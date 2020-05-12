@@ -22,7 +22,9 @@
         <!-- Navbar Right Menu -->
         <div class="navbar-custom-menu">
             <ul class="nav navbar-nav">
-
+                <li>
+                    <a href="/" target="_blank"><i class="fa fa-home"></i> &nbsp;{{trans('admin.home')}}</a>
+                </li>
                 {!! Admin::getNavbar()->render() !!}
 
                 <!-- User Account Menu -->
@@ -54,10 +56,6 @@
                         </li>
                     </ul>
                 </li>
-                <!-- Control Sidebar Toggle Button -->
-                {{--<li>--}}
-                    {{--<a href="#" data-toggle="control-sidebar"><i class="fa fa-gears"></i></a>--}}
-                {{--</li>--}}
             </ul>
         </div>
     </nav>

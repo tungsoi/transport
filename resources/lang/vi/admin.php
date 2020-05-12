@@ -105,7 +105,8 @@ return [
         'roles'             =>  'Vai trò',
         'permission'        =>  'Quyền hạn',
         'menu'              =>  'Menu',
-        'operation_log'     =>  'Lịch sự hoạt động'
+        'operation_log'     =>  'Lịch sự hoạt động',
+        'home_menu'         =>  'Menu'
     ],
     'status'                =>  'Trạng thái',
     'id'                    =>  'ID',
@@ -164,5 +165,6 @@ return [
     'register_success'   =>  'Đăng ký thành công. Vui lòng đăng nhập',
     'province'  =>  'Thành phố',
     'district'  =>  'Quận / Huyện',
-    'address'   => 'Số nhà / Đường / Phố'
+    'address'   => 'Số nhà / Đường / Phố',
+    'home'  =>  'Trang chủ'
 ];

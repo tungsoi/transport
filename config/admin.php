@@ -11,7 +11,7 @@ return [
     | login page.
     |
     */
-    'name' => 'Laravel-admin',
+    'name' => 'Ceramics',
 
     /*
     |--------------------------------------------------------------------------
@@ -22,7 +22,7 @@ return [
     | `img` tag, eg '<img src="http://logo-url" alt="Admin logo">'.
     |
     */
-    'logo' => '<b>Laravel</b> admin',
+    'logo' => '<b>Ceramics</b>',
 
     /*
     |--------------------------------------------------------------------------
@@ -34,7 +34,7 @@ return [
     | '<img src="http://logo-url" alt="Admin logo">'.
     |
     */
-    'logo-mini' => '<b>La</b>',
+    'logo-mini' => '<b>CR</b>',
 
     /*
     |--------------------------------------------------------------------------
@@ -65,6 +65,17 @@ return [
         'middleware' => ['web', 'admin'],
     ],
 
+    'fe'   =>   [
+        'route' => [
+
+            'prefix' => env('ADMIN_ROUTE_PREFIX', 'admin/fe'),
+
+            'namespace' => 'App\\Admin\\Controllers\\FE',
+
+            'middleware' => ['web', 'admin'],
+        ],
+    ],
+
     /*
     |--------------------------------------------------------------------------
     | Laravel-admin install directory
@@ -85,7 +96,7 @@ return [
     | Html title for all pages.
     |
     */
-    'title' => 'Admin',
+    'title' => env('APP_NAME'),
 
     /*
     |--------------------------------------------------------------------------
@@ -408,7 +419,7 @@ return [
             // default locale
             'default' => 'vi',
             // if or not show multi-language login page, optional, default is true
-            'show-login-page' => true,
+            'show-login-page' => false,
             // if or not show multi-language navbar, optional, default is true
             'show-navbar' => true,
             // the cookie name for the multi-language var, optional, default is 'locale'

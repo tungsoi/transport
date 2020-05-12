@@ -1,14 +1,14 @@
 <?php
 
-namespace App\Admin\Controllers;
+namespace App\Admin\Controllers\FE;
 
 use Encore\Admin\Controllers\AdminController;
 use Encore\Admin\Form;
 use Encore\Admin\Grid;
 use Encore\Admin\Show;
-use App\Models\Example;
+use App\Models\HomeMenu;
 
-class ExampleController extends AdminController
+class HomeMenuController extends AdminController
 {
     /**
      * Title for current resource.
@@ -19,7 +19,7 @@ class ExampleController extends AdminController
 
     public function __construct()
     {
-        $this->title = trans('admin.menu_titles.name');
+        $this->title = trans('admin.menu_titles.home_menu');
     }
 
     /**
@@ -29,7 +29,7 @@ class ExampleController extends AdminController
      */
     protected function grid()
     {
-        $grid = new Grid(new Example);
+        $grid = new Grid(new HomeMenu);
 
         $grid->filter(function($filter) {
             $filter->expand();
@@ -38,8 +38,8 @@ class ExampleController extends AdminController
         });
 
         $grid->id(trans('admin.id'));
-        $grid->title(trans('admin.title'));
-        $grid->order(trans('admin.order'));
+        $grid->title(trans('admin.title'))->editable();
+        $grid->order(trans('admin.order'))->editable();
         $grid->created_at(trans('admin.created_at'))->display(function () {
             return date('H:i | d-m-Y', strtotime($this->created_at));
         });
@@ -58,7 +58,7 @@ class ExampleController extends AdminController
      */
     protected function detail($id)
     {
-        $show = new Show(Example::findOrFail($id));
+        $show = new Show(HomeMenu::findOrFail($id));
 
         $show->field('id', trans('admin.id'));
         $show->title(trans('admin.title'));
@@ -76,7 +76,7 @@ class ExampleController extends AdminController
      */
     protected function form()
     {
-        $form = new Form(new Example);
+        $form = new Form(new HomeMenu);
 
         $form->display('id', __('ID'));
         $form->text('title', trans('admin.title'))->rules('required');

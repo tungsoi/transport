@@ -104,5 +104,6 @@ return [
     'prev'                   => 'Prev',
     'next'                   => 'Next',
     'quick_create'           => 'Quick create',
-    'dashboard'              =>  'Dashboard'
+    'dashboard'              =>  'Dashboard',
+    'home'                   => 'Home'
 ];

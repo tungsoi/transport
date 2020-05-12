@@ -15,7 +15,6 @@ class HomeController extends Controller
         return $content
             ->title(trans('admin.dashboard'))
             ->description(trans('admin.description'))
-            ->row(Dashboard::title())
             ->row(function (Row $row) {
 
                 $row->column(4, function (Column $column) {

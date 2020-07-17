@@ -11,7 +11,7 @@ return [
     | login page.
     |
     */
-    'name' => 'Ceramics',
+    'name' => env('APP_NAME'),
 
     /*
     |--------------------------------------------------------------------------
@@ -22,7 +22,7 @@ return [
     | `img` tag, eg '<img src="http://logo-url" alt="Admin logo">'.
     |
     */
-    'logo' => '<b>Ceramics</b>',
+    'logo' => env('APP_NAME'),
 
     /*
     |--------------------------------------------------------------------------
@@ -34,7 +34,7 @@ return [
     | '<img src="http://logo-url" alt="Admin logo">'.
     |
     */
-    'logo-mini' => '<b>CR</b>',
+    'logo-mini' => '<b>RD</b>',
 
     /*
     |--------------------------------------------------------------------------
@@ -65,15 +65,13 @@ return [
         'middleware' => ['web', 'admin'],
     ],
 
-    'fe'   =>   [
-        'route' => [
+    'customer' => [
 
-            'prefix' => env('ADMIN_ROUTE_PREFIX', 'admin/fe'),
+        'prefix' => '',
 
-            'namespace' => 'App\\Admin\\Controllers\\FE',
+        'namespace' => 'App\\Customer\\Controllers',
 
-            'middleware' => ['web', 'admin'],
-        ],
+        'middleware' => ['web'],
     ],
 
     /*
@@ -288,7 +286,7 @@ return [
     |    "skin-red", "skin-red-light", "skin-black", "skin-black-light".
     |
     */
-    'skin' => 'skin-purple-light',
+    'skin' => 'skin-red',
 
     /*
     |--------------------------------------------------------------------------
@@ -414,7 +412,8 @@ return [
             // the value is used to show
             'languages' => [
                 'vi' => 'Tiếng Việt',
-                'en' => 'English'
+                'en' => 'English',
+                'zh-CN' =>  'Tiếng Trung'
             ],
             // default locale
             'default' => 'vi',
@@ -425,5 +424,11 @@ return [
             // the cookie name for the multi-language var, optional, default is 'locale'
             'cookie-name' => 'locale'
         ],
+        'chartjs' => [
+        
+            // Set to `false` if you want to disable this extension
+            'enable' => true,
+        ]
     ],
+    'copyright' =>  "Copyright © 2016 Rồng Đỏ Logistics."
 ];

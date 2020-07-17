@@ -4,19 +4,19 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class HomeMenu extends Model
+class RongDoUser extends Model
 {
     /**
      * Table name
      *
      * @var string
      */
-    protected $table = "home_menus";
+    protected $table = "transport_customers";
 
     /**
      * Fields
      *
      * @var array
      */
-    protected $fillable = ['title', 'order'];
+    protected $fillable = ['name'];
 }

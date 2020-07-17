@@ -10,18 +10,51 @@
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
 
     @if(!is_null($favicon = Admin::favicon()))
-    <link rel="shortcut icon" href="{{$favicon}}">
+        <link rel="shortcut icon" href="{{$favicon}}">
     @endif
 
     {!! Admin::css() !!}
 
     <script src="{{ Admin::jQuery() }}"></script>
     {!! Admin::headerJs() !!}
-    <!--[if lt IE 9]>
-    <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
-    <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-    <![endif]-->
 
+    <style>
+        body {
+            font-family: "Tahoma" !important;
+            font-size: 12px !important;
+        }
+        
+        h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
+            font-family: "Tahoma" !important;
+        }
+        .content-header>h1 {
+            text-transform: uppercase;
+            font-size: 20px;
+        }
+        .editable-click, a.editable-click, a.editable-click:hover {
+            border-bottom: none !important;
+        }
+        .uppercase {
+            text-transform: uppercase;
+        }
+        #tbl_payment {
+            background: white;
+        }
+        #tbl_payment tr th {
+            font-size: 18px;
+        }
+        #tbl_payment tbody tr:first-child td {
+            font-weight: bold;
+        }
+
+        #tbl_payment tbody tr td:nth-child(4), #tbl_payment tbody tr td:nth-child(5) {
+            text-align: right;
+        }
+
+        .column-total_price, .column-description {
+            text-align: right;
+        }
+    </style>
 </head>
 
 <body class="hold-transition {{config('admin.skin')}} {{join(' ', config('admin.layout'))}}">
@@ -62,5 +95,6 @@
 <!-- REQUIRED JS SCRIPTS -->
 {!! Admin::js() !!}
 
+<script src="{{ asset('rongdo/autoNumeric.js') }}"></script>
 </body>
 </html>

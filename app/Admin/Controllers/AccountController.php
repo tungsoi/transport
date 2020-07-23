@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Customer\Controllers;
+namespace App\Admin\Controllers;
 
 use App\Models\TransportRecharge;
 use App\Models\Warehouse;
@@ -75,7 +75,7 @@ class AccountController extends AdminController
         return $content
             ->header($this->title)
             ->description('Lịch sử giao dịch')
-            ->body($this->rechargeHistoryGrid());
+            ->body($this->walletGrid());
     }
 
     /**
@@ -126,4 +126,56 @@ class AccountController extends AdminController
         return $grid;
     }
 
+    public function walletGrid() {
+        $form = new Form(new User);
+        $form->text('name', 'Họ và tên')->rules('required');
+        $form->text('symbol_name', 'Biệt danh')
+        ->creationRules(['required', 'unique:admin_users,symbol_name'])
+        ->updateRules(['required', "unique:admin_users,symbol_name,{{id}}"]);
+
+        $form->text('email')
+        ->creationRules(['required', 'unique:admin_users,email'])
+        ->updateRules(['required', "unique:admin_users,email,{{id}}"]);
+
+        $form->text('phone_number', 'SDT')->rules('required');
+        $form->select('ware_house_id', 'Kho')->options(Warehouse::where('is_active', 1)->get()->pluck('name', 'id'))->rules('required');
+        $form->text('address', 'Địa chỉ');
+        $form->select('is_active', 'Trạng thái')->options(User::STATUS)->default(1)->rules('required');
+
+        $form->disableEditingCheck();
+        $form->disableCreatingCheck();
+        $form->disableViewCheck();
+        if (request()->route()->getActionMethod() == 'store') {
+            $form->hidden('username');
+            $form->hidden('password');
+        }
+
+        $form->saving(function (Form $form) {
+            if (request()->route()->getActionMethod() == 'store') {
+                $form->password = Hash::make('123456');
+            }
+            $form->username = str_slug($form->name)."-".strtotime(now());
+        });
+
+        return $form;
+    }
+
+   /**
+     * Make a show builder.
+     *
+     * @param mixed   $id
+     * @return Show
+     */
+    protected function detail($id)
+    {
+        $show = new Show(User::findOrFail($id));
+
+        $show->field('id', trans('admin.id'));
+        $show->title(trans('admin.title'));
+        $show->order(trans('admin.order'));
+        $show->field('created_at', trans('admin.created_at'));
+        $show->field('updated_at', trans('admin.updated_at'));
+
+        return $show;
+    }
 }

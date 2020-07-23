@@ -50,9 +50,10 @@
         #tbl_payment tbody tr td:nth-child(4), #tbl_payment tbody tr td:nth-child(5) {
             text-align: right;
         }
-
-        .column-total_price, .column-description {
-            text-align: right;
+        .input-group label.error {
+            display: table-caption;
+            color: red;
+            font-weight: 400;
         }
     </style>
 </head>
@@ -96,5 +97,6 @@
 {!! Admin::js() !!}
 
 <script src="{{ asset('rongdo/autoNumeric.js') }}"></script>
+<script src="{{ asset('rongdo/jquery/jquery.validate.js') }}"></script>
 </body>
 </html>

@@ -31,15 +31,14 @@ class Order extends Model
         'purchase_service_fee',
         'purchase_cn_transport_fee',
         'purchase_vn_transport_fee',
+        'purchase_cn_to_vn_fee',
         'final_total_price',
         'min_deposit',
         'deposited',
         'admin_note',
+        'customer_note',
         'order_type',
         'shop_name',
-        'purchase_cn_to_vn_fee',
-        'is_discounted',
-        'customer_note',
         'surcharge',  // phụ phí
         'warehouse_id',
         'is_count',
@@ -50,18 +49,19 @@ class Order extends Model
         'transport_pay_type',
         'transport_advance_drag',
         'transport_vn_code',
-        'support_warehouse_id',
-        'supporter_order_id',
-        'price_weight',
         'current_rate',
         'order_at',
         'to_vn_at',
         'transport_size_product',
+        'support_warehouse_id',
+        'supporter_order_id',
+        'price_weight',
         'price_negotiate',
-        'transport_cublic_meter',
         'deposit_default',
+        'transport_cublic_meter',
         'purchase_service_fee_percent',
         'user_created_id',
+        'payment_customer_id',
         'deposited_at',
         'internal_note',
         'user_created_name',
@@ -69,7 +69,9 @@ class Order extends Model
         'discount_value',
         'discount_method',
         'discount_type',
-        'success_at'
+        'success_at',
+        'is_discounted',
+        'transport_customer_id'
     ];
 
     public function items() {
@@ -89,8 +91,14 @@ class Order extends Model
         }
     }
 
-    public static function getPriceService($order) {
-        return $order->items->first()->price_service ? $order->items->first()->price_service : "";
+    public static function getPriceService($order, $paymentType = "") {
+        if ($order->items->count() > 0) {
+            return $order->items->where('payment_type', $paymentType)->first() 
+                ? $order->items->where('payment_type', $paymentType)->first()->price_service 
+                : 0;
+        }
+
+        return 0;
     }
 
     const KG = 1;
@@ -101,7 +109,7 @@ class Order extends Model
     const M3_TEXT = 'Mét khối';
 
     public function getSumKg() {
-        return number_format($this->items->where('payment_type', self::KG)->sum('kg'), 2);
+        return str_replace('.00', '', $this->items->where('payment_type', self::KG)->sum('kg'));
     }
 
     public function getSumKgDiscount() {
@@ -109,15 +117,15 @@ class Order extends Model
     }
 
     public function getSumKgAfterDiscount() {
-        return number_format($this->getSumKg() + $this->getSumKgDiscount(), 2);
+        return $this->getSumKg() + $this->getSumKgDiscount();
     }
 
     public function getSumVolume() {
-        return number_format($this->items->where('payment_type', self::V)->sum('volume'), 2);
+        return $this->items->where('payment_type', self::V)->sum('volume');
     }
 
     public function getSumCublicMeter() {
-        return number_format($this->items->where('payment_type', self::M3)->sum('cublic_meter'), 3);
+        return $this->items->where('payment_type', self::M3)->sum('cublic_meter');
     }
 
     public function userCreated() {
@@ -148,6 +156,14 @@ class Order extends Model
     }
 
     public function getDetailMoneySumKg() {
-        return number_format($this->getSumKg() * $this->items->first()->price_service)." + ".number_format($this->getSumKgDiscount() * $this->items->first()->price_service);
+        return number_format($this->getSumKg() * $this->getPriceService($this, self::KG))." + ".number_format($this->getSumKgDiscount() * $this->getPriceService($this, self::KG));
+    }
+
+    public function paymentCustomer() {
+        return $this->hasOne('App\User', 'id', 'payment_customer_id');
+    }
+
+    public function transportCustomer() {
+        return $this->hasOne('App\User', 'id', 'transport_customer_id');
     }
 }

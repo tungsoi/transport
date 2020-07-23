@@ -37,13 +37,29 @@
     .panel {
         margin: 15px;
     }
+    .panel-error .panel-body {
+        background: #bd5959;
+    }
+    .pd-0 {
+        padding: 0px;
+    }
 </style>
 
-{{-- content --}}
 <div class="col-lg-12" id="vietnam_receive_form">
-    <div class="col-lg-12">
+    <div class="col-md-12">
+        <div class="box-header with-border">
+            <div class="pull-left">
+                @include('admin.orders.partials.list_btn')
+                @include('admin.orders.partials.china_rev_btn')
+                @include('admin.orders.partials.payment_btn')
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-12 pd-0">
+        <br>
         <ul>
             <li><b>Ghi chú </b></li>
+            <li>Biệt danh khách hàng: Yêu cầu nhập đúng biệt danh khi tạo tài khoản cho khách hàng.</li>
             <li>Mã vận đơn: Chỉ sử dụng được các mã chưa được nhận tại Hà Nội, chưa thanh toán.</li>
             <li>Cân nặng: Được phép nhập dạng số thập phân, chú ý theo dạng 0.5 (0 chấm 5)</li>
             <li>Thao tác: Sau khi nhập mã vận đơn, bấm nút enter để tải thông tin.</li>
@@ -54,7 +70,19 @@
         <div class="col-md-12">
             <div class="panel panel-primary">
                 <div class="panel-body">
-                    <label for="" class="fs-20">
+                    <label for="" class="fs-20 uppercase">
+                        {{ $message }}
+                    </label>
+                </div>
+            </div>
+        </div>
+    @endif
+
+    @if ($message =  Session::get('invalid-customer'))
+        <div class="col-md-12">
+            <div class="panel panel-error">
+                <div class="panel-body">
+                    <label for="" class="fs-20 uppercase">
                         {{ $message }}
                     </label>
                 </div>
@@ -69,8 +97,9 @@
                     <div class="receive-content col-lg-4">
                         <div>
                             <strong>
-                                <span class="bolder uppercase">Tên Khách hàng</span>
+                                <span class="bolder uppercase">Tên biệt danh Khách hàng</span>
                             </strong>
+                            <i>(VD: TUNGHN)</i>
                         </div>
                         <div>
                             <input name="customer_name" 
@@ -79,7 +108,8 @@
                             class="form-control customer_name" 
                             placeholder="Tên khách hàng" 
                             required=""
-                            oninput="setCustomValidity('')">
+                            oninput="setCustomValidity('')"
+                            value="{{ old('customer_name') }}">
                         </div>
                     </div>
                 </div>
@@ -123,7 +153,7 @@
                                         <input type="text" name="advance_drag[]" class="form-control advance_drag" placeholder="Nhập ứng kéo" value="">
                                     </td>
                                     <td>
-                                        <input type="text" name="note[]" class="form-control note" placeholder="Nhập ghi chú" value="">
+                                        <input type="text" name="note[]" class="form-control note" placeholder="Nhập ghi chú" value="HN nhận">
                                     </td>
                                     <td>
                                         <i class="fa fa-times-circle btnRemoveItem" aria-hidden="true"></i>
@@ -134,158 +164,12 @@
                     </div>
                 </div>
                 <div class="modal-footer clearfix">
-                    <button type="submit" class="btn btn-primary js-button-submit">Xác nhận</button>
-                    <a href="" class="btn btn-default" data-dismiss="modal">Quay lại</a>
+                    <button type="submit" class="btn btn-danger js-button-submit">Xác nhận</button>
+                    <a href="{{ route('transport_orders.index') }}" class="btn btn-default" data-dismiss="modal">Quay lại</a>
                 </div>
             </div>
         </form>
     </div>
 </div>
-{{-- end content --}}
 
-{{-- script --}}
-<script>
-    $(document).on('keydown', 'input[name="cn_code[]"]', function (e) {
-        if (e.which == 13) { // button enter
-            e.preventDefault();
-            let cn_code = $(this).val();
-            let tr = $(this).parent().parent();
-            $('.js-button-submit').removeAttr('disabled');
-
-            let codearr = $('input[name="cn_code[]"]');
-            let flag = 0;
-            for (let v = 0; v <= codearr.length; v++) {
-                if (cn_code == codearr.eq(v).val() && codearr.eq(v).val() != "") {   
-                    flag++;
-                }
-
-                if (flag >= 2) {
-                    codearr.eq(v).parent().find('.error').remove();
-                    codearr.eq(v).parent().append('<span class="error">Mã vận đơn đã được dùng, không được sử dụng lại.</span>');
-                    codearr.eq(v).focus();
-                    $('.js-button-submit').attr('disabled', 'disabled');
-                    return false;
-                }
-            }
-            $.ajax({
-                type: 'GET',
-                url: '/admin/transport_orders/get-data-transport-order-items',
-                data: {cn_code: cn_code},
-                success: function(response) {
-                    // console.log(response);
-                    tr.children().find('input[name="item_id[]"]').val('');
-                    tr.children().find('input[name="customer_name[]"]').val('');
-                    tr.children().find('input[name="kg[]"]').val('');
-                    tr.children().find('input[name="product_length[]"]').val('');
-                    tr.children().find('input[name="product_width[]"]').val('');
-                    tr.children().find('input[name="product_height[]"]').val('');
-                    tr.children().find('input[name="advance_drag[]"]').val('');
-                    tr.children().find('input[name="note[]"]').val('');
-                    tr.children().find('input[name="product_volumn[]"]').val('');
-                    tr.children().find('input[name="product_cublic_meter[]"]').val('');
-
-                    tr.children().find('input[name="cn_code[]"]').parent().find('.error').remove();
-
-                    if (response != "")
-                    {
-                        tr.children().find('input[name="cn_code[]"]').val(response.cn_code);
-                        tr.children().find('input[name="item_id[]"]').val(response.id);
-                        tr.children().find('input[name="customer_name[]"]').val(response.customer_name);
-                        tr.children().find('input[name="kg[]"]').val(response.kg);
-                        tr.children().find('input[name="product_length[]"]').val(response.product_length);
-                        tr.children().find('input[name="product_width[]"]').val(response.product_width);
-                        tr.children().find('input[name="product_height[]"]').val(response.product_height);
-                        tr.children().find('input[name="advance_drag[]"]').val(response.advance_drag);
-                        tr.children().find('input[name="note[]"]').val(response.note);
-                        tr.children().find('input[name="product_volumn[]"]').val(response.product_volumn);
-                        tr.children().find('input[name="product_cublic_meter[]"]').val(response.product_cublic_meter);
-
-                        $(function() {
-                            $('.advance_drag').autoNumeric();
-                        });
-                    } else {
-                        tr.children().find('input[name="cn_code[]"]').parent().append('<span class="error">Mã vận đơn không tổn tại</span>');
-                    }
-                }
-            });
-        }
-});
-
-    $(document).on('blur', '.js-cn-code-ip', function (e) {
-        let value = $(this).val();
-        let ts = $(this);
-        if (value != '') {
-            $.ajax({
-                type: 'GET',
-                url: '/admin/transport-orders/check-exist-transport-code',
-                data: {transportCode: value},
-                success: function(response) {
-                    if (response && response.status != false) {
-                        if (response.exist == true) {
-                            $(ts).closest('div').find('.js-noti-transport-code').html('Mã vận đơn TQ đã về kho VN, vui lòng nhập mã khác');
-                            $('.js-button-submit').addClass('hidden');
-                        } else {
-                            $(ts).closest('div').find('.js-noti-transport-code').html('');
-                            $('.js-button-submit').removeClass('hidden');
-                        }
-                    }
-                }
-            });
-        }
-    });
-
-    $(document).on('keydown','#tbl-orders input', function(e) {
-        if (e.which == 13) {
-            e.preventDefault();
-            // return false;
-            var ele = $('#tbl-orders tbody tr').last().clone();
-            ele.find('input').val(0);
-            ele.find('.cn_code').val("");
-
-            let stt = ele.find('.stt').html();
-            ele.find('.stt').html(Number(stt)+1);
-            ele.appendTo('#tbl-orders tbody');
-            ele.find('.cn_code').focus();
-            var ad = ele.find('.advance_drag');
-
-            $(function() {
-                $('.advance_drag').autoNumeric();
-            });
-        }
-    });
-
-    $(document).on('keydown','.customer_name', function(e) {
-        if (e.which == 13) {
-            e.preventDefault();
-            return false;
-        }
-    });
-
-    $(function() {
-        $('.advance_drag').autoNumeric();
-    });
-
-    $(document).on('click', '.btnRemoveItem', function (e){
-        var tr = $('#tbl-orders tr');
-        if (tr.length > 2) {
-            $(this).parent().parent().remove();
-        }
-    });
-
-    $('form').on('focus', 'input[type=number]', function (e) {
-        $(this).on('mousewheel.disableScroll', function (e) {
-            e.preventDefault()
-        });
-    });
-    $('form').on('blur', 'input[type=number]', function (e) {
-        $(this).off('mousewheel.disableScroll');
-    });
-    $('form').on('focus', 'input[type=text]', function (e) {
-        $(this).on('mousewheel.disableScroll', function (e) {
-            e.preventDefault()
-        });
-    });
-    $('form').on('blur', 'input[type=text]', function (e) {
-        $(this).off('mousewheel.disableScroll');
-    });
-</script>
+<script src="{{ asset('rongdo/pages/vietnam_receive.js') }}"></script>

@@ -8,6 +8,7 @@ use Encore\Admin\Form;
 use Encore\Admin\Grid;
 use Encore\Admin\Show;
 use App\User;
+use Encore\Admin\Facades\Admin;
 
 class WareHouseController extends AdminController
 {
@@ -98,14 +99,30 @@ class WareHouseController extends AdminController
     protected function form()
     {
         $form = new Form(new Warehouse);
-        $form->text('name', 'Tên Kho')->rules('required');
+        $form->text('name', 'Tên Kho');
         $form->text('address', 'Địa chỉ');
-        $form->select('is_active', 'Trạng thái')->options(User::STATUS)->default(1)->rules('required');
+        $form->select('is_active', 'Trạng thái')->options(User::STATUS)->default(1);
 
         $form->disableEditingCheck();
         $form->disableCreatingCheck();
         $form->disableViewCheck();
 
+        Admin::script($this->script());
+
         return $form;
+    }
+
+    public function script() {
+        return <<<EOT
+        $(document).ready(function () {
+            $("form").validate({
+                rules: {
+                    name: {
+                        required: true
+                    }
+                }
+            });
+        });
+EOT;
     }
 }

@@ -3,7 +3,6 @@
 namespace App\Admin\Actions\Customer;
 
 use Encore\Admin\Actions\RowAction;
-use Illuminate\Database\Eloquent\Model;
 
 class OrderHistory extends RowAction
 {   
@@ -12,7 +11,7 @@ class OrderHistory extends RowAction
      *
      * @var string
      */
-    public $name = 'Danh sách đơn hàng';
+    public $name = 'Danh sách mã vận đơn';
 
     /**
      * Customer id

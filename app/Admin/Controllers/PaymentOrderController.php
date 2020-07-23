@@ -3,6 +3,7 @@
 namespace App\Admin\Controllers;
 
 use App\Models\ExchangeRate;
+use App\Models\TransportRecharge;
 use App\Models\Warehouse;
 use Encore\Admin\Controllers\AdminController;
 use Encore\Admin\Form;
@@ -12,6 +13,7 @@ use App\User;
 use Encore\Admin\Layout\Content;
 use Encore\Admin\Layout\Row;
 use Encore\Admin\Layout\Column;
+use Encore\Admin\Form\Field\Select;
 
 class PaymentOrderController extends AdminController
 {
@@ -124,7 +126,12 @@ class PaymentOrderController extends AdminController
                 $row->column(12, function (Column $column)
                 {
                     $vnd = ExchangeRate::where('is_active', 1)->orderBy('id', 'desc')->first()->vnd;
-                    $column->append(view('admin.orders.payment', compact('vnd')));
+                    $form = new Form(new TransportRecharge());
+                    $customer = $form->select('payment_customer_id', 'Khách hàng thanh toán')
+                                ->options(User::where('is_customer', 1)->pluck('symbol_name', 'id'))
+                                ->help('* Đơn hàng sẽ thanh toán trên tài khoản của khách hàng được chọn.')
+                                ->rules('required');
+                    $column->append(view('admin.orders.payment', compact('vnd', 'customer')));
                 });
             });
     }

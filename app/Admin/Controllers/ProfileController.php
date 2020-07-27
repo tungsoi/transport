@@ -121,6 +121,9 @@ class ProfileController extends AdminController
         $grid = new Grid(new TransportRecharge());
         $grid->model()->where('customer_id', Admin::user()->id)->orderBy('id', 'desc');
 
+        $grid->header(function ($query) {
+            return '<h4 class="uppercase">Số dư ví hiện tại: '.number_format(User::find(Admin::user()->id)->wallet).' VND</h4>';
+        });
         $grid->filter(function($filter) {
             $filter->expand();
             $filter->disableIdFilter();

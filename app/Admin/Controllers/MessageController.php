@@ -32,6 +32,10 @@ class MessageController extends AdminController
     protected function grid()
     {
         $grid = new Grid(new Message);
+        if (Admin::user()->isRole('customer')) {
+            $grid->model()->where('customer_id', Admin::user()->id);
+            $grid->disableExport();
+        }
 
         $grid->filter(function($filter) {
             $filter->expand();
@@ -48,6 +52,7 @@ class MessageController extends AdminController
             return $this->customer->symbol_name ?? "";
         });
         $grid->title('Tiêu đề');
+        $grid->content('Nội dung');
         
         $grid->created_at(trans('admin.created_at'))->display(function () {
             return date('H:i | d-m-Y', strtotime($this->created_at));

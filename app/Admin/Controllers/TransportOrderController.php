@@ -97,25 +97,43 @@ class TransportOrderController extends AdminController
         });
         $grid->internal_note('Ghi chú')->editable();
         $grid->actions(function ($actions) {
+
+            if (! Admin::user()->can('order.detail') ) {
+                $actions->disableView();
+            }
+
+            if (! Admin::user()->can('order.delete') ) {
+                $actions->disableDelete();
+            }
             $actions->disableEdit();
-            $actions->disableDelete();
         });
         $grid->disableCreateButton();
         $grid->tools(function ($tools) {
-            $tools->append('<a href="'.route('transport_orders.china_receives').'" class="btn btn-sm btn-warning active" target="_blank">
-                <i class="fa fa-grav"></i>
-                <span class="hidden-xs">&nbsp;Trung Quốc nhận</span>
-            </a>');
-            $tools->append('<a href="'.route('transport_orders.vietnam_receives').'" class="btn btn-sm btn-success active"  target="_blank">
-                <i class="fa fa-plus"></i>
-                <span class="hidden-xs">&nbsp;Hà Nội nhận</span>
-            </a>');
+            if (Admin::user()->can('order.china') ) {
+                $tools->append('<a href="'.route('transport_orders.china_receives').'" class="btn btn-sm btn-warning active" target="_blank">
+                    <i class="fa fa-grav"></i>
+                    <span class="hidden-xs">&nbsp;Trung Quốc nhận</span>
+                </a>');
+            }
 
-            $tools->append('<a href="'.route('transport_orders.payments').'" class="btn btn-sm btn-danger active"  target="_blank">
-                <i class="fa fa-money"></i>
-                <span class="hidden-xs">&nbsp;Thanh toán</span>
-            </a>');
+            if (Admin::user()->can('order.vietnam') ) {
+                $tools->append('<a href="'.route('transport_orders.vietnam_receives').'" class="btn btn-sm btn-success active"  target="_blank">
+                    <i class="fa fa-plus"></i>
+                    <span class="hidden-xs">&nbsp;Hà Nội nhận</span>
+                </a>');
+            }
+
+            if (Admin::user()->can('order.payment') ) {
+                $tools->append('<a href="'.route('transport_orders.payments').'" class="btn btn-sm btn-danger active"  target="_blank">
+                    <i class="fa fa-money"></i>
+                    <span class="hidden-xs">&nbsp;Thanh toán</span>
+                </a>');
+            }
         });
+        if (! Admin::user()->can('order.export') ) {
+            $grid->disableExport();
+        }
+
         $grid->paginate(20);
         return $grid;
     }

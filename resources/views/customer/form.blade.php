@@ -118,10 +118,10 @@
                             <p>{{ $item['warehouse_vn_date'] ? date('H:i / d-m-Y', strtotime($item['warehouse_vn_date'])) : ''  }}</p>
                         </td>
                         <td>
-                            <span class="badge {{ $item['transporting_vn'] == 1 ? 'bg-green' : 'bg-red'  }}">
-                                {{ $item['transporting_vn'] == 1 ? 'Đã xuất' : 'Chưa xuất'  }}
+                            <span class="badge {{ $item['is_payment'] == 1 ? 'bg-green' : 'bg-red'  }}">
+                                {{ $item['is_payment'] == 1 ? 'Đã xuất' : 'Chưa xuất'  }}
                             </span>
-                            <p>{{ $item['transporting_vn_date'] ? date('H:i / d-m-Y', strtotime($item['transporting_vn_date'])) : ''  }}</p>
+                            <p>{{ $item['is_payment'] == 1 ? date('H:i / d-m-Y', strtotime($item->order->created_at)) : ''  }}</p>
                         </td>
                     </tr>
                 @endforeach

@@ -526,45 +526,31 @@ class TransportOrderController extends AdminController
             $customer = User::where('symbol_name', $data['customer_name'])->first();
             if (! $customer) 
             {
-                Session::flash('invalid-customer', 'Không tìm thấy khách hàng. Kiểm tra lại biệt danh.');
+                Session::flash('invalid-customer', 'Không tìm thấy khách hàng. Kiểm tra lại mã khách hàng.');
                 return redirect()->back();
             }
 
-            if (sizeof($data['cn_code']) > 1) {
-                foreach ($data['cn_code'] as $key => $code)
-                {
-                    if (!is_null($code))
-                    {
-                        $field = [
-                            'cn_code'           =>  $code,
-                            'kg'                =>  $data['kg'][$key] ?? 0,
-                            'advance_drag'      =>  (int) str_replace(',', '.', $data['advance_drag'][$key]) ?? null,
-                            'product_width'     =>  $data['product_width'][$key] ?? 0,
-                            'product_length'    =>  $data['product_length'][$key] ?? 0,
-                            'product_height'    =>  $data['product_height'][$key] ?? 0,
-                            'transport_customer_id' =>  $customer->id ?? null,
-                            'user_id_updated'   =>  Admin::user()->id,
-                            'warehouse_vn'      =>  1,
-                            'warehouse_vn_date' =>  now(),
-                            'note'              =>  $data['note'][$key] == 'TQ nhận' ? 'HN nhận' : $data['note'][$key],
-                            'volume'            =>  TransportOrderItem::calculateVolume(
-                                $data['product_width'][$key],
-                                $data['product_height'][$key],
-                                $data['product_length'][$key]
-                            ),
-                            'cublic_meter'      =>  TransportOrderItem::calculateCublicMeter(
-                                $data['product_width'][$key],
-                                $data['product_height'][$key],
-                                $data['product_length'][$key]
-                            ),
-                            'warehouse_cn'  =>  1
-                        ];
-    
-                        if (TransportOrderItem::where('cn_code', $field['cn_code'])->count() > 0) {
-                            TransportOrderItem::where('cn_code', $field['cn_code'])->orderBy('id', 'desc')->first()->update($field);
-                        } else {
-                            TransportOrderItem::create($field);
-                        }
+            if (sizeof($data['cn_code']) >= 1 && $data['cn_code'][0] != null) {
+                $items = [];
+                for ($key = 0; $key < sizeof($data['cn_code']); $key++) {
+                    $items[] = $service->buildDataVietnamReceive([
+                        'customer_name'     =>  $data['customer_name'],
+                        'cn_code'           =>  $data['cn_code'][$key],
+                        'kg'                =>  $data['kg'][$key],
+                        'product_width'     =>  $data['product_width'][$key],
+                        'product_length'    =>  $data['product_length'][$key],
+                        'product_height'    =>  $data['product_height'][$key],
+                        'advance_drag'      =>  $data['advance_drag'][$key],
+                        'note'              =>  $data['note'][$key]
+                    ]);
+                }
+
+                foreach ($items as $item) {
+                    if ($item['is_created']) {
+                        unset($item['is_created']);
+                        TransportOrderItem::where('cn_code', $item['cn_code'])->update($item);
+                    } else {
+                        TransportOrderItem::create($item);
                     }
                 }
     
@@ -576,13 +562,7 @@ class TransportOrderController extends AdminController
         } catch (\Exception $e) {
             DB::rollback();
             Log::error([
-                'method'  => __METHOD__,
-                'line'    => __LINE__,
-                'message' => 'Lỗi khi tạo đơn hàng vận chuyển',
-                'context' => [
-                    'data'          => $request->all(),
-                    'error_message' => $e->getMessage()
-                ]
+                'message' => 'Lỗi khi tạo đơn hàng vận chuyển'
             ]);
             Session::flash('notification', $e->getMessage());
             return redirect()->back()->withInput();

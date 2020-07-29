@@ -116,9 +116,9 @@
                 <li class="nav-item">
                     <a class="nav-link" href="{{ route('admin.login') }}">Đăng nhập</a>
                 </li>
-                {{-- <li class="nav-item">
+                <li class="nav-item">
                     <a class="nav-link" href="{{ route('customer.register') }}">Đăng ký</a>
-                </li> --}}
+                </li>
                 </ul>
             </div>
         </div>

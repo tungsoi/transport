@@ -88,6 +88,7 @@
                 <th class="text-center">Chiều dài (cm)</th>
                 <th class="text-center">Chiều rộng (cm)</th>
                 <th class="text-center">Chiều cao (cm)</th>
+                <th class="text-center">Tiền ứng kéo (Tệ)</th>
                 <th class="text-center">Về kho TQ</th>
                 <th class="text-center">Về kho VN</th>
                 <th class="text-center">Xuất kho</th>
@@ -104,7 +105,7 @@
                         <td>{{ $item->product_length }}</td>
                         <td>{{ $item->product_width }}</td>
                         <td>{{ $item->product_height }}</td>
-
+                        <td>{{ $item->advance_drag }}</td>
                         <td>
                             <span class="badge {{ $item['warehouse_cn'] == 1 ? 'bg-green' : 'bg-red'  }}">
                                 {{ $item['warehouse_cn'] == 1 ? 'Đã về kho' : 'Chưa về kho'  }}

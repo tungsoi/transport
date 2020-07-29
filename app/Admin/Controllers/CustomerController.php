@@ -50,7 +50,7 @@ class CustomerController extends AdminController
             $filter->disableIdFilter();
             $filter->column(1/2, function ($filter) {
                 $filter->like('name', 'Họ và tên');
-                $filter->like('symbol_name', 'Biệt danh');
+                $filter->like('symbol_name', 'Mã khách hàng');
             });
             $filter->column(1/2, function ($filter) {
                 $filter->like('email');
@@ -72,7 +72,7 @@ class CustomerController extends AdminController
         $grid->column('number', 'STT');
         $grid->username('Tên đăng nhập');
         $grid->name('Họ và tên')->editable();
-        $grid->symbol_name('Tên biệt danh');
+        $grid->symbol_name('Mã khách hàng');
         $grid->email()->editable();
         $grid->phone_number('SDT')->editable();
         $grid->ware_house_id('Kho')->display(function () {
@@ -123,7 +123,7 @@ class CustomerController extends AdminController
 
         $show->id('ID');
         $show->name('Họ và tên');
-        $show->symbol_name('Biệt danh');
+        $show->symbol_name('Mã khách hàng');
         $show->email();
         $show->phone_number('SDT');
         $show->ware_house_id('Kho')->as(function () {
@@ -162,7 +162,7 @@ class CustomerController extends AdminController
         $form->text('username', 'Tên đăng nhập')
         ->creationRules(['required', 'unique:admin_users,username'])
         ->updateRules(['required', "unique:admin_users,username,{{id}}"]);
-        $form->text('symbol_name', 'Biệt danh')
+        $form->text('symbol_name', 'Mã khách hàng')
         ->creationRules(['required', 'unique:admin_users,symbol_name'])
         ->updateRules(['required', "unique:admin_users,symbol_name,{{id}}"]);
 
@@ -187,7 +187,7 @@ class CustomerController extends AdminController
             if (request()->route()->getActionMethod() == 'store') {
                 $form->password = Hash::make('123456');
             }
-            $form->username = str_slug($form->name)."-".strtotime(now());
+            $form->username = str_replace('-', '', str_slug($form->name)."-".strtotime(now()));
         });
 
         return $form;

@@ -556,7 +556,8 @@ class TransportOrderController extends AdminController
                                 $data['product_width'][$key],
                                 $data['product_height'][$key],
                                 $data['product_length'][$key]
-                            )
+                            ),
+                            'warehouse_cn'  =>  1
                         ];
     
                         if (TransportOrderItem::where('cn_code', $field['cn_code'])->count() > 0) {

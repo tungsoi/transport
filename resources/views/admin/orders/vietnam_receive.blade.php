@@ -59,7 +59,7 @@
         <br>
         <ul>
             <li><b>Ghi chú </b></li>
-            <li>Biệt danh khách hàng: Yêu cầu nhập đúng biệt danh khi tạo tài khoản cho khách hàng.</li>
+            <li>Mã khách hàng: Yêu cầu nhập đúng biệt danh khi tạo tài khoản cho khách hàng.</li>
             <li>Mã vận đơn: Chỉ sử dụng được các mã chưa được nhận tại Hà Nội, chưa thanh toán.</li>
             <li>Cân nặng: Được phép nhập dạng số thập phân, chú ý theo dạng 0.5 (0 chấm 5)</li>
             <li>Thao tác: Sau khi nhập mã vận đơn, bấm nút enter để tải thông tin.</li>
@@ -97,7 +97,7 @@
                     <div class="receive-content col-lg-4">
                         <div>
                             <strong>
-                                <span class="bolder uppercase">Tên biệt danh Khách hàng</span>
+                                <span class="bolder uppercase">Mã Khách hàng</span>
                             </strong>
                             <i>(VD: TUNGHN)</i>
                         </div>

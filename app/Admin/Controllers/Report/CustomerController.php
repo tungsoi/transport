@@ -47,7 +47,7 @@ class CustomerController extends AdminController
             $filter->expand();
             $filter->disableIdFilter();
             $filter->like('name', 'Họ và tên');
-            $filter->like('symbol_name', 'Biệt danh');
+            $filter->like('symbol_name', 'Mã khách hàng');
             $filter->like('email');
             $filter->like('phone_number', 'SDT');
             $filter->equal('ware_house_id', 'Kho')->select(Warehouse::where('is_active', 1)->get()->pluck('name', 'id'));
@@ -55,7 +55,7 @@ class CustomerController extends AdminController
 
         $grid->id('STT');
         $grid->name('Họ và tên');
-        $grid->symbol_name('Biệt danh');
+        $grid->symbol_name('Mã khách hàng');
         $grid->email();
         $grid->phone_number('SDT');
         $grid->ware_house_id('Kho')->display(function () {

@@ -43,7 +43,7 @@ class AccountController extends AdminController
         $show->wallet('Số dư ví')->as(function () {
             return number_format($this->wallet);
         });
-        $show->symbol_name('Biệt danh');
+        $show->symbol_name('Mã khách hàng');
         $show->ware_house_id('Kho')->as(function () {
             return $this->warehouse->name ?? "";
         });
@@ -129,7 +129,7 @@ class AccountController extends AdminController
     public function walletGrid() {
         $form = new Form(new User);
         $form->text('name', 'Họ và tên')->rules('required');
-        $form->text('symbol_name', 'Biệt danh')
+        $form->text('symbol_name', 'Mã khách hàng')
         ->creationRules(['required', 'unique:admin_users,symbol_name'])
         ->updateRules(['required', "unique:admin_users,symbol_name,{{id}}"]);
 

@@ -63,6 +63,9 @@ class TransportOrderController extends AdminController
         $grid->column('number', 'STT');
         $grid->order_number('Mã đơn hàng');
         $grid->transport_customer_id('Tên khách hàng')->display(function() {
+            if ($this->transport_customer_id == "") {
+                return $this->items->first()->customer_name ?? "";
+            }
             return $this->transportCustomer->symbol_name ?? "";
         });
         $grid->items('Số MVD')->count();

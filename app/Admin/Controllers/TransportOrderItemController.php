@@ -69,7 +69,7 @@ class TransportOrderItemController extends AdminController
             $row->column('number', ($row->number+1));
         });
         $grid->column('number', 'STT');
-        $grid->transport_customer_id('Tên KH')->display(function () {
+        $grid->transport_customer_id('Mã KH')->display(function () {
             $check_row = false;
             if ($this->warehouse_cn == 1 && $this->warehouse_vn == 1 && $this->is_payment == 0) {
                 $check_row = true; // chua thanh toan ha noi nhan

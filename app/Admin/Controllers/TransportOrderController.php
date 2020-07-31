@@ -215,7 +215,7 @@ class TransportOrderController extends AdminController
         });
 
         $grid->transport_customer_id('Mã khách hàng')->display(function() {
-            return $this->transportCustomer->symbol_name ?? "";
+            return $this->items->first()->customer_name ?? "";
         });
         $grid->payment_customer_id('Khách hàng thanh toán')->display(function() {
             return $this->paymentCustomer->symbol_name ?? "";

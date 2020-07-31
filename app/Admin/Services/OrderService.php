@@ -85,7 +85,7 @@ class OrderService
             'discount_type'             =>  $data['discount_type'][0],
             'discount_value'            =>  $data['discount_kg'],
             'payment_customer_id'       =>  $data['payment_customer_id'],
-            'transport_customer_id'     =>  TransportOrderItem::find($data['item_id'][0])->customer->id ?? ""
+            'transport_customer_id'     =>  TransportOrderItem::find($data['item_id'][0])->customer->id ?? null
         ];
     }
 

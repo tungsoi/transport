@@ -141,13 +141,13 @@
                                         <input type="text" name="kg[]" class="form-control" placeholder="Nhập cân nặng" value="">
                                     </td>
                                     <td>
-                                        <input type="number" name="product_length[]" class="form-control" placeholder="Nhập chiều dài" value="0">
+                                        <input type="number" name="product_length[]" class="form-control" placeholder="Nhập chiều dài" value="">
                                     </td>
                                     <td>
-                                        <input type="number" name="product_width[]" class="form-control" placeholder="Nhập chiều rộng" value="0">
+                                        <input type="number" name="product_width[]" class="form-control" placeholder="Nhập chiều rộng" value="">
                                     </td>
                                     <td>
-                                        <input type="number" name="product_height[]" class="form-control" placeholder="Nhập chiều cao" value="0">
+                                        <input type="number" name="product_height[]" class="form-control" placeholder="Nhập chiều cao" value="">
                                     </td>
                                     <td>
                                         <input type="text" name="advance_drag[]" class="form-control advance_drag" placeholder="Nhập ứng kéo" value="">

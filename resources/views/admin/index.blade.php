@@ -55,6 +55,9 @@
             color: red;
             font-weight: 400;
         }
+        tfoot {
+            display: table-row-group;
+        }
     </style>
 </head>
 

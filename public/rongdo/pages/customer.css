@@ -1,0 +1,5 @@
+table .dropdown-menu {
+    position: relative;
+    float: right !important;
+    left: 0px !important;
+}

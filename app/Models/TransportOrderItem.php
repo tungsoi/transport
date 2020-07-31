@@ -46,7 +46,8 @@ class TransportOrderItem extends Model
         'payment_type',
         'cublic_meter',
         'note',
-        'payment_date'
+        'payment_date',
+        'customer_name'
     ];
 
     const KG = 1;

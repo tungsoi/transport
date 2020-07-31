@@ -121,9 +121,6 @@ class ProfileController extends AdminController
         $grid = new Grid(new TransportRecharge());
         $grid->model()->where('customer_id', Admin::user()->id)->orderBy('id', 'desc');
 
-        $grid->header(function ($query) {
-            return '<h4 class="uppercase">Số dư ví hiện tại: '.number_format(User::find(Admin::user()->id)->wallet).' VND</h4>';
-        });
         $grid->filter(function($filter) {
             $filter->expand();
             $filter->disableIdFilter();
@@ -325,17 +322,19 @@ class ProfileController extends AdminController
             return $this->transportCustomer->symbol_name ?? "";
         });
         $grid->items('Số MVD')->count();
-        $grid->transport_kg('KG');
+        $grid->transport_kg('KG')->totalRow();
         $grid->price_kg('Giá KG (VND)')->display(function() {
             return number_format($this->getPriceService($this, $this::KG));
         });
         $grid->transport_volume('V/6000')->display(function() {
             return $this->transport_volume != '0.0000' ? $this->transport_volume : 0;
-        });
+        })->totalRow();
         $grid->price_volume('Giá V/6000 (VND)')->display(function() {
             return number_format($this->getPriceService($this, $this::V));
         });
-        $grid->transport_cublic_meter('M3');
+        $grid->transport_cublic_meter('M3')->totalRow(function ($amount) {
+            return number_format($amount);
+        });
         $grid->price_cublic_meter('Giá M3 (VND)')->display(function() {
             return number_format($this->getPriceService($this, $this::M3));
         });
@@ -346,6 +345,8 @@ class ProfileController extends AdminController
             }
 
             return $total;
+        })->totalRow(function ($amount) {
+            return number_format($amount);
         });
         
         $grid->created_at(trans('admin.created_at'))->display(function () {

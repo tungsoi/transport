@@ -102,12 +102,11 @@ class TransportOrderController extends AdminController
                 $actions->disableView();
             }
 
-            if (! Admin::user()->can('order.delete') ) {
-                $actions->disableDelete();
-            }
+            $actions->disableDelete();
             $actions->disableEdit();
         });
         $grid->disableCreateButton();
+        $grid->disableRowSelector();
         $grid->tools(function ($tools) {
             if (Admin::user()->can('order.china') ) {
                 $tools->append('<a href="'.route('transport_orders.china_receives').'" class="btn btn-sm btn-warning active" target="_blank">
@@ -212,11 +211,10 @@ class TransportOrderController extends AdminController
             if ($this->final_total_price <= 0) {
                 return '<span class="label label-danger">'.$total.'</span>';
             }
-
             return $total;
         });
 
-        $grid->transport_customer_id('Tên khách hàng theo đơn hàng')->display(function() {
+        $grid->transport_customer_id('Mã khách hàng')->display(function() {
             return $this->transportCustomer->symbol_name ?? "";
         });
         $grid->payment_customer_id('Khách hàng thanh toán')->display(function() {
@@ -522,27 +520,21 @@ class TransportOrderController extends AdminController
             $service = new OrderService();
             $data = $request->all();
 
-            # check tai khoan kh
-            $customer = User::where('symbol_name', $data['customer_name'])->first();
-            if (! $customer) 
-            {
-                Session::flash('invalid-customer', 'Không tìm thấy khách hàng. Kiểm tra lại mã khách hàng.');
-                return redirect()->back();
-            }
-
             if (sizeof($data['cn_code']) >= 1 && $data['cn_code'][0] != null) {
                 $items = [];
                 for ($key = 0; $key < sizeof($data['cn_code']); $key++) {
-                    $items[] = $service->buildDataVietnamReceive([
-                        'customer_name'     =>  $data['customer_name'],
-                        'cn_code'           =>  $data['cn_code'][$key],
-                        'kg'                =>  $data['kg'][$key],
-                        'product_width'     =>  $data['product_width'][$key],
-                        'product_length'    =>  $data['product_length'][$key],
-                        'product_height'    =>  $data['product_height'][$key],
-                        'advance_drag'      =>  $data['advance_drag'][$key],
-                        'note'              =>  $data['note'][$key]
-                    ]);
+                    if ($data['cn_code'][$key] != "") {
+                        $items[] = $service->buildDataVietnamReceive([
+                            'customer_name'     =>  $data['customer_name'],
+                            'cn_code'           =>  $data['cn_code'][$key],
+                            'kg'                =>  $data['kg'][$key],
+                            'product_width'     =>  $data['product_width'][$key],
+                            'product_length'    =>  $data['product_length'][$key],
+                            'product_height'    =>  $data['product_height'][$key],
+                            'advance_drag'      =>  $data['advance_drag'][$key],
+                            'note'              =>  $data['note'][$key]
+                        ]);
+                    }
                 }
 
                 foreach ($items as $item) {
@@ -604,7 +596,7 @@ class TransportOrderController extends AdminController
             DB::commit();
             Session::flash('payment-success', 'Thanh toán đơn hàng vận chuyển thành công');
 
-            return redirect()->back();
+            return redirect()->route('transport_orders.payments');
 
         } catch (\Exception $exception) {
             dd($exception);

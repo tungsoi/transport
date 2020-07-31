@@ -50,7 +50,20 @@ class CustomerController extends AdminController
             $filter->disableIdFilter();
             $filter->column(1/2, function ($filter) {
                 $filter->like('name', 'Họ và tên');
-                $filter->like('symbol_name', 'Mã khách hàng');
+                $filter->like('symbol_name', 'Mã KH');
+                $filter->where(function ($query) {
+                    switch ($this->input) {
+                        case 0:
+                            $query->where('wallet', '<', 0);
+                            break;
+                        case 1:
+                            $query->where('wallet', '>', 0);
+                            break;
+                        case 2:
+                            $query->where('wallet', '<', 0)->orWhere('wallet', '>=', 0);
+                            break;
+                    }
+                }, 'Số dư tài khoản', 'wallet')->select(['Công nợ', 'Số dư', 'Tất cả'])->default(2);
             });
             $filter->column(1/2, function ($filter) {
                 $filter->like('email');
@@ -61,18 +74,19 @@ class CustomerController extends AdminController
 
         $grid->header(function ($query) {
 
-            $owed = $query->where('wallet', '<', 0)->sum('wallet');
+            $owed = $query->sum('wallet');
+            $color = $owed > 0 ? 'green' : 'red';
 
-            return '<h4>Công nợ khách hàng hiện tại: <span style="color:red">'. number_format($owed) ."</span> (VND)</h4>";
+            return '<h4>Công nợ khách hàng hiện tại: <span style="color:'.$color.'">'. number_format($owed) ."</span> (VND)</h4>";
         });
 
         $grid->rows(function (Grid\Row $row) {
             $row->column('number', ($row->number+1));
         });
         $grid->column('number', 'STT');
-        $grid->username('Tên đăng nhập');
+        $grid->symbol_name('Mã khách hàng')->label('warning');
+        // $grid->username('Tên đăng nhập');
         $grid->name('Họ và tên')->editable();
-        $grid->symbol_name('Mã khách hàng');
         $grid->email()->editable();
         $grid->phone_number('SDT')->editable();
         $grid->ware_house_id('Kho')->display(function () {
@@ -97,9 +111,6 @@ class CustomerController extends AdminController
         $grid->created_at(trans('admin.created_at'))->display(function () {
             return $this->created_at != "" ? date('H:i | d-m-Y', strtotime($this->created_at)) : "";
         });
-        $grid->updated_at(trans('admin.updated_at'))->display(function () {
-            return date('H:i | d-m-Y', strtotime($this->updated_at));
-        });
         $grid->paginate(30);
         $grid->actions(function ($actions) {
             $actions->add(new Recharge($this->row->id));
@@ -107,6 +118,7 @@ class CustomerController extends AdminController
             $actions->add(new OrderHistory($this->row->id));
             $actions->add(new OrderPayment($this->row->id));
         });
+        Admin::css(asset('rongdo/pages/customer.css'));
 
         return $grid;
     }
@@ -158,26 +170,28 @@ class CustomerController extends AdminController
     protected function form()
     {
         $form = new Form(new User);
-        $form->text('name', 'Họ và tên')->rules('required');
-        $form->text('username', 'Tên đăng nhập')
-        ->creationRules(['required', 'unique:admin_users,username'])
-        ->updateRules(['required', "unique:admin_users,username,{{id}}"]);
-        $form->text('symbol_name', 'Mã khách hàng')
-        ->creationRules(['required', 'unique:admin_users,symbol_name'])
-        ->updateRules(['required', "unique:admin_users,symbol_name,{{id}}"]);
-
-        $form->text('email')
-        ->creationRules(['required', 'unique:admin_users,email'])
-        ->updateRules(['required', "unique:admin_users,email,{{id}}"]);
-
-        $form->text('phone_number', 'SDT')->rules('required');
-        $form->select('ware_house_id', 'Kho')->options(Warehouse::where('is_active', 1)->get()->pluck('name', 'id'))->rules('required');
-        $form->text('address', 'Địa chỉ');
-        $form->select('is_active', 'Trạng thái')->options(User::STATUS)->default(1)->rules('required');
+        $form->column(1/2, function ($form) {
+            $form->text('name', 'Họ và tên')->rules('required');
+            $form->text('symbol_name', 'Mã khách hàng')
+            ->creationRules(['required', 'unique:admin_users,symbol_name'])
+            ->updateRules(['required', "unique:admin_users,symbol_name,{{id}}"]);
+    
+            $form->text('email')
+            ->creationRules(['required', 'unique:admin_users,email'])
+            ->updateRules(['required', "unique:admin_users,email,{{id}}"]);
+        });
+        
+        $form->column(1/2, function ($form) {
+            $form->text('phone_number', 'SDT');
+            $form->select('ware_house_id', 'Kho')->options(Warehouse::where('is_active', 1)->get()->pluck('name', 'id'));
+            $form->text('address', 'Địa chỉ');
+            $form->select('is_active', 'Trạng thái')->options(User::STATUS)->default(1);
+        });
 
         $form->disableEditingCheck();
         $form->disableCreatingCheck();
         $form->disableViewCheck();
+
         if (request()->route()->getActionMethod() == 'store') {
             $form->hidden('username');
             $form->hidden('password');
@@ -187,7 +201,14 @@ class CustomerController extends AdminController
             if (request()->route()->getActionMethod() == 'store') {
                 $form->password = Hash::make('123456');
             }
-            $form->username = str_replace('-', '', str_slug($form->name)."-".strtotime(now()));
+            $form->username = $form->email;
+        });
+
+        $form->saved(function (Form $form) {
+            DB::table('admin_role_users')->insert([
+                'user_id'   =>  $form->model()->id,
+                'role_id'   =>  2
+            ]);
         });
 
         return $form;
@@ -207,7 +228,7 @@ class CustomerController extends AdminController
         $form->currency('money', 'Số tiền cần nạp')->rules('required')->symbol('VND')->default(0)->digits(0);
         $form->select('type_recharge', 'Loại hành động')->options(TransportRecharge::RECHARGE)->default(1)->rules('required')
         ->help('Trường hợp Hoàn tiền hoặc trừ tiền, yêu cầu ghi rõ nội dung: Lý do, Đơn hàng, ...');
-        $form->textarea('content', 'Nội dung')->default('Nạp tiền vào ví khách hàng thông qua hình thức chuyển khoản.');
+        $form->textarea('content', 'Nội dung')->default('...');
         $form->hidden('user_id_created')->default(Admin::user()->id);
         $form->hidden('customer_id')->default($id);
         $form->disableEditingCheck();
@@ -483,17 +504,21 @@ class CustomerController extends AdminController
             return $this->transportCustomer->symbol_name ?? "";
         });
         $grid->items('Số MVD')->count();
-        $grid->transport_kg('KG');
+        $grid->transport_kg('KG')->totalRow(function ($amount) {
+            return number_format($amount);
+        });
         $grid->price_kg('Giá KG (VND)')->display(function() {
             return number_format($this->getPriceService($this, $this::KG));
         });
         $grid->transport_volume('V/6000')->display(function() {
             return $this->transport_volume != '0.0000' ? $this->transport_volume : 0;
-        });
+        })->totalRow();
         $grid->price_volume('Giá V/6000 (VND)')->display(function() {
             return number_format($this->getPriceService($this, $this::V));
         });
-        $grid->transport_cublic_meter('M3');
+        $grid->transport_cublic_meter('M3')->totalRow(function ($amount) {
+            return number_format($amount);
+        });
         $grid->price_cublic_meter('Giá M3 (VND)')->display(function() {
             return number_format($this->getPriceService($this, $this::M3));
         });
@@ -504,6 +529,8 @@ class CustomerController extends AdminController
             }
 
             return $total;
+        })->totalRow(function ($amount) {
+            return number_format($amount);
         });
         
         $grid->created_at(trans('admin.created_at'))->display(function () {

@@ -2,6 +2,7 @@
 
 namespace App\Admin\Controllers;
 
+use App\Admin\Extensions\CheckRow;
 use App\Models\Warehouse;
 use Encore\Admin\Controllers\AdminController;
 use Encore\Admin\Form;
@@ -9,6 +10,7 @@ use Encore\Admin\Grid;
 use Encore\Admin\Show;
 use App\User;
 use App\Models\TransportOrderItem;
+use Encore\Admin\Facades\Admin;
 
 class TransportOrderItemController extends AdminController
 {
@@ -39,7 +41,7 @@ class TransportOrderItemController extends AdminController
             $filter->disableIdFilter();
             $filter->column(1/2, function ($filter) {
                 $filter->like('cn_code', 'Mã vận đơn');
-                $filter->equal('user_id_updated', 'Người sửa')->select(User::where('is_customer', 0)->pluck('name', 'id'));
+                $filter->like('customer_name', 'Mã KH');
                 $filter->where(function ($query) {
                     switch ($this->input) {
                         case TransportOrderItem::IS_PAYMENT:
@@ -58,8 +60,9 @@ class TransportOrderItemController extends AdminController
                 }, 'Trạng thái', 'status')->select(TransportOrderItem::STATUS);
             });
             $filter->column(1/2, function ($filter) {
-                $filter->between('warehouse_cn_date', 'Ngày về kho TQ')->date();
-                $filter->between('warehouse_vn_date', 'Ngày về kho Hà Nội')->date();
+                $filter->between('warehouse_cn_date', 'Ngày về TQ')->date();
+                $filter->between('warehouse_vn_date', 'Ngày về HN')->date();
+                $filter->equal('user_id_updated', 'Người sửa')->select(User::where('is_customer', 0)->pluck('name', 'id'));
             });
         });
         $grid->rows(function (Grid\Row $row) {
@@ -67,19 +70,27 @@ class TransportOrderItemController extends AdminController
         });
         $grid->column('number', 'STT');
         $grid->transport_customer_id('Tên KH')->display(function () {
-            return $this->customer->symbol_name ?? "";
+            $check_row = false;
+            if ($this->warehouse_cn == 1 && $this->warehouse_vn == 1 && $this->is_payment == 0) {
+                $check_row = true; // chua thanh toan ha noi nhan
+            }
+            $input = "<input type='hidden' class='flag' value='".$check_row."' data-item-id='".$this->id."'/>";
+            if ($this->transport_customer_id == "") {
+                return $this->customer_name.$input;
+            }
+            return $this->customer->symbol_name.$input ?? "";
         });
         $grid->cn_code('MVD');
-        $grid->kg();
+        $grid->kg()->totalRow();
         $grid->product_width('Rộng (cm)');
         $grid->product_length('Dài (cm)');
         $grid->product_height('Cao (cm)');
         $grid->volume('V/6000')->display(function() {
             return str_replace('.00', '', $this->volume);
-        });
+        })->totalRow();
         $grid->cublic_meter('M3')->display(function() {
             return str_replace('.000', '', $this->cublic_meter);
-        });
+        })->totalRow();
         $grid->advance_drag('Ứng kéo (Tệ)');
         $grid->price_service('Giá VC')->display(function() {
             return number_format($this->price_service);
@@ -126,7 +137,41 @@ class TransportOrderItemController extends AdminController
         });
         $grid->paginate(20);
         $grid->disableCreateButton();
-        
+        $grid->tools(function (Grid\Tools $tools) {
+            $tools->append('<a id="btn-payment-code" class="btn btn-sm btn-danger" title="Thanh toán">
+                <i class="fa fa-dollar"></i>
+                <span class="hidden-xs">&nbsp;Thanh toán</span>
+            </a>');
+        });
+        Admin::script(
+            <<<EOT
+
+            $('tfoot').each(function () {
+                $(this).insertAfter($(this).siblings('thead'));
+            });
+
+            let flags = $('table .column-transport_customer_id .flag');
+            $(flags).each(function( index ) {
+                if (!flags.eq(index).val()) {
+                    flags.eq(index).parent().prev().prev().children().remove();
+                }
+            });
+
+            $('#btn-payment-code').on('click', function (e)
+            {
+                let checked = $('table input[class="grid-row-checkbox"]:checked');
+                let list = "";
+                $(checked).each(function( index ) {
+                    let cn_code = checked.eq(index).parent().parent().next().next().next().html().trim();
+                    if (cn_code != "") {
+                        list += cn_code + ",";
+                    }
+                });
+               
+                window.location.href = "/admin/transport_orders/payments?payment_in_list_code="+list;
+            });
+EOT
+    );
         return $grid;
     }
 

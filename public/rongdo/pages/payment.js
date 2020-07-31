@@ -15,25 +15,27 @@ $(document).on('ready pjax:success', function() {
        }
    }
 
-   var tech = GetURLParameter('payment_in_list_code');
-   if (tech != undefined)
-   {
-       var res = tech.split(",");
-       res = jQuery.grep(res, function(n){ return (n); });
+    var tech = GetURLParameter('payment_in_list_code');
+    if (tech != undefined)
+    {
+        var res = tech.split(",");
+        res = jQuery.grep(res, function(n){ return (n); });
 
-       for (var i = 0; i < res.length; i++)
-       {
-           cloneTr();
-           let input = $('input[name="cn_code[]"]').eq(i);
-           let parent = input.parent();
-           let tr = input.parent().parent();
-           $('input[name="cn_code[]"]').eq(i).val(res[i]);
-           let stt = i;
-           $.ajax({
-               type: 'GET',
-               url: '/admin/transport-orders/get-data-transport-order-items',
-               data: {cn_code: res[i], isPayment: 1},
-               success: function(response) {
+        for (var i = 0; i < res.length; i++)
+        {
+            cloneTr();
+            let input = $('input[name="cn_code[]"]').eq(i);
+            let parent = input.parent();
+            let tr = input.parent().parent();
+            $('input[name="cn_code[]"]').eq(i).val(res[i]);
+            let stt = i;
+
+        //    console.log(res[i]);
+            $.ajax({
+                type: 'GET',
+                url: '/admin/transport_orders/get-data-transport-order-items',
+                data: {cn_code: res[i], isPayment: 1},
+                success: function(response) {
                    if (response && response.status != false) {
                        parent.find('.error').remove();
                        tr.children().find('.stt').text(stt+1);
@@ -49,10 +51,10 @@ $(document).on('ready pjax:success', function() {
                        checkCustomer();
                        handle();
                    } 
-               }
-           });
-       }
-   }
+                }
+            });
+        }
+    }
 
    var exchange_rate = Number( $('.exchange_rate').val());
 

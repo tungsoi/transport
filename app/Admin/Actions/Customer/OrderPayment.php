@@ -11,7 +11,7 @@ class OrderPayment extends RowAction
      *
      * @var string
      */
-    public $name = 'Danh sách đơn hàng đã thanh toán';
+    public $name = 'Đơn hàng';
 
     /**
      * Customer id

@@ -30,8 +30,8 @@ class TransportRecharge extends Model
     ];
 
     const RECHARGE = [
-        self::RECHARGE_MONEY                  =>  'Nạp tiền mặt',
-        self::RECHARGE_BANK                  =>  'Nạp tiền chuyển khoản',
+        self::RECHARGE_MONEY    =>  'Nạp tiền mặt',
+        self::RECHARGE_BANK     =>  'Nạp tiền chuyển khoản',
         self::REFUND        =>  'Hoàn tiền',
         self::DEDUCTION     =>  'Trừ tiền',
     ];
@@ -40,6 +40,8 @@ class TransportRecharge extends Model
     const DEDUCTION = 3;
     const RECHARGE_MONEY = 0;
     const RECHARGE_BANK = 1;
+    const PAYMENT = 4;
+    const RECHARGE_PAYMENT = 'Thanh toán đơn hàng';
 
     public function customer() {
         return $this->hasOne('App\User', 'id', 'customer_id');

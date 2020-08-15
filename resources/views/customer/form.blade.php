@@ -127,7 +127,7 @@
                     </tr>
                 @endforeach
             @else
-                <td colspan="10">Không có dữ liệu (Nhập dữ liệu để tìm kiếm mã vận đơn)</td>
+                <td colspan="11">Không có dữ liệu (Nhập dữ liệu để tìm kiếm mã vận đơn)</td>
             @endif
         </tbody>
       </table>

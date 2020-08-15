@@ -11,7 +11,7 @@ class OrderHistory extends RowAction
      *
      * @var string
      */
-    public $name = 'Danh sách mã vận đơn';
+    public $name = 'Mã vận đơn';
 
     /**
      * Customer id

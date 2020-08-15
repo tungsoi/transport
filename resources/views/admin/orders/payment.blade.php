@@ -288,7 +288,27 @@
     </div>
 </div>
 
+<?php 
+    $order_raw = Session::get('order_raw');
+?>
+
+@if (isset($order_raw) && !is_null($order_raw))
+    @include('admin.orders.partials.modal', [
+        'order_raw'     =>  $order_raw
+    ])
+@endif
+
 <script type="text/javascript" src="https://unpkg.com/default-passive-events"></script>
 
 <script src="{{ asset('rongdo/autoNumeric42.js') }}"></script>
 <script src="{{ asset('rongdo/pages/payment.js') }}"></script>
+
+<script>
+    $(window).load(function() {
+        $('#myModal').modal('show');
+    });
+
+    $('#myModal').on('hidden.bs.modal', function (e) {
+        window.location.reload();
+    })
+</script>

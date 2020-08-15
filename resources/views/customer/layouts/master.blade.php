@@ -21,6 +21,12 @@
 
     @yield('style')
     <style>
+
+        @import url(https://fonts.googleapis.com/css?family=Open+Sans);
+
+        body {
+            font-family: 'Open Sans',serif !important;
+        }
         .logo-img {
             max-width: 40px;
         }

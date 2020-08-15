@@ -12,7 +12,7 @@ class RechargeHistory extends RowAction
      *
      * @var string
      */
-    public $name = 'Lịch sử giao dịch ví';
+    public $name = 'Lịch sử ví';
 
     /**
      * Customer id

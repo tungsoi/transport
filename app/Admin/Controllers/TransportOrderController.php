@@ -16,6 +16,7 @@ use Encore\Admin\Layout\Row;
 use Encore\Admin\Widgets\Table;
 use Illuminate\Http\Request;
 use App\Models\TransportCustomer;
+use App\Models\TransportRecharge;
 use Encore\Admin\Facades\Admin;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -564,6 +565,12 @@ class TransportOrderController extends AdminController
         }
     }
 
+    /**
+     * Thanh toán đơn hàng
+     *
+     * @param Request $request
+     * @return void
+     */
     public function paymentTransportOrder(Request $request)
     {
         DB::beginTransaction();
@@ -595,15 +602,23 @@ class TransportOrderController extends AdminController
                 'wallet'    =>  (int) $wallet - (int) str_replace('.00', '', $data['final_total_price'])
             ]);
             $customer->save();
+
+            # create record in report_recharge
+            TransportRecharge::create([
+                'customer_id'       =>  $request->payment_customer_id,
+                'user_id_created'   =>  1,
+                'money'             =>  (int) str_replace('.00', '', $data['final_total_price']),
+                'type_recharge'     =>  TransportRecharge::PAYMENT,
+                'content'           =>  TransportRecharge::RECHARGE_PAYMENT . " " . $order->order_number
+            ]);
             
             DB::commit();
             Session::flash('payment-success', 'Thanh toán đơn hàng vận chuyển thành công');
 
-            return redirect()->route('transport_orders.payments');
+            return redirect()->route('transport_orders.payments')->with(['order_raw' => $order]);
 
         } catch (\Exception $exception) {
-            dd($exception);
-            DB::rollBack();
+            DB::rollback();
             Log::error(['message' => 'Lỗi khi thanh toán đơn hàng vận chuyển' ]);
             Session::flash('payment-error', ['status' => 'danger', 'message' => 'Thanh toán đơn hàng vận chuyển lỗi']);
 

@@ -10,13 +10,10 @@
                     <input type="text" class="form-control" placeholder="Họ và tên">
                 </div>
                 <div class="form-group">
-                    <input type="text" class="form-control" placeholder="Mật khẩu">
+                    <input type="text" class="form-control" placeholder="Biệt danh">
                 </div>
                 <div class="form-group">
-                    <input type="text" class="form-control" placeholder="Số điện thoại">
-                </div>
-                <div class="form-group">
-                    <input type="text" class="form-control" placeholder="Địa chỉ">
+                    <input type="text" class="form-control" placeholder="Địa chỉ email">
                 </div>
                 <div class="form-group">
                     <input type="pasword" class="form-control" placeholder="Mật khẩu">

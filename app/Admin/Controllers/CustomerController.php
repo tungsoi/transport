@@ -118,7 +118,7 @@ class CustomerController extends AdminController
             $actions->add(new OrderHistory($this->row->id));
             $actions->add(new OrderPayment($this->row->id));
         });
-        Admin::css(asset('rongdo/pages/customer.css'));
+        // Admin::css(asset('rongdo/pages/customer.css'));
 
         return $grid;
     }
@@ -289,7 +289,7 @@ class CustomerController extends AdminController
     {
         return $content
             ->header($this->title)
-            ->description('Lịch sử giao dịch')
+            ->description('Lịch sử giao dịch Ví tiền ')
             ->body($this->rechargeHistoryGrid($id));
     }
 
@@ -309,6 +309,11 @@ class CustomerController extends AdminController
             $filter->equal('type_recharge', 'Loại giao dịch')->select(TransportRecharge::RECHARGE);
         });
 
+        $grid->header(function ($query) use ($id) {
+            $wallet = User::find($id)->wallet;
+            $color = $wallet > 0 ? 'green' : 'red';
+            return '<h4 style="font-weight: bold;">Số dư hiện tại: <span  style="color: '.$color.'">'. number_format($wallet) ."</span> (VND)</h4>";
+        });        
         $grid->id('ID');
         $grid->customer_id('Tên khách hàng')->display(function () {
             return $this->customer->name ?? "";
@@ -324,7 +329,7 @@ class CustomerController extends AdminController
             return '<span class="label label-danger">'.number_format($this->money).'</span>';
         });
         $grid->type_recharge('Loại giao dịch')->display(function () {
-            return TransportRecharge::RECHARGE[$this->type_recharge];
+            return TransportRecharge::RECHARGE[$this->type_recharge] ?? TransportRecharge::RECHARGE_PAYMENT;
         });
         $grid->content('Nội dung');
         $grid->created_at(trans('admin.created_at'))->display(function () {
@@ -500,9 +505,9 @@ class CustomerController extends AdminController
         });
         $grid->column('number', 'STT');
         $grid->order_number('Mã đơn hàng');
-        $grid->transport_customer_id('Tên khách hàng')->display(function() {
-            return $this->transportCustomer->symbol_name ?? "";
-        });
+        // $grid->transport_customer_id('Tên khách hàng')->display(function() {
+        //     return $this->transportCustomer->symbol_name ?? "";
+        // });
         $grid->items('Số MVD')->count();
         $grid->transport_kg('KG')->totalRow(function ($amount) {
             return number_format($amount);

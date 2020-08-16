@@ -28,8 +28,7 @@ class HomeController extends Controller
     public function index(Request $request) {
         $service = new OrderService;
         $orderItem = $service->search($request->all());
-        $html = $this->grid()->render();
-        return view('customer.index', compact('html', 'orderItem'));
+        return view('customer.index', compact('orderItem'));
     }  
 
      /**

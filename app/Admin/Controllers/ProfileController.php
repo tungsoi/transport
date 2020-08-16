@@ -127,6 +127,12 @@ class ProfileController extends AdminController
             $filter->equal('type_recharge', 'Loại giao dịch')->select(TransportRecharge::RECHARGE);
         });
 
+        $grid->header(function ($query) {
+            $wallet = User::find(Admin::user()->id)->wallet;
+            $color = $wallet > 0 ? 'green' : 'red';
+            return '<h4 style="font-weight: bold;">Số dư hiện tại: <span  style="color: '.$color.'">'. number_format($wallet) ."</span> (VND)</h4>";
+        });  
+
         $grid->id('ID');
         $grid->customer_id('Tên khách hàng')->display(function () {
             return $this->customer->name ?? "";
@@ -142,7 +148,7 @@ class ProfileController extends AdminController
             return '<span class="label label-danger">'.number_format($this->money).'</span>';
         });
         $grid->type_recharge('Loại giao dịch')->display(function () {
-            return TransportRecharge::RECHARGE[$this->type_recharge];
+            return TransportRecharge::RECHARGE[$this->type_recharge] ?? TransportRecharge::RECHARGE_PAYMENT;
         });
         $grid->content('Nội dung');
         $grid->created_at(trans('admin.created_at'))->display(function () {
@@ -318,9 +324,9 @@ class ProfileController extends AdminController
         });
         $grid->column('number', 'STT');
         $grid->order_number('Mã đơn hàng');
-        $grid->transport_customer_id('Tên khách hàng')->display(function() {
-            return $this->transportCustomer->symbol_name ?? "";
-        });
+        // $grid->transport_customer_id('Tên khách hàng')->display(function() {
+        //     return $this->transportCustomer->symbol_name ?? "";
+        // });
         $grid->items('Số MVD')->count();
         $grid->transport_kg('KG')->totalRow();
         $grid->price_kg('Giá KG (VND)')->display(function() {

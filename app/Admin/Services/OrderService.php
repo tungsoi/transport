@@ -98,7 +98,7 @@ class OrderService
                     : $res->where('warehouse_vn', 0);
             $data = $data->first();
             if ($data) {
-                $data->customer_name = $data->customer->symbol_name ?? "";
+                $data->customer_name = $data->customer_name ?? "";
                 $data->product_volumn = str_replace(',', '', str_replace('.00', '', $data->volume));
                 $data->product_cublic_meter = str_replace(',', '', str_replace('.000', '', $data->cublic_meter));
 

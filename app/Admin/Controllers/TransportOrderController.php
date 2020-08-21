@@ -69,6 +69,12 @@ class TransportOrderController extends AdminController
             }
             return $this->transportCustomer->symbol_name ?? "";
         });
+        $grid->payment_customer_id('KH Thanh toán')->display(function() {
+            if ($this->payment_customer_id != "") {
+                return $this->paymentCustomer->symbol_name ?? "";
+            }
+            return "";
+        });
         $grid->items('Số MVD')->count();
         $grid->transport_kg('KG');
         $grid->price_kg('Giá KG (VND)')->display(function() {
@@ -90,7 +96,7 @@ class TransportOrderController extends AdminController
                 return '<span class="label label-danger">'.$total.'</span>';
             }
 
-            return $total;
+            return '<span class="label label-success">'.$total.'</span>';
         });
         
         $grid->created_at(trans('admin.created_at'))->display(function () {

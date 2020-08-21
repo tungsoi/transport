@@ -117,9 +117,9 @@ class CustomerController extends AdminController
             $actions->add(new RechargeHistory($this->row->id));
             $actions->add(new OrderHistory($this->row->id));
             $actions->add(new OrderPayment($this->row->id));
-        });
-        // Admin::css(asset('rongdo/pages/customer.css'));
 
+            $actions->disableDelete();
+        });
         return $grid;
     }
 
@@ -329,7 +329,10 @@ class CustomerController extends AdminController
             return '<span class="label label-danger">'.number_format($this->money).'</span>';
         });
         $grid->type_recharge('Loại giao dịch')->display(function () {
-            return TransportRecharge::RECHARGE[$this->type_recharge] ?? TransportRecharge::RECHARGE_PAYMENT;
+            if ($this->type_recharge == TransportRecharge::PAYMENT) {
+                return '<span class="label label-'.TransportRecharge::COLOR[TransportRecharge::PAYMENT].' ">'.TransportRecharge::RECHARGE_PAYMENT.'</span>';
+            }
+            return '<span class="label label-'.TransportRecharge::COLOR[$this->type_recharge].' ">'.TransportRecharge::RECHARGE[$this->type_recharge].'</span>';
         });
         $grid->content('Nội dung');
         $grid->created_at(trans('admin.created_at'))->display(function () {
@@ -508,21 +511,30 @@ class CustomerController extends AdminController
         // $grid->transport_customer_id('Tên khách hàng')->display(function() {
         //     return $this->transportCustomer->symbol_name ?? "";
         // });
+
+        $grid->payment_customer_id('KH Thanh toán')->display(function() {
+            if ($this->payment_customer_id != "") {
+                return $this->paymentCustomer->symbol_name ?? "";
+            }
+            return "";
+        });
         $grid->items('Số MVD')->count();
         $grid->transport_kg('KG')->totalRow(function ($amount) {
-            return number_format($amount);
+            return "<span class='label label-success'>".number_format($amount)."</span>";
         });
         $grid->price_kg('Giá KG (VND)')->display(function() {
             return number_format($this->getPriceService($this, $this::KG));
         });
         $grid->transport_volume('V/6000')->display(function() {
             return $this->transport_volume != '0.0000' ? $this->transport_volume : 0;
-        })->totalRow();
+        })->totalRow(function ($amount) {
+            return "<span class='label label-success'>".number_format($amount)."</span>";
+        });
         $grid->price_volume('Giá V/6000 (VND)')->display(function() {
             return number_format($this->getPriceService($this, $this::V));
         });
         $grid->transport_cublic_meter('M3')->totalRow(function ($amount) {
-            return number_format($amount);
+            return "<span class='label label-success'>".number_format($amount)."</span>";
         });
         $grid->price_cublic_meter('Giá M3 (VND)')->display(function() {
             return number_format($this->getPriceService($this, $this::M3));
@@ -535,7 +547,7 @@ class CustomerController extends AdminController
 
             return $total;
         })->totalRow(function ($amount) {
-            return number_format($amount);
+            return "<span class='label label-success'>".number_format($amount)."</span>";
         });
         
         $grid->created_at(trans('admin.created_at'))->display(function () {

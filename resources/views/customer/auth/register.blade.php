@@ -16,10 +16,10 @@
                     <input type="text" class="form-control" placeholder="Địa chỉ email">
                 </div>
                 <div class="form-group">
-                    <input type="pasword" class="form-control" placeholder="Mật khẩu">
+                    <input type="password" class="form-control" placeholder="Mật khẩu">
                 </div>
                 <div class="form-group">
-                    <input type="pasword" class="form-control" placeholder="Mật khẩu xác nhận">
+                    <input type="password" class="form-control" placeholder="Mật khẩu xác nhận">
                 </div>
                 <button type="button" class="btn btn-primary"><i class="fas fa-edit"></i> Đăng ký</button>
             </form>

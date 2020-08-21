@@ -28,6 +28,15 @@ Route::group([
     $router->get('/reports/totals', 'Report\TotalController@index')->name('reports.totals');
     $router->get('/reports/customers', 'Report\CustomerController@index')->name('reports.customers');
 
+    # redirect route use for report group
+    $router->get('/reports/customers/{id}/edit', function ($id) {
+        return redirect()->route('customers.edit', $id);
+    });
+
+    $router->get('/reports/customers/{id}', function ($id) {
+        return redirect()->route('customers.show', $id);
+    });
+
     // transport_orders
     $router->get('/transport_orders/vietnam_receives', 'VietNamReceivceController@index')->name('transport_orders.vietnam_receives');
     $router->get('/transport_orders/china_receives', 'ChinaReceivceController@index')->name('transport_orders.china_receives');

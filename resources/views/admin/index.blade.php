@@ -58,6 +58,10 @@
         tfoot {
             display: table-row-group;
         }
+        /* .grid-dropdown-actions .dropdown-menu {
+            left: -110px !important;
+            top: -100px !important;
+        } */
     </style>
 </head>
 

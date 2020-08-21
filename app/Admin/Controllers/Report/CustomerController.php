@@ -11,6 +11,7 @@ use App\User;
 use App\Admin\Actions\Customer\Recharge;
 use App\Admin\Actions\Customer\RechargeHistory;
 use App\Admin\Actions\Customer\OrderHistory;
+use App\Admin\Actions\Customer\OrderPayment;
 use App\Models\RongDoUser;
 use App\Models\TransportOrderItem;
 use App\Models\TransportRecharge;
@@ -53,7 +54,19 @@ class CustomerController extends AdminController
             $filter->equal('ware_house_id', 'Kho')->select(Warehouse::where('is_active', 1)->get()->pluck('name', 'id'));
         });
 
-        $grid->id('STT');
+        $grid->header(function ($query) {
+
+            $owed = $query->where('wallet' , '<', 0)->sum('wallet');
+            $color = $owed > 0 ? 'green' : 'red';
+
+            return '<h4>Công nợ khách hàng hiện tại: <span style="color:'.$color.'">'. number_format($owed) ."</span> (VND)</h4>";
+        });
+
+        $grid->rows(function (Grid\Row $row) {
+            $row->column('number', ($row->number+1));
+        });
+        $grid->column('number', 'STT');
+
         $grid->name('Họ và tên');
         $grid->symbol_name('Mã khách hàng');
         $grid->email();
@@ -82,12 +95,17 @@ class CustomerController extends AdminController
             $recharge_money = TransportRecharge::where('customer_id', $this->id)->where('type_recharge', TransportRecharge::RECHARGE_MONEY)->sum('money');
             $recharge_bank = TransportRecharge::where('customer_id', $this->id)->where('type_recharge', TransportRecharge::RECHARGE_BANK)->sum('money');
 
-            return "Tiền mặt: " . "<b>".number_format($recharge_money)."</b>" . "<br>" ."Chuyển khoản: " . "<b>".number_format($recharge_bank)."</b>" ;
+            return "Tiền mặt: " . "<b>".number_format($recharge_money)."</b>" 
+            . "<br>" ."Chuyển khoản: " . "<b>".number_format($recharge_bank)."</b>"
+            . "<br>" ."Tổng cộng: " . "<b>".number_format($recharge_bank + $recharge_money)."</b>" ;
         });
         $grid->actions(function ($actions) {
-           $actions->disableEdit();
-           $actions->disableDelete();
-           $actions->disableView();
+            $actions->add(new Recharge($this->row->id));
+            $actions->add(new RechargeHistory($this->row->id));
+            $actions->add(new OrderHistory($this->row->id));
+            $actions->add(new OrderPayment($this->row->id));
+
+            $actions->disableDelete();
         });
         $grid->paginate(20);
 

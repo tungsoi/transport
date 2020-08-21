@@ -80,17 +80,30 @@ class TransportOrderItemController extends AdminController
             }
             return $this->customer->symbol_name.$input ?? "";
         });
-        $grid->cn_code('MVD');
-        $grid->kg()->totalRow();
+        $grid->cn_code('MVD')->label('warning');
+        $grid->column('payment_customer_id', 'KH Thanh toán')->display(function () {
+            if (is_null($this->order_id)) {
+                return "";
+            }
+
+            return $this->order->paymentCustomer->symbol_name ?? "";
+        });
+        $grid->kg()->totalRow(function ($amount) {
+            return '<span class="label label-danger">'.$amount.'</span>';
+        });
         $grid->product_width('Rộng (cm)');
         $grid->product_length('Dài (cm)');
         $grid->product_height('Cao (cm)');
         $grid->volume('V/6000')->display(function() {
             return str_replace('.00', '', $this->volume);
-        })->totalRow();
+        })->totalRow(function ($amount) {
+            return '<span class="label label-danger">'.$amount.'</span>';
+        });
         $grid->cublic_meter('M3')->display(function() {
             return str_replace('.000', '', $this->cublic_meter);
-        })->totalRow();
+        })->totalRow(function ($amount) {
+            return '<span class="label label-danger">'.$amount.'</span>';
+        });
         $grid->advance_drag('Ứng kéo (Tệ)');
         $grid->price_service('Giá VC')->display(function() {
             return number_format($this->price_service);
@@ -162,7 +175,7 @@ class TransportOrderItemController extends AdminController
                 let checked = $('table input[class="grid-row-checkbox"]:checked');
                 let list = "";
                 $(checked).each(function( index ) {
-                    let cn_code = checked.eq(index).parent().parent().next().next().next().html().trim();
+                    let cn_code = checked.eq(index).parent().parent().next().next().next().children().html().trim();
                     if (cn_code != "") {
                         list += cn_code + ",";
                     }

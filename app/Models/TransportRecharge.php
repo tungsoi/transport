@@ -43,6 +43,14 @@ class TransportRecharge extends Model
     const PAYMENT = 4;
     const RECHARGE_PAYMENT = 'Thanh toán đơn hàng';
 
+    const COLOR = [
+        'warning',
+        'success',
+        'primary',
+        'default',
+        'danger'
+    ];
+
     public function customer() {
         return $this->hasOne('App\User', 'id', 'customer_id');
     }

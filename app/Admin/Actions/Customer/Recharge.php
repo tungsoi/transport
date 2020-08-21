@@ -38,7 +38,7 @@ class Recharge extends RowAction
      */
     public function href()
     {
-        return 'customers/'.$this->customer_id.'/recharge';
+        return route('customers.recharge', $this->customer_id);
     }
 
 }

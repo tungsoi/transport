@@ -137,7 +137,7 @@
                                     <input type="text" name="cn_code[]" class="form-control cn_code" placeholder="VD: RD01" autofocus required="required">
                                 </td>
                                 <td>
-                                    <input type="text" name="customer_name[]" class="form-control" placeholder="VD: TUNGDT" readonly>
+                                    <input type="text" name="customer_name[]" class="form-control" placeholder="">
                                 </td>
                                 <td>
                                     <select class="form-control payment_type" name="payment_type[]">
@@ -311,4 +311,10 @@
     $('#myModal').on('hidden.bs.modal', function (e) {
         window.location.reload();
     })
+
+    $(document).on('click', '#btn-recharge', function() {
+        let href = $(this).attr('data-href');
+        $('#myModal').modal('hide');
+        window.location.href = href;
+    });
 </script>

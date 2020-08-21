@@ -27,6 +27,21 @@
                     <td>Số dư</td>
                     <td>{{ isset($order_raw->paymentCustomer->wallet) ? number_format($order_raw->paymentCustomer->wallet) : "" }} VND</td>
                 </tr>
+                <tr>
+                    <td></td>
+                    <td>
+                      @php
+                        $route = '#';
+                        if (isset($order_raw->paymentCustomer->id)) {
+                          $route = route('customers.recharge', $order_raw->paymentCustomer->id);
+                        }  
+                      @endphp
+                      <button data-href="{{ $route }}" class="btn btn-sm btn-success" id="btn-recharge">
+                        <i class="fa fa-plus"></i> &nbsp;
+                        Cộng tiền vào ví
+                      </button>
+                    </td>
+                </tr>
             </tbody>
         </table>
       </div>

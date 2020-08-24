@@ -119,12 +119,15 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarResponsive">
                 <ul class="navbar-nav ml-auto">
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ route('admin.login') }}">Đăng nhập</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ route('customer.register') }}">Đăng ký</a>
-                </li>
+                    @if (! Admin::user())
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ route('admin.login') }}">Đăng nhập</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ route('customer.register') }}">Đăng ký</a>
+                        </li>
+
+                    @endif
                 </ul>
             </div>
         </div>

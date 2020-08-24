@@ -4,6 +4,7 @@ namespace App\Customer\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\User;
+use Encore\Admin\Facades\Admin;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -12,6 +13,9 @@ use Illuminate\Support\Facades\Validator;
 
 class RegisterController extends Controller {
     public function register() {
+        if (Admin::user()) {
+            return redirect()->route('admin.home');
+        }
         return view('customer.auth.register');
     }
 

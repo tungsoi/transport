@@ -6,6 +6,6 @@ use App\Http\Controllers\Controller;
 
 class LoginController extends Controller {
     public function login() {
-        return view('customer.auth.login');
+        return redirect()->route('admin.login');
     }
 }

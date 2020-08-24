@@ -44,7 +44,8 @@ class User extends Model implements AuthenticatableContract
         'is_customer',
         'symbol_name',
         'ware_house_id',
-        'is_active'
+        'is_active',
+        'password'
     ];
 
     /**

@@ -79,4 +79,5 @@ Route::group([
     $router->get('search', 'HomeController@index')->name('customer.search');
     $router->get('login', 'Auth\LoginController@login')->name('customer.login');
     $router->get('register', 'Auth\RegisterController@register')->name('customer.register');
+    $router->post('register', 'Auth\RegisterController@postRegister')->name('customer.postRegister');
 });

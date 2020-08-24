@@ -37,6 +37,11 @@
     <p class="login-box-msg">{{ trans('admin.login') }}</p>
 
     <form action="{{ admin_url('auth/login') }}" method="post">
+        @if ($message = Session::get('register'))
+          <div class="panel panel-success">
+            <div class="panel-heading">{{ $message }}</div>
+          </div>
+        @endif
       <div class="form-group has-feedback {!! !$errors->has('username') ?: 'has-error' !!}">
 
         @if($errors->has('username'))
@@ -76,6 +81,18 @@
           <button type="submit" class="btn btn-primary btn-block btn-flat">{{ trans('admin.login') }}</button>
         </div>
         <!-- /.col -->
+      </div>
+      <div class="row">
+        <div class="col-xs-12">
+          <hr>
+          @if(config('admin.auth.remember'))
+          <div class="checkbox icheck" style="float: right">
+            <a href="{{ route('customer.register') }}"> 
+              Đăng ký tài khoản khách hàng ?
+            </a>
+          </div>
+          @endif
+        </div>
       </div>
     </form>
 

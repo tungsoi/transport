@@ -124,13 +124,17 @@ class ProfileController extends AdminController
         $grid->filter(function($filter) {
             $filter->expand();
             $filter->disableIdFilter();
-            $filter->equal('type_recharge', 'Loại giao dịch')->select(TransportRecharge::RECHARGE);
+            $filter->equal('type_recharge', 'Loại giao dịch')->select(TransportRecharge::ALL_RECHARGE);
         });
 
         $grid->header(function ($query) {
-            $wallet = User::find(Admin::user()->id)->wallet;
-            $color = $wallet > 0 ? 'green' : 'red';
-            return '<h4 style="font-weight: bold;">Số dư hiện tại: <span  style="color: '.$color.'">'. number_format($wallet) ."</span> (VND)</h4>";
+            $rechargeMoney = TransportRecharge::where('customer_id', Admin::user()->id)->where('type_recharge', TransportRecharge::RECHARGE_MONEY)->sum('money');
+            $rechargeBank = TransportRecharge::where('customer_id', Admin::user()->id)->where('type_recharge', TransportRecharge::RECHARGE_BANK)->sum('money');
+            $money = Admin::user()->wallet;
+            $color = $money > 0 ? 'green' : 'red';
+            return '<h5 style="font-weight: bold;">Tổng tiền mặt đã nạp: <span style="color: green">'. number_format($rechargeMoney) ."</span> (VND)</h5>".
+            '<h5 style="font-weight: bold;">Tổng tiền chuyển khoản đã nạp: <span style="color: green">'. number_format($rechargeBank) ."</span> (VND)</h5>".
+            '<h5 style="font-weight: bold;">Số dư hiện tại: <span style="color: '.$color.'">'. number_format($money) ."</span> (VND)</h5>";
         });  
 
         $grid->id('ID');
@@ -148,12 +152,14 @@ class ProfileController extends AdminController
             return '<span class="label label-danger">'.number_format($this->money).'</span>';
         });
         $grid->type_recharge('Loại giao dịch')->display(function () {
-            return TransportRecharge::RECHARGE[$this->type_recharge] ?? TransportRecharge::RECHARGE_PAYMENT;
+            $text = TransportRecharge::RECHARGE[$this->type_recharge] ?? TransportRecharge::RECHARGE_PAYMENT;
+            return "<span class='label label-".TransportRecharge::COLOR[$this->type_recharge]."'>".$text."</span>";
         });
         $grid->content('Nội dung');
         $grid->created_at(trans('admin.created_at'))->display(function () {
             return date('H:i | d-m-Y', strtotime($this->created_at));
         });
+        $grid->disableActions();
         $grid->actions(function ($actions) {
             $actions->disableDelete();
             $actions->disableView();

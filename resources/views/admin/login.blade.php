@@ -6,11 +6,9 @@
   <title>{{config('admin.title')}} | {{ trans('admin.login') }}</title>
   <!-- Tell the browser to be responsive to screen width -->
   <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
-  
-  @if(!is_null($favicon = Admin::favicon()))
-  <link rel="shortcut icon" href="{{$favicon}}">
-  @endif
 
+  <link rel="shortcut icon" href="{{ asset('rongdo/img/money.png') }}">
+  
   <!-- Bootstrap 3.3.5 -->
   <link rel="stylesheet" href="{{ admin_asset("vendor/laravel-admin/AdminLTE/bootstrap/css/bootstrap.min.css") }}">
   <!-- Font Awesome -->
@@ -50,7 +48,7 @@
           @endforeach
         @endif
 
-        <input type="text" class="form-control" placeholder="{{ trans('admin.username') }}" name="username" value="{{ old('username') }}">
+        <input type="text" class="form-control" placeholder="{{ trans('admin.email') }}" name="username" value="{{ old('username') }}">
         <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
       </div>
       <div class="form-group has-feedback {!! !$errors->has('password') ?: 'has-error' !!}">

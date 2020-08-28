@@ -34,7 +34,11 @@
                         <!-- The user image in the navbar-->
                         <img src="{{ Admin::user()->avatar }}" class="user-image" alt="User Image">
                         <!-- hidden-xs hides the username on small devices so only the image appears. -->
-                        <span class="hidden-xs">{{ Admin::user()->name }}</span>
+                        @if (Admin::user()->is_customer == 1)
+                            <span class="hidden-xs">{{ "Mã KH: ".Admin::user()->symbol_name . " - Họ tên: ". Admin::user()->name }}</span>
+                        @else
+                            <span class="hidden-xs">{{ Admin::user()->name }}</span>
+                        @endif
                     </a>
                     <ul class="dropdown-menu">
                         <!-- The user image in the menu -->
@@ -42,8 +46,8 @@
                             <img src="{{ Admin::user()->avatar }}" class="img-circle" alt="User Image">
 
                             <p>
-                                {{ Admin::user()->name }}
-                                <small>Member since admin {{ Admin::user()->created_at }}</small>
+                                {{ "Mã KH: ".Admin::user()->symbol_name ?? "" }} <br>
+                                {{ "Họ tên: ".Admin::user()->name }}
                             </p>
                         </li>
                         <li class="user-footer">

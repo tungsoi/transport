@@ -34,7 +34,7 @@ return [
     | '<img src="http://logo-url" alt="Admin logo">'.
     |
     */
-    'logo-mini' => '<b>RD</b>',
+    'logo-mini' => '<b>ALI</b>',
 
     /*
     |--------------------------------------------------------------------------
@@ -430,5 +430,5 @@ return [
             'enable' => true,
         ]
     ],
-    'copyright' =>  "Copyright © 2016 Rồng Đỏ Logistics."
+    'copyright' =>  "Copyright © 2020 Alilogi Logistics."
 ];

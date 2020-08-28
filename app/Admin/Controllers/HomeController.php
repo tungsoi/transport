@@ -74,7 +74,7 @@ class HomeController extends Controller
         });
         $grid->column('number', 'STT');
         $grid->cn_code('Mã vận đơn');
-        $grid->transport_customer_id('Khách hàng')->display(function () {
+        $grid->transport_customer_id('Mã khách hàng')->display(function () {
             $check_row = false;
             if ($this->warehouse_cn == 1 && $this->warehouse_vn == 1 && $this->is_payment == 0) {
                 $check_row = true; // chua thanh toan ha noi nhan

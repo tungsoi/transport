@@ -25,9 +25,12 @@
                     <div class="col-md-12">
                         <input id="symbol_name" type="text" class="form-control" 
                             name="symbol_name" value="{{ old('symbol_name') }}" 
-                            placeholder="VD: thuyanh234"
-                             
-                            autofocus>
+                            placeholder="VD: thuyanh234" autofocus>
+                        
+                        <i class="">
+                            <i class="fa fa-info-circle" aria-hidden="true"></i> 
+                            Mã khách hàng là mã khách ghi trên kiện hàng để kho có thể phân loại được. Mã khách hàng để bên cạnh tên người nhận tiếng trung.
+                        </i> <br>
 
                         @if ($errors->has('symbol_name'))
                             <span class="help-block">

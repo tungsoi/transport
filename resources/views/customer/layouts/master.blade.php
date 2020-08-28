@@ -9,6 +9,8 @@
 
     <title>{{ config('admin.name') }}</title>
 
+    <link rel="shortcut icon" href="{{ asset('rongdo/img/money.png') }}">
+  
     <!-- Bootstrap core CSS -->
     <link href="{{ asset('rongdo/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet">
 

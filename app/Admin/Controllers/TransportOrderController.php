@@ -217,6 +217,7 @@ class TransportOrderController extends AdminController
 
         $grid->order_number('Mã đơn hàng');
         $grid->final_total_price('Tổng tiền (VND)')->display(function() {
+            dd($this->final_total_price);
             $total = number_format($this->final_total_price);
             if ($this->final_total_price <= 0) {
                 return '<span class="label label-danger">'.$total.'</span>';

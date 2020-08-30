@@ -208,53 +208,57 @@ class TransportOrderController extends AdminController
      */
     protected function detail($id)
     {
-        $grid = new Grid(new Order);
-        $grid->model()->where('id', $id);
-
-        $grid->header(function ($query) {
-            return "<h4 class='uppercase'><b>Thông tin chi tiết</b> <br></h4>";
-        });
-
-        $grid->order_number('Mã đơn hàng');
-        $grid->final_total_price('Tổng tiền (VND)')->display(function() {
-            $total = number_format(str_replace('.00', '', $this->final_total_price));
-            if ($this->final_total_price <= 0) {
-                return '<span class="label label-danger">'.$total.'</span>';
-            }
-            return $total;
-        });
-
-        $grid->transport_customer_id('Mã khách hàng')->display(function() {
-            return $this->items->first()->customer_name ?? "";
-        });
-        $grid->payment_customer_id('Khách hàng thanh toán')->display(function() {
-            return $this->paymentCustomer->symbol_name ?? "";
-        });
-        $grid->created_at('Ngày trả hàng')->display(function () {
-            return date('H:i | d-m-Y', strtotime($this->created_at));
-        });
-        $grid->user_created_name('Người tạo');
-        $grid->internal_note('Ghi chú');
-        $grid->disableActions();
-        $grid->disablePagination();
-        $grid->disableCreateButton();
-        $grid->disableFilter();
-        $grid->disableRowSelector();
-        $grid->disableColumnSelector();
-        $grid->disableExport();
-
-        $grid->tools(function ($tools) {
-            $tools->append('<a href="'.route('transport_orders.index').'" class="btn btn-sm btn-primary" title="Danh sách đơn hàng vận chuyển">
-                <i class="fa fa-list"></i>
-                <span class="hidden-xs">&nbsp;Danh sách đơn hàng vận chuyển</span>
-            </a>');
-
-            $tools->append('<a href="#" class="btn btn-sm btn-warning" onclick="window.print()">
-                <i class="fa fa-print"></i>
-                <span class="hidden-xs">&nbsp;In hoá đơn</span>
-            </a>');
-        });
-        return $grid;
+        try {
+            $grid = new Grid(new Order);
+            $grid->model()->where('id', $id);
+    
+            $grid->header(function ($query) {
+                return "<h4 class='uppercase'><b>Thông tin chi tiết</b> <br></h4>";
+            });
+    
+            $grid->order_number('Mã đơn hàng');
+            $grid->final_total_price('Tổng tiền (VND)')->display(function() {
+                $total = number_format(str_replace('.00', '', $this->final_total_price));
+                if ($this->final_total_price <= 0) {
+                    return '<span class="label label-danger">'.$total.'</span>';
+                }
+                return $total;
+            });
+    
+            $grid->transport_customer_id('Mã khách hàng')->display(function() {
+                return $this->items->first()->customer_name ?? "";
+            });
+            $grid->payment_customer_id('Khách hàng thanh toán')->display(function() {
+                return $this->paymentCustomer->symbol_name ?? "";
+            });
+            $grid->created_at('Ngày trả hàng')->display(function () {
+                return date('H:i | d-m-Y', strtotime($this->created_at));
+            });
+            $grid->user_created_name('Người tạo');
+            $grid->internal_note('Ghi chú');
+            $grid->disableActions();
+            $grid->disablePagination();
+            $grid->disableCreateButton();
+            $grid->disableFilter();
+            $grid->disableRowSelector();
+            $grid->disableColumnSelector();
+            $grid->disableExport();
+    
+            $grid->tools(function ($tools) {
+                $tools->append('<a href="'.route('transport_orders.index').'" class="btn btn-sm btn-primary" title="Danh sách đơn hàng vận chuyển">
+                    <i class="fa fa-list"></i>
+                    <span class="hidden-xs">&nbsp;Danh sách đơn hàng vận chuyển</span>
+                </a>');
+    
+                $tools->append('<a href="#" class="btn btn-sm btn-warning" onclick="window.print()">
+                    <i class="fa fa-print"></i>
+                    <span class="hidden-xs">&nbsp;In hoá đơn</span>
+                </a>');
+            });
+            return $grid;
+        } catch (\Exception $e) {
+            dd($e->getMessage());
+        }
     }
 
     /**

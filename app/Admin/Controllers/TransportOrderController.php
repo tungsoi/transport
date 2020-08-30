@@ -75,7 +75,14 @@ class TransportOrderController extends AdminController
             }
             return "";
         });
-        $grid->items('Số MVD')->count();
+        $grid->items('Số MVD')->count()->expand(function ($model) {
+
+            $items = $model->items()->take(10)->get()->map(function ($comment) {
+                return $comment->only(['cn_code', 'kg', 'product_width', 'product_length', 'product_height', 'advance_drag']);
+            })->toArray();
+            
+            return new Table(['MVD', 'Khối lượng (kg)', 'Rộng (cm)', 'Dài (cm)', 'Cao (cm)', 'Ứng kéo (Tệ)'], $items);
+        });
         $grid->transport_kg('KG');
         $grid->price_kg('Giá KG (VND)')->display(function() {
             return number_format($this->getPriceService($this, $this::KG));

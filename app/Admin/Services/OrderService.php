@@ -18,7 +18,7 @@ class OrderService
     public function buildDataChinaReceive($data = []) {
         $data['warehouse_cn']           = 1;
         $data['warehouse_cn_date']      = now();
-        $data['advance_drag']           = str_replace(',', '', $data['advance_drag']);
+        $data['advance_drag']           = $data['advance_drag'] != "" ? str_replace(',', '', $data['advance_drag']) : 0;
         $data['kg']                     = str_replace(',', '.', $data['kg']);
         $data['user_id_updated']        = Admin::user()->id;
         $data['note']                   = 'TQ nhận';
@@ -42,7 +42,7 @@ class OrderService
 
         $data['warehouse_cn']           = 1;
         $data['warehouse_cn_date']      = $flag ? $flag->warehouse_cn_date : now();
-        $data['advance_drag']           = str_replace(',', '', $data['advance_drag']);
+        $data['advance_drag']           = $data['advance_drag'] != "" ? str_replace(',', '', $data['advance_drag']) : 0;
         $data['kg']                     = str_replace(',', '.', $data['kg']);
         $data['user_id_updated']        = Admin::user()->id;
         $data['note']                   = $data['note'] == 'TQ nhận' ? 'HN nhận' : $data['note'];

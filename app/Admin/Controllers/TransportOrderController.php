@@ -257,7 +257,7 @@ class TransportOrderController extends AdminController
             });
             return $grid;
         } catch (\Exception $e) {
-            dd($e->getMessage());
+            dd($e);
         }
     }
 
@@ -337,7 +337,7 @@ class TransportOrderController extends AdminController
 
             return $grid;
         } catch (\Exception $e) {
-            dd($e->getMessage());
+            dd($e);
         }
     }
 
@@ -385,7 +385,7 @@ class TransportOrderController extends AdminController
 
             return $grid;
         } catch (\Exception $e) {
-            dd($e->getMessage());
+            dd($e);
         }
     }
 
@@ -468,7 +468,7 @@ class TransportOrderController extends AdminController
 
             return $table->render();
         } catch (\Exception $e) {
-            dd($e->getMessage());
+            dd($e);
         }
     }
 

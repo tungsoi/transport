@@ -267,74 +267,78 @@ class TransportOrderController extends AdminController
      * @return Grid
      */
     protected function listItem($id)
-    {
-        $grid = new Grid(new TransportOrderItem());
-        $order = Order::find($id);
-        $grid->model()->where('order_id', $id);
-        $grid->header(function ($query) {
-            return "<h4 class='uppercase'><b>Danh sách mã vận đơn</b> <br></h4>";
-        });
-
-        $grid->cn_code('Mã vận đơn');
-        $grid->product_width('Rộng (cm)');
-        $grid->product_length('Dài (cm)');
-        $grid->product_height('Cao (cm)');
-        $grid->kg('Cân nặng (kg)')->totalRow(function ($amount) use ($id, $order) {
-            return '<span class="label label-primary">'. $order->getSumKg() .'</span>';
-        });
-        $grid->volume('Thể tích (V/6000)')->totalRow(function ($amount) use ($id, $order) {
-            return '<span class="label label-primary">'. $order->getSumVolume() .'</span>';
-        });
-        $grid->cublic_meter('Mét khối (M3)')->totalRow(function ($amount) use ($id, $order) {
-            return '<span class="label label-primary">'. $order->getSumCublicMeter() .'</span>';
-        });
-        
-        $grid->payment_type('Loại thanh toán')->display(function () {
-            return $this->paymentTypeText($this);
-        });
-        $grid->advance_drag('Ứng kéo (Tệ)')->totalRow(function ($amount) use ($id) {
-            return '<span class="label label-primary">'.$amount.'</span>';
-        });
-        $grid->price_service('Giá dịch vụ (VND)')->display(function () {
-            return $this->price_service ? number_format($this->price_service) : "";
-        });
-        $grid->total_price('Tổng tiền theo từng mã (VND)')->display(function () {
-            switch ($this->payment_type)
-            {
-                case TransportOrderItem::KG:
-                    return number_format($this->kg * $this->price_service);
-                case TransportOrderItem::V:
-                    return number_format($this->volume * $this->price_service);
-                case TransportOrderItem::M3:
-                    return number_format($this->cublic_meter * $this->price_service);
-            }      
-        })->totalRow(function ($amount) use ($id) {
+    {   
+        try {
+            $grid = new Grid(new TransportOrderItem());
             $order = Order::find($id);
-            return '<span class="label label-primary">'.number_format($order->getTotalPriceOrder()).'</span>';
-        });
-        $grid->description('Chi tiết')->display(function () {
-            switch ($this->payment_type)
-            {
-                case TransportOrderItem::KG:
-                    return "= ".(int) $this->kg." x ". number_format($this->price_service);
-                case TransportOrderItem::V:
-                    return "= ".$this->volume." x ". number_format($this->price_service);
-                case TransportOrderItem::M3:
-                    return "= ".$this->cublic_meter." x ". number_format($this->price_service);
-            }      
-            return number_format($this->kg * $this->price_service) ?? 0;
-        });
+            $grid->model()->where('order_id', $id);
+            $grid->header(function ($query) {
+                return "<h4 class='uppercase'><b>Danh sách mã vận đơn</b> <br></h4>";
+            });
 
-        $grid->disableActions();
-        $grid->disablePagination();
-        $grid->disableCreateButton();
-        $grid->disableFilter();
-        $grid->disableRowSelector();
-        $grid->disableColumnSelector();
-        $grid->disableTools();
-        $grid->disableExport();
+            $grid->cn_code('Mã vận đơn');
+            $grid->product_width('Rộng (cm)');
+            $grid->product_length('Dài (cm)');
+            $grid->product_height('Cao (cm)');
+            $grid->kg('Cân nặng (kg)')->totalRow(function ($amount) use ($id, $order) {
+                return '<span class="label label-primary">'. $order->getSumKg() .'</span>';
+            });
+            $grid->volume('Thể tích (V/6000)')->totalRow(function ($amount) use ($id, $order) {
+                return '<span class="label label-primary">'. $order->getSumVolume() .'</span>';
+            });
+            $grid->cublic_meter('Mét khối (M3)')->totalRow(function ($amount) use ($id, $order) {
+                return '<span class="label label-primary">'. $order->getSumCublicMeter() .'</span>';
+            });
+            
+            $grid->payment_type('Loại thanh toán')->display(function () {
+                return $this->paymentTypeText($this);
+            });
+            $grid->advance_drag('Ứng kéo (Tệ)')->totalRow(function ($amount) use ($id) {
+                return '<span class="label label-primary">'.$amount.'</span>';
+            });
+            $grid->price_service('Giá dịch vụ (VND)')->display(function () {
+                return $this->price_service ? number_format($this->price_service) : "";
+            });
+            $grid->total_price('Tổng tiền theo từng mã (VND)')->display(function () {
+                switch ($this->payment_type)
+                {
+                    case TransportOrderItem::KG:
+                        return number_format($this->kg * $this->price_service);
+                    case TransportOrderItem::V:
+                        return number_format($this->volume * $this->price_service);
+                    case TransportOrderItem::M3:
+                        return number_format($this->cublic_meter * $this->price_service);
+                }      
+            })->totalRow(function ($amount) use ($id) {
+                $order = Order::find($id);
+                return '<span class="label label-primary">'.number_format($order->getTotalPriceOrder()).'</span>';
+            });
+            $grid->description('Chi tiết')->display(function () {
+                switch ($this->payment_type)
+                {
+                    case TransportOrderItem::KG:
+                        return "= ".(int) $this->kg." x ". number_format($this->price_service);
+                    case TransportOrderItem::V:
+                        return "= ".$this->volume." x ". number_format($this->price_service);
+                    case TransportOrderItem::M3:
+                        return "= ".$this->cublic_meter." x ". number_format($this->price_service);
+                }      
+                return number_format($this->kg * $this->price_service) ?? 0;
+            });
 
-        return $grid;
+            $grid->disableActions();
+            $grid->disablePagination();
+            $grid->disableCreateButton();
+            $grid->disableFilter();
+            $grid->disableRowSelector();
+            $grid->disableColumnSelector();
+            $grid->disableTools();
+            $grid->disableExport();
+
+            return $grid;
+        } catch (\Exception $e) {
+            dd($e->getMessage());
+        }
     }
 
     /**
@@ -344,40 +348,45 @@ class TransportOrderController extends AdminController
      */
     protected function discount($id)
     {
-        $grid = new Grid(new Order);
-        $grid->model()->where('id', $id);
+        try {
+                
+            $grid = new Grid(new Order);
+            $grid->model()->where('id', $id);
 
-        $grid->header(function ($query) {
-            return "<h4 class='uppercase'><b>Giảm trừ cân nặng</b> <br></h4>";
-        });
-        $grid->discount_type('Loại giảm trừ')->display(function () {
-            return $this->discount_type == 1 ? '<span class="label label-danger">Giảm đi</span>' : '<span class="label label-primary">Tăng lên</span>';
-        });
-        $grid->discount_value('Giá trị giảm trừ (kg)')->display(function () {
-            return $this->discount_value == "" ? 0 : $this->discount_value;
-        })->label('primary');
+            $grid->header(function ($query) {
+                return "<h4 class='uppercase'><b>Giảm trừ cân nặng</b> <br></h4>";
+            });
+            $grid->discount_type('Loại giảm trừ')->display(function () {
+                return $this->discount_type == 1 ? '<span class="label label-danger">Giảm đi</span>' : '<span class="label label-primary">Tăng lên</span>';
+            });
+            $grid->discount_value('Giá trị giảm trừ (kg)')->display(function () {
+                return $this->discount_value == "" ? 0 : $this->discount_value;
+            })->label('primary');
 
-        $grid->discount_money('Tiền thanh toán giảm trừ (VND)')->display(function () {
-            $price = $this->items->where('payment_type', 1)->first();
-            $price_service = $price ? $price->price_service : 0;
-            $sum = number_format($this->discount_value * $price_service);
-            $des = " (". $this->discount_value ." x ". number_format($price_service) . ")";
-            if ($this->discount_type == 1) {
-                return '<span class="label label-danger">- '.$sum.'</span>&nbsp;' . $des;
-            } else {
-                return '<span class="label label-success">+ '.$sum.'</span>&nbsp;' . $des;
-            }
-        });
-        $grid->disableActions();
-        $grid->disablePagination();
-        $grid->disableCreateButton();
-        $grid->disableFilter();
-        $grid->disableRowSelector();
-        $grid->disableColumnSelector();
-        $grid->disableExport();
-        $grid->disableTools();
+            $grid->discount_money('Tiền thanh toán giảm trừ (VND)')->display(function () {
+                $price = $this->items->where('payment_type', 1)->first();
+                $price_service = $price ? $price->price_service : 0;
+                $sum = number_format($this->discount_value * $price_service);
+                $des = " (". $this->discount_value ." x ". number_format($price_service) . ")";
+                if ($this->discount_type == 1) {
+                    return '<span class="label label-danger">- '.$sum.'</span>&nbsp;' . $des;
+                } else {
+                    return '<span class="label label-success">+ '.$sum.'</span>&nbsp;' . $des;
+                }
+            });
+            $grid->disableActions();
+            $grid->disablePagination();
+            $grid->disableCreateButton();
+            $grid->disableFilter();
+            $grid->disableRowSelector();
+            $grid->disableColumnSelector();
+            $grid->disableExport();
+            $grid->disableTools();
 
-        return $grid;
+            return $grid;
+        } catch (\Exception $e) {
+            dd($e->getMessage());
+        }
     }
 
 
@@ -388,74 +397,79 @@ class TransportOrderController extends AdminController
      */
     protected function payment($id)
     {
-        $order = Order::find($id);
+        try {
+                
+            $order = Order::find($id);
 
-        // Tổng kg sau khi đã tính giảm trừ
-        $sumKg = $order->getSumKgAfterDiscount();
+            // Tổng kg sau khi đã tính giảm trừ
+            $sumKg = $order->getSumKgAfterDiscount();
 
-        $price = [
-            Order::KG => $order->items->where('payment_type', Order::KG)->first()->price_service ?? 0,
-            Order::V  => $order->items->where('payment_type', Order::V)->first()->price_service ?? 0,
-            Order::M3 => $order->items->where('payment_type', Order::M3)->first()->price_service ?? 0
-        ];
+            $price = [
+                Order::KG => $order->items->where('payment_type', Order::KG)->first()->price_service ?? 0,
+                Order::V  => $order->items->where('payment_type', Order::V)->first()->price_service ?? 0,
+                Order::M3 => $order->items->where('payment_type', Order::M3)->first()->price_service ?? 0
+            ];
 
-        // Header table
-        $headers = ['THANH TOÁN', null, null, null, null, null];
+            // Header table
+            $headers = ['THANH TOÁN', null, null, null, null, null];
 
-        // Get detail sum kg
-        $detailSumKg   = $order->getDetailSumKg();
+            // Get detail sum kg
+            $detailSumKg   = $order->getDetailSumKg();
 
-        $rows = [
-            [null, 'Số lượng', 'Đơn giá (VND)', 'Thành tiền (VND)', 'Chi tiết'],
-            [
-                'Tổng khối lượng', 
-                $order->getSumKgAfterDiscount() . " (".$order->getSumKg()." ". $detailSumKg .")", 
-                number_format($price[Order::KG]),
-                $price[Order::KG] != 0 
-                    ? number_format($order->getSumKgAfterDiscount() * $price[Order::KG])
-                    : 0,
-                "= " . $order->getDetailMoneySumKg()
-            ],
-            [
-                'Tổng V/6000', 
-                $order->getSumVolume(),
-                number_format($price[Order::V]),
-                $price[Order::V] != 0
-                    ? number_format($order->getSumVolume() * $price[Order::V]) 
-                    : 0,
-                "= " . $order->getSumVolume() . " x " . number_format($price[Order::V])
-            ],
-            [
-                'Tổng M3', 
-                $order->getSumCublicMeter(),
-                number_format($price[Order::M3]),
-                $price[Order::M3] != 0 
-                    ? number_format($order->getSumCublicMeter() * $price[Order::M3])
-                    : 0,
-                "= " . $order->getSumCublicMeter() . " x " . number_format($price[Order::M3])
-            ],
-            [
-                'Tổng ứng kéo', 
-                null, 
-                null, 
-                number_format($order->transport_advance_drag),
-                "= ". str_replace('.00', '', $order->getSumItemAdvanceDrag())." Tệ"
-            ],
-            [
-                'Tổng tiền', 
-                null,
-                null, 
-                '<span class="label label-primary">'.number_format($order->final_total_price).'</span>',
-                "= ". number_format($order->getTotalPriceOrder())
-                . " + " .number_format($order->getSumKgDiscount() * $order->getPriceService($order, Order::KG))
-                . " + " .number_format($order->transport_advance_drag)
-            ],
-        ];
+            $rows = [
+                [null, 'Số lượng', 'Đơn giá (VND)', 'Thành tiền (VND)', 'Chi tiết'],
+                [
+                    'Tổng khối lượng', 
+                    $order->getSumKgAfterDiscount() . " (".$order->getSumKg()." ". $detailSumKg .")", 
+                    number_format($price[Order::KG]),
+                    $price[Order::KG] != 0 
+                        ? number_format($order->getSumKgAfterDiscount() * $price[Order::KG])
+                        : 0,
+                    "= " . $order->getDetailMoneySumKg()
+                ],
+                [
+                    'Tổng V/6000', 
+                    $order->getSumVolume(),
+                    number_format($price[Order::V]),
+                    $price[Order::V] != 0
+                        ? number_format($order->getSumVolume() * $price[Order::V]) 
+                        : 0,
+                    "= " . $order->getSumVolume() . " x " . number_format($price[Order::V])
+                ],
+                [
+                    'Tổng M3', 
+                    $order->getSumCublicMeter(),
+                    number_format($price[Order::M3]),
+                    $price[Order::M3] != 0 
+                        ? number_format($order->getSumCublicMeter() * $price[Order::M3])
+                        : 0,
+                    "= " . $order->getSumCublicMeter() . " x " . number_format($price[Order::M3])
+                ],
+                [
+                    'Tổng ứng kéo', 
+                    null, 
+                    null, 
+                    number_format($order->transport_advance_drag),
+                    "= ". str_replace('.00', '', $order->getSumItemAdvanceDrag())." Tệ"
+                ],
+                [
+                    'Tổng tiền', 
+                    null,
+                    null, 
+                    '<span class="label label-primary">'.number_format($order->final_total_price).'</span>',
+                    "= ". number_format($order->getTotalPriceOrder())
+                    . " + " .number_format($order->getSumKgDiscount() * $order->getPriceService($order, Order::KG))
+                    . " + " .number_format($order->transport_advance_drag)
+                ],
+            ];
 
-        $table = new Table($headers, $rows);
-        $table->id('tbl_payment');
+            $table = new Table($headers, $rows);
+            $table->id('tbl_payment');
 
-        return $table->render();
+            return $table->render();
+        } catch (\Exception $e) {
+            dd($e->getMessage());
+        }
     }
 
     public function getDataTransportOrderItems(Request $request)

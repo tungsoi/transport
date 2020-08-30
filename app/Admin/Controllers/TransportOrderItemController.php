@@ -69,6 +69,10 @@ class TransportOrderItemController extends AdminController
             $row->column('number', ($row->number+1));
         });
         $grid->column('number', 'STT');
+        $grid->order_id('Mã đơn hàng')->display(function () {
+            return $this->order->order_number ?? "";
+        });
+        $grid->cn_code('MVD')->label('warning');
         $grid->transport_customer_id('Mã KH')->display(function () {
             $check_row = false;
             if ($this->warehouse_cn == 1 && $this->warehouse_vn == 1 && $this->is_payment == 0) {
@@ -80,7 +84,6 @@ class TransportOrderItemController extends AdminController
             }
             return $this->customer->symbol_name.$input ?? "";
         });
-        $grid->cn_code('MVD')->label('warning');
         $grid->column('payment_customer_id', 'KH Thanh toán')->display(function () {
             if (is_null($this->order_id)) {
                 return "";

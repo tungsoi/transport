@@ -27,7 +27,7 @@
         @import url(https://fonts.googleapis.com/css?family=Open+Sans);
 
         body {
-            font-family: 'Open Sans',serif !important;
+            font-family: 'Open Sans', sans-serif !important;
         }
         .logo-img {
             max-width: 40px;
@@ -103,6 +103,9 @@
         }
         .tx-heading {
             margin: 20px;
+        }
+        .masthead h2, .masthead h3, .masthead h4, .masthead h5 {
+            font-weight: 300;
         }
     </style>
 </head>

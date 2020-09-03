@@ -26,18 +26,18 @@ class RefundController extends AdminController
 
     public function __construct()
     {
-        $this->title = 'Thống kê hoàn tiền';
+        $this->title = 'Báo cáo hoàn trả tiền';
     }
 
     public function index(Content $content)
     {
         return $content
             ->header($this->title)
-            ->description('Danh sách')
+            ->description('Số tiền hoàn trả khách hàng khi thanh toán nhầm')
             ->row(function (Row $row) {
                 $row->column(12, function (Column $column)
                 {
-                    $title = "Thống kê hoàn tiền theo tháng 2020";
+                    $title = "Báo cáo hoàn trả tiền theo tháng 2020";
                     $dataArray = [];
                     for ($i = 1; $i <= 12; $i++) {
                         $rows = TransportRecharge::whereYear('created_at', '=', '2020')
@@ -74,8 +74,8 @@ class RefundController extends AdminController
         });
 
         $grid->id('ID');
-        $grid->customer_id('Tên khách hàng')->display(function () {
-            return $this->customer->name ?? "";
+        $grid->customer_id('Mã khách hàng')->display(function () {
+            return $this->customer->symbol_name ?? "";
         });
         $grid->user_id_created('Nhân viên thực hiện')->display(function () {
             return $this->userCreated->name ?? "";
@@ -86,6 +86,8 @@ class RefundController extends AdminController
             }
 
             return '<span class="label label-danger">'.number_format($this->money).'</span>';
+        })->totalRow(function ($amount) {
+            return number_format($amount);
         });
         $grid->type_recharge('Loại giao dịch')->display(function () {
             return TransportRecharge::RECHARGE[$this->type_recharge];
@@ -99,6 +101,7 @@ class RefundController extends AdminController
             $actions->disableView();
             $actions->disableEdit();
         });
+        $grid->disableActions();
 
         $grid->disableCreateButton();
         return $grid;

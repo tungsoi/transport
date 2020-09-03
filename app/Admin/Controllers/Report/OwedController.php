@@ -67,7 +67,11 @@ class OwedController extends AdminController
             return '<h4>Công nợ khách hàng tạm tính hiện tại: <span style="color:red">'. number_format($owed) ."</span> (VND)</h4>";
         });
 
-        $grid->id('STT');
+        $grid->rows(function (Grid\Row $row) {
+            $row->column('number', ($row->number+1));
+        });
+        $grid->column('number', 'STT');
+        $grid->symbol_name('Mã khách hàng');
         $grid->name('Họ và tên')->editable();
         $grid->email()->editable();
         $grid->phone_number('SDT')->editable();
@@ -102,6 +106,7 @@ class OwedController extends AdminController
             $actions->disableView();
             $actions->disableDelete();
         });
+        $grid->disableActions();
         return $grid;
     }
 

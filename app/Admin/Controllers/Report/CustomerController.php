@@ -67,8 +67,8 @@ class CustomerController extends AdminController
         });
         $grid->column('number', 'STT');
 
-        $grid->name('Họ và tên');
         $grid->symbol_name('Mã khách hàng');
+        $grid->name('Họ và tên');
         $grid->email();
         $grid->phone_number('SDT');
         $grid->ware_house_id('Kho')->display(function () {
@@ -88,10 +88,10 @@ class CustomerController extends AdminController
         $grid->sumCublicMeter('Tổng khối')->display(function () {
             return $this->getSumCublicMeterByCustomerSymbolName($this->symbol_name);
         });
-        $grid->sumMoneyPayment('Tổng tiền đã thanh toán (VND)')->display(function () {
+        $grid->sumMoneyPayment('Doanh thu (VND)')->display(function () {
             return number_format($this->getSumMoneyPayment($this->symbol_name)) ?? "";
         });
-        $grid->sumMoneyRecharge('Tổng tiền đã nạp (VND)')->display(function () {
+        $grid->sumMoneyRecharge('Nạp tài khoản (VND)')->display(function () {
             $recharge_money = TransportRecharge::where('customer_id', $this->id)->where('type_recharge', TransportRecharge::RECHARGE_MONEY)->sum('money');
             $recharge_bank = TransportRecharge::where('customer_id', $this->id)->where('type_recharge', TransportRecharge::RECHARGE_BANK)->sum('money');
 

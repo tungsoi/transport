@@ -19,13 +19,13 @@
                 <div class="col-md-6">
                     <div class="input-group mb-2">
                         <div class="col-md-3">
-                            <label for="">Tên khách hàng</label>
+                            <label for="">Mã khách hàng</label>
                         </div>
                         <div class="col-md-9">
                             <input type="text" 
                                 name="username" 
                                 class="form-control input-xs" 
-                                placeholder="Tên khách hàng"
+                                placeholder="Mã khách hàng"
                                 value="{{ request('username') }}">
                         </div>
                     </div>
@@ -100,7 +100,7 @@
                     <tr>
                         <td>{{ $key + 1 }}</td>
                         <td>{{ $item['cn_code'] }}</td>
-                        <td>{{ $item->customer->name ?? null }}</td>
+                        <td>{{ $item->customer->symbol_name ?? null }}</td>
                         <td>{{ $item->kg }}</td>
                         <td>{{ $item->product_length }}</td>
                         <td>{{ $item->product_width }}</td>

@@ -20,9 +20,8 @@ class OrderService {
             if (empty($data['cn_code'] && empty($data['username']))) { return []; }
 
             $orderTransportItem = TransportOrderItem::leftJoin('orders', 'transport_order_items.order_id', '=', 'orders.id')
-                ->leftJoin('customers', 'orders.customer_id', '=', 'customers.id')
-                ->leftJoin('transport_customers', 'transport_customers.id', '=', 'transport_order_items.transport_customer_id')
-                ->select('transport_order_items.*', 'orders.id', 'orders.customer_id', 'customers.symbol_name')
+                ->leftJoin('admin_users', 'transport_order_items.transport_customer_id', '=', 'admin_users.id')
+                ->select('transport_order_items.*', 'admin_users.symbol_name')
                 ->where(function ($query) use ($data) {
                     $this->subWhereCnCodeAndUserName($query, $data,'warehouse_cn_date');
                 })
@@ -60,7 +59,7 @@ class OrderService {
             $query->where('cn_code', 'LIKE', '%' . $data['cn_code'] . '%');
         }
         if (!empty($data['username'])) {
-            $query->where('transport_customers.name', 'like', '%'.$data['username'].'%');
+            $query->where('admin_users.symbol_name', 'like', '%'.$data['username'].'%');
         }
     }
 

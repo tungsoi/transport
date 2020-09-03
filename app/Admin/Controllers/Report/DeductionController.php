@@ -26,23 +26,23 @@ class DeductionController extends AdminController
 
     public function __construct()
     {
-        $this->title = 'Thống kê trừ tiền tài khoản';
+        $this->title = 'Báo cáo doanh thu';
     }
 
     public function index(Content $content)
     {
         return $content
             ->header($this->title)
-            ->description('Danh sách')
+            ->description('Trừ tiền theo đơn thanh toán')
             ->row(function (Row $row) {
                 $row->column(12, function (Column $column)
                 {
-                    $title = "Thống kê trừ tiền theo tháng 2020";
+                    $title = "Báo cáo doanh thu theo tháng 2020";
                     $dataArray = [];
                     for ($i = 1; $i <= 12; $i++) {
                         $rows = TransportRecharge::whereYear('created_at', '=', '2020')
                                 ->whereMonth('created_at', '=', $i)
-                                ->where('type_recharge', TransportRecharge::DEDUCTION)
+                                ->where('type_recharge', TransportRecharge::PAYMENT)
                                 ->sum('money');
 
                         $dataArray[] = $rows;
@@ -65,7 +65,7 @@ class DeductionController extends AdminController
     protected function grid()
     {
         $grid = new Grid(new TransportRecharge);
-        $grid->model()->where('type_recharge', TransportRecharge::DEDUCTION)->orderBy('id', 'desc');
+        $grid->model()->where('type_recharge', TransportRecharge::PAYMENT)->orderBy('id', 'desc');
 
         $grid->filter(function($filter) {
             $filter->expand();
@@ -74,8 +74,12 @@ class DeductionController extends AdminController
         });
 
         $grid->id('ID');
-        $grid->customer_id('Tên khách hàng')->display(function () {
-            return $this->customer->name ?? "";
+        $grid->column('order_code', 'Mã đơn hàng')->display(function () {
+            $data = explode(' ', $this->content);
+            return $data[sizeof($data)-1] ?? null;
+        });
+        $grid->customer_id('Mã khách hàng')->display(function () {
+            return $this->customer->symbol_name ?? "";
         });
         $grid->user_id_created('Nhân viên thực hiện')->display(function () {
             return $this->userCreated->name ?? "";
@@ -86,9 +90,11 @@ class DeductionController extends AdminController
             }
 
             return '<span class="label label-danger">'.number_format($this->money).'</span>';
+        })->totalRow(function ($amount) {
+            return number_format($amount);
         });
         $grid->type_recharge('Loại giao dịch')->display(function () {
-            return TransportRecharge::RECHARGE[$this->type_recharge];
+            return TransportRecharge::RECHARGE_PAYMENT;
         });
         $grid->content('Nội dung');
         $grid->created_at(trans('admin.created_at'))->display(function () {
@@ -101,6 +107,7 @@ class DeductionController extends AdminController
         });
 
         $grid->disableCreateButton();
+        $grid->disableActions();
         return $grid;
     }
 

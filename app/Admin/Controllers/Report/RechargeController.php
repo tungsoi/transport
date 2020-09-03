@@ -26,14 +26,14 @@ class RechargeController extends AdminController
 
     public function __construct()
     {
-        $this->title = 'Thống kê tiền nạp khách hàng';
+        $this->title = 'Báo cáo nạp tài khoản';
     }
 
     public function index(Content $content)
     {
         return $content
             ->header($this->title)
-            ->description('Danh sách')
+            ->description('Số tiền khách hàng nạp vào tài khoản')
             ->row(function (Row $row) {
                 $row->column(12, function (Column $column)
                 {
@@ -42,13 +42,25 @@ class RechargeController extends AdminController
                     for ($i = 1; $i <= 12; $i++) {
                         $rows = TransportRecharge::whereYear('created_at', '=', '2020')
                                 ->whereMonth('created_at', '=', $i)
-                                ->whereIn('type_recharge', [TransportRecharge::RECHARGE_MONEY, TransportRecharge::RECHARGE_BANK])
+                                ->where('type_recharge', TransportRecharge::RECHARGE_MONEY)
                                 ->sum('money');
 
                         $dataArray[] = $rows;
                     }
-                    $data = implode(",", $dataArray);
-                    $column->append(view('admin.charts.recharge', compact('title', 'data')));
+                    $dataMoney = implode(",", $dataArray);
+
+                    $dataArrayBank = [];
+                    for ($i = 1; $i <= 12; $i++) {
+                        $rows = TransportRecharge::whereYear('created_at', '=', '2020')
+                                ->whereMonth('created_at', '=', $i)
+                                ->where('type_recharge', TransportRecharge::RECHARGE_BANK)
+                                ->sum('money');
+
+                        $dataArrayBank[] = $rows;
+                    }
+                    $dataBank = implode(",", $dataArrayBank);
+
+                    $column->append(view('admin.charts.recharge', compact('title', 'dataMoney', 'dataBank')));
                 });
                 $row->column(12, function (Column $column)
                 {
@@ -74,8 +86,8 @@ class RechargeController extends AdminController
         });
 
         $grid->id('ID');
-        $grid->customer_id('Tên khách hàng')->display(function () {
-            return $this->customer->name ?? "";
+        $grid->customer_id('Mã khách hàng')->display(function () {
+            return $this->customer->symbol_name ?? "";
         });
         $grid->user_id_created('Nhân viên thực hiện')->display(function () {
             return $this->userCreated->name ?? "";
@@ -86,6 +98,8 @@ class RechargeController extends AdminController
             }
 
             return '<span class="label label-danger">'.number_format($this->money).'</span>';
+        })->totalRow(function ($amount) {
+            return number_format($amount);
         });
         $grid->type_recharge('Loại giao dịch')->display(function () {
             return TransportRecharge::RECHARGE[$this->type_recharge];
@@ -99,6 +113,8 @@ class RechargeController extends AdminController
             $actions->disableView();
             $actions->disableEdit();
         });
+        
+        $grid->disableActions();
 
         $grid->disableCreateButton();
         return $grid;

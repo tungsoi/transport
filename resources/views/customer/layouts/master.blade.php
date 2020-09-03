@@ -139,7 +139,7 @@
     </nav>
 
     <!-- Page Header -->
-    <header class="masthead" style="background-image: url('{{ asset('rongdo/img/about-bg.png') }}')">
+    <header class="masthead" style="background-image: url('{{ asset('rongdo/img/banner.jpg') }}')">
         {{-- <div class="overlay"></div> --}}
         <div class="container">
             <div class="row">

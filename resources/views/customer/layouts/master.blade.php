@@ -116,7 +116,7 @@
     <nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
         <div class="container">
             <a class="navbar-brand" href="/" target="_blank">
-                <img src="{{ asset('rongdo/img/logo.png') }}" alt="" class="logo-img"> &nbsp; RỒNG ĐỎ LOGISTICS
+                <img src="{{ asset('rongdo/img/final-logo.png') }}" alt="" style="width: 200px;">
             </a>
             <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
                 Menu
@@ -140,14 +140,14 @@
 
     <!-- Page Header -->
     <header class="masthead" style="background-image: url('{{ asset('rongdo/img/about-bg.jpg') }}')">
-        <div class="overlay"></div>
+        {{-- <div class="overlay"></div> --}}
         <div class="container">
             <div class="row">
                 <div class="col-lg-12 col-md-12 mx-auto">
                     <div class="page-heading">
-                        <h2>GIÚP HÀNG TRIỆU KHÁCH HÀNG DOANH NGHIỆP</h2> <hr>
-                        <h2>NHẬP HÀNG TẬN GỐC</h2>
-                        <h3>NGUỒN HÀNG UY TÍN THẾ GIỚI</h3>
+                        <h3>GIÚP HÀNG TRIỆU KHÁCH HÀNG DOANH NGHIỆP</h3> <hr>
+                        <h4>NHẬP HÀNG TẬN GỐC</h4>
+                        <h4>NGUỒN HÀNG UY TÍN THẾ GIỚI</h4>
                         <br><br>
                         <h5>Kho Sài Gòn: 0977777324 | Kho Hà Nội: 0971226605</h5>
                     </div>

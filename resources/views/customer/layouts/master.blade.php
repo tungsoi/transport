@@ -208,7 +208,7 @@
                     <img src="{{ asset('rongdo/img/final-logo.png') }}" alt="" srcset="">
                 </center>
                 <hr>
-                <h2 class="uppercase text-center">{{ $popup->title }}</h2>
+                <h4 class="uppercase text-center">{{ $popup->title }}</h4>
                 <div class="popup-content">
                     {!! $popup->content !!}
                 </div>

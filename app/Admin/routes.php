@@ -63,7 +63,8 @@ Route::group([
         'transport_order_items' =>  'TransportOrderItemController',
         'transport_orders'      =>  'TransportOrderController',
         'profiles'              =>  'ProfileController',
-        'messages'              =>  'MessageController'
+        'messages'              =>  'MessageController',
+        'popups'                =>  'PopupController'
     ]);
 });
 

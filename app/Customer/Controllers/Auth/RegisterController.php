@@ -28,12 +28,13 @@ class RegisterController extends Controller {
             'password'  =>  bcrypt($data['password']),
             'name'      =>  $data['symbol_name'],
             'email'     =>  $data['email'],
-            'phone_number'  =>  '',
+            'phone_number'  =>  $data['mobile'],
             'wallet'    =>  0,
             'is_customer'   =>  1,
             'symbol_name'   =>  $data['symbol_name'],
             'ware_house_id' =>  null,
-            'is_active' =>  1
+            'is_active' =>  1,
+            'address'  =>   $data['address']
         ]);
 
         DB::table('admin_role_users')->insert([
@@ -49,7 +50,9 @@ class RegisterController extends Controller {
         return Validator::make($data, [
             'symbol_name' => 'required|unique:admin_users,symbol_name',
             'email' => 'email|unique:admin_users,email',
-            'password' => 'required|required_with:password_confirmation|same:password_confirmation'
+            'password' => 'required|required_with:password_confirmation|same:password_confirmation',
+            'address'   =>  'required',
+            'mobile'    =>  'required'
         ]);
     }
 }

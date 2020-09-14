@@ -108,6 +108,7 @@ class CustomerController extends AdminController
                 return  '<span class="label label-danger">Khoá</span>';
             }
         });
+        $grid->note('Ghi chú')->editable();
         $grid->created_at(trans('admin.created_at'))->display(function () {
             return $this->created_at != "" ? date('H:i | d-m-Y', strtotime($this->created_at)) : "";
         });
@@ -153,6 +154,7 @@ class CustomerController extends AdminController
                 return  'Khoá';
             }
         });
+        $show->note();
         $show->created_at(trans('admin.created_at'))->as(function () {
             return date('H:i | d-m-Y', strtotime($this->created_at));
         });
@@ -186,6 +188,7 @@ class CustomerController extends AdminController
             $form->select('ware_house_id', 'Kho')->options(Warehouse::where('is_active', 1)->get()->pluck('name', 'id'));
             $form->text('address', 'Địa chỉ');
             $form->select('is_active', 'Trạng thái')->options(User::STATUS)->default(1);
+            $form->text('note');
         });
 
         $form->disableEditingCheck();

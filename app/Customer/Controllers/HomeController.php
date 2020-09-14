@@ -8,6 +8,7 @@ use Encore\Admin\Form;
 use Encore\Admin\Grid;
 use Encore\Admin\Show;
 use App\Http\Controllers\Controller;
+use App\Models\Popup;
 use App\Models\TransportOrderItem;
 use Illuminate\Http\Request;
 
@@ -28,7 +29,8 @@ class HomeController extends Controller
     public function index(Request $request) {
         $service = new OrderService;
         $orderItem = $service->search($request->all());
-        return view('customer.index', compact('orderItem'));
+        $popup = Popup::first();
+        return view('customer.index', compact('orderItem', 'popup'));
     }  
 
      /**

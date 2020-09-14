@@ -58,6 +58,42 @@
                     </div>
                 </div>
 
+                <div class="form-group{{ $errors->has('address') ? ' has-error' : '' }}">
+                    <label for="address" class="col-md-4 control-label">Địa chỉ  <span class="error">(*)</span></label>
+
+                    <div class="col-md-12">
+                        <input id="address" type="text" class="form-control" 
+                            name="address" 
+                            value="{{ old('address') }}" 
+                            placeholder="..."
+                            >
+
+                        @if ($errors->has('address'))
+                            <span class="help-block">
+                                <strong>{{ $errors->first('address') }}</strong>
+                            </span>
+                        @endif
+                    </div>
+                </div>
+
+                <div class="form-group{{ $errors->has('mobile') ? ' has-error' : '' }}">
+                    <label for="mobile" class="col-md-4 control-label">Số điện thoại  <span class="error">(*)</span></label>
+
+                    <div class="col-md-12">
+                        <input id="mobile" type="text" class="form-control" 
+                            name="mobile" 
+                            value="{{ old('mobile') }}" 
+                            placeholder="..."
+                            >
+
+                        @if ($errors->has('mobile'))
+                            <span class="help-block">
+                                <strong>{{ $errors->first('mobile') }}</strong>
+                            </span>
+                        @endif
+                    </div>
+                </div>
+
                 <div class="form-group{{ $errors->has('password') ? ' has-error' : '' }}">
                     <label for="password" class="col-md-4 control-label">Mật khẩu  <span class="error">(*)</span></label>
 

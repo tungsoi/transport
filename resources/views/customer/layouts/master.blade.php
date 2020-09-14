@@ -12,22 +12,23 @@
     <link rel="shortcut icon" href="{{ asset('rongdo/img/money.png') }}">
   
     <!-- Bootstrap core CSS -->
-    <link href="{{ asset('rongdo/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet">
+    <link href="{{ asset('rongdo/bootstrap/css/bootstrap.css') }}" rel="stylesheet">
 
     <!-- Custom fonts for this template -->
     <link href="{{ asset('rongdo/fontawesome-free/css/all.min.css') }}" rel="stylesheet" type="text/css">
     <link rel="stylesheet" href="{{ asset('vendor/laravel-admin/font-awesome/css/font-awesome.min.css') }}">
     
     <!-- Custom styles for this template -->
-    <link href="{{ asset('rongdo/app/clean-blog.min.css') }}" rel="stylesheet">
+    <link href="{{ asset('rongdo/app/clean-blog.min.css') }}" rel="stylesheet"><link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300&display=swap" rel="stylesheet">
 
     @yield('style')
     <style>
 
-        @import url(https://fonts.googleapis.com/css?family=Open+Sans);
+        /* @import url(https://fonts.googleapis.com/css?family=Open+Sans); */
 
-        body {
-            font-family: 'Open Sans', sans-serif !important;
+        body, body p, body span, body li a, h1, h2, h3, h4 , h5, h6, label, td, th, button {
+            /* font-family: 'Open Sans', sans-serif !important; */
+            font-family: 'Roboto', sans-serif;
         }
         .logo-img {
             max-width: 40px;
@@ -107,6 +108,9 @@
         .masthead h2, .masthead h3, .masthead h4, .masthead h5 {
             font-weight: 300;
         }
+        #mainNav .navbar-nav>li.nav-item>a {
+            font-size: 14px;
+        }
     </style>
 </head>
 
@@ -124,6 +128,19 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarResponsive">
                 <ul class="navbar-nav ml-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/">Tìm mã vận đơn</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Báo giá</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Giới thiệu</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Liên hệ</a>
+                    </li>
+
                     @if (! Admin::user())
                         <li class="nav-item">
                             <a class="nav-link" href="{{ route('admin.login') }}">Đăng nhập</a>
@@ -131,6 +148,13 @@
                         <li class="nav-item">
                             <a class="nav-link" href="{{ route('customer.register') }}">Đăng ký</a>
                         </li>
+
+                    @else 
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ route('admin.home') }}"> {{ Admin::user()->name }} 
+                            <i class="fa fa-sign-in" aria-hidden="true"></i>
+                        </a>
+                    </li>
 
                     @endif
                 </ul>
@@ -170,6 +194,32 @@
         </div>
     </footer>
 
+
+    <!-- Modal -->
+    @if (isset($popup))
+    <div id="mdl-popup" class="modal fade" role="dialog">
+        <div class="modal-dialog modal-lg">
+    
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-body">
+                <br>
+                <center>
+                    <img src="{{ asset('rongdo/img/final-logo.png') }}" alt="" srcset="">
+                </center>
+                <hr>
+                <h2 class="uppercase text-center">{{ $popup->title }}</h2>
+                <div class="popup-content">
+                    {!! $popup->content !!}
+                </div>
+            </div>
+        </div>
+    
+        </div>
+    </div>
+
+    @endif
+
     <!-- Bootstrap core JavaScript -->
     <script src="{{ asset('rongdo/jquery/jquery.min.js') }}"></script>
     <script src="{{ asset('rongdo/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
@@ -178,5 +228,11 @@
     <script src="{{ asset('rongdo/app/clean-blog.min.js') }}"></script>
 
     @yield('script')
+
+    <script>
+        $(document).ready(function(){
+            $('#mdl-popup').modal('show');
+        });
+    </script>
 </body>
 </html>

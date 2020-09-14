@@ -428,6 +428,17 @@ return [
         
             // Set to `false` if you want to disable this extension
             'enable' => true,
+        ],
+        'summernote' => [
+        
+            //Set to false if you want to disable this extension
+            'enable' => true,
+            
+            // Editor configuration
+            'config' => [
+                'height' => 500,
+                'font-family'   =>  'Arial'
+            ]
         ]
     ],
     'copyright' =>  "Copyright © 2020 Alilogi Logistics."

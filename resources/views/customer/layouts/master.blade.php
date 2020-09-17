@@ -213,6 +213,9 @@
                     {!! $popup->content !!}
                 </div>
             </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal">Đóng</button>
+            </div>
         </div>
     
         </div>

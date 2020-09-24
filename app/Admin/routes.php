@@ -57,6 +57,9 @@ Route::group([
     $router->get('/profiles/messages', 'ProfileController@message')->name('customer.message');
     $router->get('/profiles/messages/create', 'ProfileController@messageCreate')->name('customer.messageCreate');
 
+    // post
+    $router->get('/posts/fetch/{id}', 'PostController@fetch')->name('posts.fetch');
+
     $router->resources([
         'customers'             =>  'CustomerController',
         'warehouses'            =>  'WareHouseController',
@@ -64,7 +67,8 @@ Route::group([
         'transport_orders'      =>  'TransportOrderController',
         'profiles'              =>  'ProfileController',
         'messages'              =>  'MessageController',
-        'popups'                =>  'PopupController'
+        'popups'                =>  'PopupController',
+        'posts'                 =>  'PostController'
     ]);
 });
 

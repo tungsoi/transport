@@ -132,13 +132,13 @@
                         <a class="nav-link" href="/">Tìm mã vận đơn</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">Báo giá</a>
+                        <a class="nav-link" href="{{ route('posts.fetch', 'fee') }}">Báo giá</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">Giới thiệu</a>
+                        <a class="nav-link" href="{{ route('posts.fetch', 'introduction') }}">Giới thiệu</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">Liên hệ</a>
+                        <a class="nav-link" href="{{ route('posts.fetch', 'contact') }}">Liên hệ</a>
                     </li>
 
                     @if (! Admin::user())

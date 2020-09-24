@@ -107,6 +107,7 @@ class PostController extends AdminController
 
     public function fetch($code) {
         $post = Post::whereSlug($code)->first();
+        if (! $post) { return redirect("/"); }
         $popup = Popup::first();
         return view('customer.layouts.post', compact('post', 'popup'));
     }

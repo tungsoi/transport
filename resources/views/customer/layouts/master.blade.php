@@ -132,10 +132,10 @@
                         <a class="nav-link" href="/">Tìm mã vận đơn</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ route('posts.fetch', 'fee') }}">Báo giá</a>
+                        <a class="nav-link" href="{{ route('posts.fetch', 'introduction') }}">Giới thiệu</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ route('posts.fetch', 'introduction') }}">Giới thiệu</a>
+                        <a class="nav-link" href="{{ route('posts.fetch', 'fee') }}">Báo giá</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="{{ route('posts.fetch', 'contact') }}">Liên hệ</a>
@@ -173,7 +173,7 @@
                         <h4>NHẬP HÀNG TẬN GỐC</h4>
                         <h4>NGUỒN HÀNG UY TÍN THẾ GIỚI</h4>
                         <br><br>
-                        <h5>Kho Sài Gòn: 0977777324 | Kho Hà Nội: 0971226605</h5>
+                        <h5>Kho Hà Nội: 0971226605 | Hotline: 0971226601</h5>
                     </div>
                 </div>
             </div>

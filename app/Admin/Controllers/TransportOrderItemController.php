@@ -230,7 +230,8 @@ EOT
     {
         $form = new Form(new TransportOrderItem);
         $form->text('cn_code', 'Mã vận đơn')->rules('required');
-        $form->select('transport_customer_id', 'Tên khách hàng')->options(User::where('is_customer', 1)->get()->pluck('symbol_name', 'id'))->rules('required');
+        $form->text('customer_name');
+        // $form->select('transport_customer_id', 'Tên khách hàng')->options(User::where('is_customer', 1)->get()->pluck('symbol_name', 'id'))->rules('required');
         $form->text('kg', 'Cân nặng (kg)')->rules('required');
         $form->text('product_length', 'Chiều dài (cm)')->rules('required');
         $form->text('product_width', 'Chiều rộng (cm)')->rules('required');

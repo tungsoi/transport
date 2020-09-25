@@ -154,10 +154,13 @@ class TransportOrderItemController extends AdminController
         $grid->paginate(20);
         $grid->disableCreateButton();
         $grid->tools(function (Grid\Tools $tools) {
-            $tools->append('<a id="btn-payment-code" class="btn btn-sm btn-danger" title="Thanh toán">
-                <i class="fa fa-dollar"></i>
-                <span class="hidden-xs">&nbsp;Thanh toán</span>
-            </a>');
+            if (Admin::user()->can('order.payment') ) {
+                $tools->append('<a id="btn-payment-code" class="btn btn-sm btn-danger" title="Thanh toán">
+                    <i class="fa fa-dollar"></i>
+                    <span class="hidden-xs">&nbsp;Thanh toán</span>
+                </a>');
+            }
+            
         });
         Admin::script(
             <<<EOT

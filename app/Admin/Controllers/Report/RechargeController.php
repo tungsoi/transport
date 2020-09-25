@@ -14,6 +14,7 @@ use Encore\Admin\Layout\Row;
 use Encore\Admin\Layout\Content;
 use Encore\Admin\Widgets\Box;
 use Encore\Admin\Layout\Column;
+use Encore\Admin\Facades\Admin;
 
 class RechargeController extends AdminController
 {
@@ -82,7 +83,7 @@ class RechargeController extends AdminController
         $grid->filter(function($filter) {
             $filter->expand();
             $filter->disableIdFilter();
-            $filter->between('created_at', 'Ngày tạo')->date();
+            $filter->equal('type_recharge', 'Loại giao dịch')->select(TransportRecharge::RECHARGE);
         });
 
         $grid->id('ID');
@@ -99,7 +100,8 @@ class RechargeController extends AdminController
 
             return '<span class="label label-danger">'.number_format($this->money).'</span>';
         })->totalRow(function ($amount) {
-            return number_format($amount);
+            $am = number_format($amount);
+            return '<span class="label label-danger">'.$am.'</span>';
         });
         $grid->type_recharge('Loại giao dịch')->display(function () {
             return TransportRecharge::RECHARGE[$this->type_recharge];
@@ -117,6 +119,31 @@ class RechargeController extends AdminController
         $grid->disableActions();
 
         $grid->disableCreateButton();
+
+        $grid->tools(function (Grid\Tools $tools) {
+            $tools->append('<a href="'.route('reports.recharges').'" class="btn btn-sm btn-danger" title="Tất cả">
+                <i class="fa fa-dollar"></i>
+                <span class="hidden-xs">&nbsp;Tất cả</span>
+            </a>');
+
+            $tools->append('<a href="'.route('reports.recharges').'?&type_recharge=0" class="btn btn-sm btn-warning" title="Nạp tiền mặt">
+                <i class="fa fa-dollar"></i>
+                <span class="hidden-xs">&nbsp;Nạp tiền mặt</span>
+            </a>');
+            $tools->append('<a href="'.route('reports.recharges').'?&type_recharge=1" class="btn btn-sm btn-success" title="Nạp tiền chuyển khoản">
+                <i class="fa fa-dollar"></i>
+                <span class="hidden-xs">&nbsp;Nạp tiền chuyển khoản</span>
+            </a>');
+        });
+
+        Admin::script(
+            <<<EOT
+
+            $('tfoot').each(function () {
+                $(this).insertAfter($(this).siblings('thead'));
+            });
+EOT
+    );
         return $grid;
     }
 

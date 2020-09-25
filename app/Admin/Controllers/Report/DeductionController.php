@@ -14,6 +14,7 @@ use Encore\Admin\Layout\Row;
 use Encore\Admin\Layout\Content;
 use Encore\Admin\Widgets\Box;
 use Encore\Admin\Layout\Column;
+use Encore\Admin\Facades\Admin;
 
 class DeductionController extends AdminController
 {
@@ -91,7 +92,8 @@ class DeductionController extends AdminController
 
             return '<span class="label label-danger">'.number_format($this->money).'</span>';
         })->totalRow(function ($amount) {
-            return number_format($amount);
+            $am = number_format($amount);
+            return '<span class="label label-danger">'.$am.'</span>';
         });
         $grid->type_recharge('Loại giao dịch')->display(function () {
             return TransportRecharge::RECHARGE_PAYMENT;
@@ -108,6 +110,14 @@ class DeductionController extends AdminController
 
         $grid->disableCreateButton();
         $grid->disableActions();
+        Admin::script(
+            <<<EOT
+
+            $('tfoot').each(function () {
+                $(this).insertAfter($(this).siblings('thead'));
+            });
+EOT
+    );
         return $grid;
     }
 

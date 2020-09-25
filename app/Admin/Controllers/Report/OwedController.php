@@ -84,7 +84,7 @@ class OwedController extends AdminController
             }
 
             return '<span class="label label-danger">'.number_format($this->wallet).'</span>';
-        });
+        })->sortable();
         $grid->address('Địa chỉ')->editable();
         $grid->is_active('Trạng thái')->display(function () {
             switch($this->is_active) {

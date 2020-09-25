@@ -80,17 +80,17 @@ class CustomerController extends AdminController
             }
 
             return '<span class="label label-danger">'.number_format($this->wallet).'</span>';
-        });
+        })->sortable();
         
         $grid->sumKg('Tổng cân')->display(function () {
             return $this->getSumWeightByCustomerSymbolName($this->symbol_name);
-        });
+        })->sortable();
         $grid->sumCublicMeter('Tổng khối')->display(function () {
             return $this->getSumCublicMeterByCustomerSymbolName($this->symbol_name);
-        });
+        })->sortable();
         $grid->sumMoneyPayment('Doanh thu (VND)')->display(function () {
             return number_format($this->getSumMoneyPayment($this->symbol_name)) ?? "";
-        });
+        })->sortable();
         $grid->sumMoneyRecharge('Nạp tài khoản (VND)')->display(function () {
             $recharge_money = TransportRecharge::where('customer_id', $this->id)->where('type_recharge', TransportRecharge::RECHARGE_MONEY)->sum('money');
             $recharge_bank = TransportRecharge::where('customer_id', $this->id)->where('type_recharge', TransportRecharge::RECHARGE_BANK)->sum('money');

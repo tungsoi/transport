@@ -83,7 +83,6 @@ class RechargeController extends AdminController
         $grid->filter(function($filter) {
             $filter->expand();
             $filter->disableIdFilter();
-            $filter->equal('type_recharge', 'Loại giao dịch')->select(TransportRecharge::RECHARGE);
         });
 
         $grid->id('ID');

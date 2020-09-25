@@ -187,6 +187,7 @@ class CustomerController extends AdminController
             $form->text('email')
             ->creationRules(['required', 'unique:admin_users,email'])
             ->updateRules(['required', "unique:admin_users,email,{{id}}"]);
+            $form->hidden('is_customer')->default(1);
         });
         
         $form->column(1/2, function ($form) {

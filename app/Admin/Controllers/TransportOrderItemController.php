@@ -82,7 +82,10 @@ class TransportOrderItemController extends AdminController
             if ($this->transport_customer_id == "") {
                 return $this->customer_name.$input;
             }
-            return $this->customer->symbol_name.$input ?? "";
+            $res = $this->customer->symbol_name ?? "";
+            if ($res != null) {
+                return $res.$input;
+            }
         });
         $grid->column('payment_customer_id', 'KH Thanh toán')->display(function () {
             if (is_null($this->order_id)) {
@@ -150,9 +153,14 @@ class TransportOrderItemController extends AdminController
             } elseif ($actions->row->warehouse_vn == 0) {
                 $actions->disableEdit();
             }
+
+            if (! Admin::user()->isRole('administrator')) {
+                $actions->disableDelete();
+            }
         });
         $grid->paginate(20);
         $grid->disableCreateButton();
+        
         $grid->tools(function (Grid\Tools $tools) {
             if (Admin::user()->can('order.payment') ) {
                 $tools->append('<a id="btn-payment-code" class="btn btn-sm btn-danger" title="Thanh toán">
@@ -160,8 +168,14 @@ class TransportOrderItemController extends AdminController
                     <span class="hidden-xs">&nbsp;Thanh toán</span>
                 </a>');
             }
-            
+
+            $tools->batch(function(Grid\Tools\BatchActions $actions){
+                if (! Admin::user()->isRole('administrator')) {
+                    $actions->disableDelete();
+                }
+            });
         });
+
         Admin::script(
             <<<EOT
 

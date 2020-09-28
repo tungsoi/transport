@@ -55,7 +55,12 @@ class TransportOrderController extends AdminController
             });
             $filter->column(1/2, function ($filter) {
                 $filter->between('created_at', 'Ngày thanh toán')->date();
-                $filter->like('customer_name', 'Tên khách hàng');
+                $filter->where(function ($query) {
+                    $orders = TransportOrderItem::where('customer_name', 'like', "%{$this->input}%")->get()->pluck('order_id');
+
+                    $query->whereIn('id', $orders);
+                
+                }, 'Tên khách hàng');
             });
         });
         $grid->rows(function (Grid\Row $row) {
@@ -77,7 +82,7 @@ class TransportOrderController extends AdminController
         });
         $grid->items('Số MVD')->count()->expand(function ($model) {
 
-            $items = $model->items()->take(10)->get()->map(function ($comment) {
+            $items = $model->items()->take(50)->get()->map(function ($comment) {
                 return $comment->only(['cn_code', 'kg', 'product_width', 'product_length', 'product_height', 'advance_drag']);
             })->toArray();
             
@@ -614,40 +619,43 @@ class TransportOrderController extends AdminController
                 return redirect()->back();
             }
 
-            # create order
-            $order = Order::firstOrCreate($data);
+            $flag = Order::where('order_number', $data['order_number'])->count();
+            if ($flag == 0) {
+                # create order
+                $order = Order::create($data);
 
-            # update items
-            foreach ($request->item_id as $key => $id)
-            {
-                $dataItem = $service->buildDataItemPaymentUpdate($key, $request->all());
-                $dataItem['order_id'] = $order->id;
+                # update items
+                foreach ($request->item_id as $key => $id)
+                {
+                    $dataItem = $service->buildDataItemPaymentUpdate($key, $request->all());
+                    $dataItem['order_id'] = $order->id;
 
-                TransportOrderItem::find($id)->update($dataItem);
+                    TransportOrderItem::find($id)->update($dataItem);
+                }
+
+                # process wallet customer
+                $customer = User::find($request->payment_customer_id);
+                $wallet = (int)$customer->wallet;
+                $customer->update([
+                    'wallet'    =>  (int) $wallet - (int) str_replace('.00', '', $data['final_total_price'])
+                ]);
+                $customer->save();
+
+                # create record in report_recharge
+                TransportRecharge::create([
+                    'customer_id'       =>  $request->payment_customer_id,
+                    'user_id_created'   =>  1,
+                    'money'             =>  (int) str_replace('.00', '', $data['final_total_price']),
+                    'type_recharge'     =>  TransportRecharge::PAYMENT,
+                    'content'           =>  TransportRecharge::RECHARGE_PAYMENT . " " . $order->order_number
+                ]);
+                
+                DB::commit();
+                Session::flash('payment-success', 'Thanh toán đơn hàng vận chuyển thành công');
+
+                return redirect()->route('transport_orders.payments')->with(['order_raw' => $order]);
+
             }
-
-            # process wallet customer
-            $customer = User::find($request->payment_customer_id);
-            $wallet = (int)$customer->wallet;
-            $customer->update([
-                'wallet'    =>  (int) $wallet - (int) str_replace('.00', '', $data['final_total_price'])
-            ]);
-            $customer->save();
-
-            # create record in report_recharge
-            TransportRecharge::create([
-                'customer_id'       =>  $request->payment_customer_id,
-                'user_id_created'   =>  1,
-                'money'             =>  (int) str_replace('.00', '', $data['final_total_price']),
-                'type_recharge'     =>  TransportRecharge::PAYMENT,
-                'content'           =>  TransportRecharge::RECHARGE_PAYMENT . " " . $order->order_number
-            ]);
-            
-            DB::commit();
-            Session::flash('payment-success', 'Thanh toán đơn hàng vận chuyển thành công');
-
-            return redirect()->route('transport_orders.payments')->with(['order_raw' => $order]);
-
         } catch (\Exception $exception) {
             DB::rollback();
             Log::error(['message' => 'Lỗi khi thanh toán đơn hàng vận chuyển' ]);

@@ -11,6 +11,7 @@ use Encore\Admin\Show;
 use App\User;
 use App\Models\TransportOrderItem;
 use Encore\Admin\Facades\Admin;
+use App\Models\Order;
 
 class TransportOrderItemController extends AdminController
 {
@@ -34,12 +35,18 @@ class TransportOrderItemController extends AdminController
     protected function grid()
     {
         $grid = new Grid(new TransportOrderItem);
-        $grid->model()->orderBy('id', 'desc');
+        $grid->model()->orderBy('is_payment', 'asc')->orderBy('created_at', 'asc');
 
         $grid->filter(function($filter) {
             $filter->expand();
             $filter->disableIdFilter();
             $filter->column(1/2, function ($filter) {
+                $filter->where(function ($query) {
+                    $orders = Order::where('order_number', 'like', "%{$this->input}%")->get()->pluck('id');
+
+                    $query->whereIn('order_id', $orders);
+                
+                }, 'Mã đơn hàng');
                 $filter->like('cn_code', 'Mã vận đơn');
                 $filter->like('customer_name', 'Mã KH');
                 $filter->where(function ($query) {
@@ -129,7 +136,7 @@ class TransportOrderItemController extends AdminController
             {
                 case 1:
                     $msg = "Đã thanh toán";
-                    return '<span class="label label-success">'.$msg.'</span> <br>' . date('H:i | d-m-Y', strtotime($this->transporting_vn_date));
+                    return '<span class="label label-success">'.$msg.'</span> <br>' . date('H:i | d-m-Y', strtotime($this->order->created_at));
                 case 0 :
                     return '<span class="label label-danger">Chưa thanh toán</span>';
             }

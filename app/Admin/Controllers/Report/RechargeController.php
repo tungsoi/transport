@@ -12,7 +12,6 @@ use App\Models\TransportOrderItem;
 use App\Models\TransportRecharge;
 use Encore\Admin\Layout\Row;
 use Encore\Admin\Layout\Content;
-use Encore\Admin\Widgets\Box;
 use Encore\Admin\Layout\Column;
 use Encore\Admin\Facades\Admin;
 
@@ -83,6 +82,8 @@ class RechargeController extends AdminController
         $grid->filter(function($filter) {
             $filter->expand();
             $filter->disableIdFilter();
+            $filter->equal('type_recharge', 'Loại giao dịch')->select(TransportRecharge::RECHARE_SEARCH);
+            $filter->between('created_at', 'Ngày tạo')->date();
         });
 
         $grid->id('ID');
@@ -121,16 +122,13 @@ class RechargeController extends AdminController
 
         $grid->tools(function (Grid\Tools $tools) {
             $tools->append('<a href="'.route('reports.recharges').'" class="btn btn-sm btn-danger" title="Tất cả">
-                <i class="fa fa-dollar"></i>
                 <span class="hidden-xs">&nbsp;Tất cả</span>
             </a>');
 
-            $tools->append('<a href="'.route('reports.recharges').'?&type_recharge=0" class="btn btn-sm btn-warning" title="Nạp tiền mặt">
-                <i class="fa fa-dollar"></i>
+            $tools->append('<a href="'.route('reports.recharges').'?type_recharge=0" class="btn btn-sm btn-warning" title="Nạp tiền mặt">
                 <span class="hidden-xs">&nbsp;Nạp tiền mặt</span>
             </a>');
-            $tools->append('<a href="'.route('reports.recharges').'?&type_recharge=1" class="btn btn-sm btn-success" title="Nạp tiền chuyển khoản">
-                <i class="fa fa-dollar"></i>
+            $tools->append('<a href="'.route('reports.recharges').'?type_recharge=1" class="btn btn-sm btn-success" title="Nạp tiền chuyển khoản">
                 <span class="hidden-xs">&nbsp;Nạp tiền chuyển khoản</span>
             </a>');
         });
@@ -143,6 +141,7 @@ class RechargeController extends AdminController
             });
 EOT
     );
+
         return $grid;
     }
 

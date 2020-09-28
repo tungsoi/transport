@@ -65,7 +65,7 @@ class RefundController extends AdminController
     protected function grid()
     {
         $grid = new Grid(new TransportRecharge);
-        $grid->model()->where('type_recharge', TransportRecharge::REFUND)->orderBy('id', 'desc');
+        $grid->model()->whereIn('type_recharge', [TransportRecharge::REFUND, TransportRecharge::DEDUCTION])->orderBy('id', 'desc');
 
         $grid->filter(function($filter) {
             $filter->expand();

@@ -235,7 +235,7 @@ class CustomerController extends AdminController
         $form->display('phone_number', 'Số điện thoại')->default($user->phone_number);
         $form->display('wallet', 'Số dư hiện tại')->default(number_format($user->wallet));
         $form->divider('Nạp tiền');
-        $form->currency('money', 'Số tiền cần nạp')->rules('required')->symbol('VND')->default(0)->digits(0);
+        $form->currency('money', 'Số tiền cần nạp')->rules('required|min:4')->symbol('VND')->digits(0);
         $form->select('type_recharge', 'Loại hành động')->options(TransportRecharge::RECHARGE)->default(1)->rules('required')
         ->help('Trường hợp Hoàn tiền hoặc trừ tiền, yêu cầu ghi rõ nội dung: Lý do, Đơn hàng, ...');
         $form->textarea('content', 'Nội dung')->default('...');
@@ -255,6 +255,14 @@ class CustomerController extends AdminController
             </a>');
         });
         
+        Admin::script(
+            <<<EOT
+            $('form').submit(function() {
+                var c = confirm("Xac nhan nap tien cho Khach hang nay ?");
+                return c; //you can just return c because it will be true or false
+            });
+EOT
+    );
         return $form;
     }
 

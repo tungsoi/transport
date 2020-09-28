@@ -71,6 +71,11 @@ class DeductionController extends AdminController
         $grid->filter(function($filter) {
             $filter->expand();
             $filter->disableIdFilter();
+            $filter->where(function ($query) {
+
+                $query->where('content', 'like', "%{$this->input}%");
+            
+            }, 'Mã đơn hàng');
             $filter->between('created_at', 'Ngày tạo')->date();
         });
 

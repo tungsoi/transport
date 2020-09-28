@@ -44,6 +44,11 @@ class TransportRecharge extends Model
         self::PAYMENT     =>  self::RECHARGE_PAYMENT,
     ];
 
+    const RECHARE_SEARCH = [
+        self::RECHARGE_MONEY    =>  'Nạp tiền mặt',
+        self::RECHARGE_BANK     =>  'Nạp tiền chuyển khoản',
+    ];
+
     const REFUND = 2;
     const DEDUCTION = 3;
     const RECHARGE_MONEY = 0;

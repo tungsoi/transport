@@ -50,7 +50,7 @@ class OwedController extends AdminController
     protected function grid()
     {
         $grid = new Grid(new User);
-        $grid->model()->where('wallet', '<', 0)->orderBy('id', 'asc');
+        $grid->model()->where('wallet', '<', 0)->orderByRaw('CHAR_LENGTH (wallet) desc')->orderBy('wallet', 'desc');
 
         $grid->filter(function($filter) {
             $filter->expand();
@@ -84,7 +84,7 @@ class OwedController extends AdminController
             }
 
             return '<span class="label label-danger">'.number_format($this->wallet).'</span>';
-        })->sortable();
+        });
         $grid->address('Địa chỉ')->editable();
         $grid->is_active('Trạng thái')->display(function () {
             switch($this->is_active) {

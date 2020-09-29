@@ -44,7 +44,7 @@ class OrderService {
                 $result->where('warehouse_vn_date', '<=', $data['warehouse_vn_date_finish']);
             }
 
-            return $result->get();
+            return $result->orderBy('is_payment', 'desc')->orderBy('created_at', 'asc')->get();
         }
     }
 

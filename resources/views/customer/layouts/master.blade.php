@@ -21,6 +21,8 @@
     <!-- Custom styles for this template -->
     <link href="{{ asset('rongdo/app/clean-blog.min.css') }}" rel="stylesheet"><link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300&display=swap" rel="stylesheet">
 
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+
     @yield('style')
     <style>
 
@@ -113,7 +115,7 @@
         }
 
         #tbl_search_result thead th {
-            font-size: 16px;
+            font-size: 14px;
             font-weight: bold;
             color: black;
         }
@@ -236,12 +238,49 @@
     <!-- Custom scripts for this template -->
     <script src="{{ asset('rongdo/app/clean-blog.min.js') }}"></script>
 
+    {{-- <script src="https://code.jquery.com/jquery-1.12.4.js"></script> --}}
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
     @yield('script')
 
     <script>
         $(document).ready(function(){
             $('#mdl-popup').modal('show');
+            $( "#warehouse_cn_date_begin" ).datepicker();
+            $( "#warehouse_cn_date_finish" ).datepicker();
+            $( "#warehouse_vn_date_begin" ).datepicker();
+            $( "#warehouse_vn_date_finish" ).datepicker();
+            
+            $( "#warehouse_cn_date_begin" ).datepicker("option", "dateFormat", "dd-mm-yy");
+            $( "#warehouse_cn_date_finish" ).datepicker("option", "dateFormat", "dd-mm-yy");
+            $( "#warehouse_vn_date_begin" ).datepicker("option", "dateFormat", "dd-mm-yy");
+            $( "#warehouse_vn_date_finish" ).datepicker("option", "dateFormat", "dd-mm-yy");
+
+            jQuery(function ($)
+            {
+            $.datepicker.regional["vi-VN"] =
+                {
+                    closeText: "Đóng",
+                    prevText: "Trước",
+                    nextText: "Sau",
+                    currentText: "Hôm nay",
+                    monthNames: ["Tháng một", "Tháng hai", "Tháng ba", "Tháng tư", "Tháng năm", "Tháng sáu", "Tháng bảy", "Tháng tám", "Tháng chín", "Tháng mười", "Tháng mười một", "Tháng mười hai"],
+                    monthNamesShort: ["Một", "Hai", "Ba", "Bốn", "Năm", "Sáu", "Bảy", "Tám", "Chín", "Mười", "Mười một", "Mười hai"],
+                    dayNames: ["Chủ nhật", "Thứ hai", "Thứ ba", "Thứ tư", "Thứ năm", "Thứ sáu", "Thứ bảy"],
+                    dayNamesShort: ["CN", "Hai", "Ba", "Tư", "Năm", "Sáu", "Bảy"],
+                    dayNamesMin: ["CN", "T2", "T3", "T4", "T5", "T6", "T7"],
+                    weekHeader: "Tuần",
+                    dateFormat: "dd/mm/yy",
+                    firstDay: 1,
+                    isRTL: false,
+                    showMonthAfterYear: false,
+                    yearSuffix: ""
+                };
+
+                $.datepicker.setDefaults($.datepicker.regional["vi-VN"]);
+            });
         });
     </script>
+
 </body>
 </html>

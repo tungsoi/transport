@@ -30,7 +30,9 @@ class HomeController extends Controller
         $service = new OrderService;
         $orderItem = $service->search($request->all());
         $popup = Popup::first();
-        return view('customer.index', compact('orderItem', 'popup'));
+        $data = $request->all();
+
+        return view('customer.index', compact('orderItem', 'popup', 'data'));
     }  
 
      /**

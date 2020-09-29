@@ -16,46 +16,36 @@ class OrderService {
      */
     public function search($data = [])
     {
-        if (! isset($data['cn_code']) && !isset($data['username'])) {
-            return [];
+        $data['cn_code'] = isset($data['cn_code']) ? $data['cn_code'] : null;
+        $data['username'] = isset($data['username']) ? $data['username'] : null;
+
+        if ($data['cn_code'] == "" && $data['username'] == "") { return []; }
+        else {
+            $result = TransportOrderItem::where('cn_code', 'like', "%".$data['cn_code']."%")
+                    ->where('customer_name', 'like', "%".$data['username']."%");
+
+            if ($data['warehouse_cn_date_begin'] != null) {
+                $data['warehouse_cn_date_begin'] = date('Y-m-d 00:00:00', strtotime($data['warehouse_cn_date_begin']));
+                $result->where('warehouse_cn_date', '>=', $data['warehouse_cn_date_begin']);
+            }
+
+            if ($data['warehouse_cn_date_finish'] != null) {
+                $data['warehouse_cn_date_finish'] = date('Y-m-d 00:00:00', strtotime($data['warehouse_cn_date_finish']));
+                $result->where('warehouse_cn_date', '<=', $data['warehouse_cn_date_finish']);
+            }
+
+            if ($data['warehouse_vn_date_begin'] != null) {
+                $data['warehouse_vn_date_begin'] = date('Y-m-d 00:00:00', strtotime($data['warehouse_vn_date_begin']));
+                $result->where('warehouse_vn_date', '>=', $data['warehouse_vn_date_begin']);
+            }
+
+            if ($data['warehouse_vn_date_finish'] != null) {
+                $data['warehouse_vn_date_finish'] = date('Y-m-d 00:00:00', strtotime($data['warehouse_vn_date_finish']));
+                $result->where('warehouse_vn_date', '<=', $data['warehouse_vn_date_finish']);
+            }
+
+            return $result->get();
         }
-
-        if ($data != null) {
-            $result = null;
-            if ($data['cn_code'] != null) {
-                $result = TransportOrderItem::where('cn_code', 'like', "%".$data['cn_code']."%");
-            }
-            if ($data['username'] != null) {
-                if ($result != null) {
-                    $result->orWhere('customer_name', 'like', "%".$data['username']."%");
-                } else {
-                    $result = TransportOrderItem::where('customer_name', 'like', "%".$data['username']."%");
-                }
-            }
-
-            if ($data['start_date'] != null) {
-                if ($result != null) {
-                    $result->orWhere('warehouse_cn_date', '>=', Carbon::parse($data['start_date'])->startOfDay())
-                    ->orWhere('warehouse_vn_date', '>=', Carbon::parse($data['start_date'])->startOfDay());
-                }
-            }
-
-            if ($data['end_date'] != null) {
-                if ($result != null) {
-                    $result->orWhere('warehouse_cn_date', '<=', Carbon::parse($data['end_date'])->startOfDay())
-                    ->orWhere('warehouse_vn_date', '<=', Carbon::parse($data['end_date'])->startOfDay());
-                }
-            }
-            
-            if ($result != null) {
-                $result->orderBy('is_payment', 'asc')->orderBy('created_at', 'asc');
-                return $result->get();
-            }
-
-            return [];
-        }
-
-        return [];
     }
 
     /**

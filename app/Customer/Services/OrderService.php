@@ -16,24 +16,43 @@ class OrderService {
      */
     public function search($data = [])
     {
-        if ($data) {
-            if (empty($data['cn_code'] && empty($data['username']))) { return []; }
+        if (! isset($data['cn_code']) && !isset($data['username'])) {
+            return [];
+        }
 
-            $orderTransportItem = TransportOrderItem::leftJoin('orders', 'transport_order_items.order_id', '=', 'orders.id')
-                ->leftJoin('admin_users', 'transport_order_items.transport_customer_id', '=', 'admin_users.id')
-                ->select('transport_order_items.*', 'admin_users.symbol_name')
-                ->where(function ($query) use ($data) {
-                    $this->subWhereCnCodeAndUserName($query, $data,'warehouse_cn_date');
-                })
-                ->orWhere(function ($query) use ($data) {
-                    $this->subWhereCnCodeAndUserName($query, $data,'warehouse_vn_date');
-                })
-                ->orWhere(function ($query) use ($data) {
-                    $this->subWhereCnCodeAndUserName($query, $data, 'transporting_vn_date');
-                })
-            ;
+        if ($data != null) {
+            $result = null;
+            if ($data['cn_code'] != null) {
+                $result = TransportOrderItem::where('cn_code', 'like', "%".$data['cn_code']."%");
+            }
+            if ($data['username'] != null) {
+                if ($result != null) {
+                    $result->orWhere('customer_name', 'like', "%".$data['username']."%");
+                } else {
+                    $result = TransportOrderItem::where('customer_name', 'like', "%".$data['username']."%");
+                }
+            }
 
-            return $orderTransportItem->latest()->paginate(200);
+            if ($data['start_date'] != null) {
+                if ($result != null) {
+                    $result->orWhere('warehouse_cn_date', '>=', Carbon::parse($data['start_date'])->startOfDay())
+                    ->orWhere('warehouse_vn_date', '>=', Carbon::parse($data['start_date'])->startOfDay());
+                }
+            }
+
+            if ($data['end_date'] != null) {
+                if ($result != null) {
+                    $result->orWhere('warehouse_cn_date', '<=', Carbon::parse($data['end_date'])->startOfDay())
+                    ->orWhere('warehouse_vn_date', '<=', Carbon::parse($data['end_date'])->startOfDay());
+                }
+            }
+            
+            if ($result != null) {
+                $result->orderBy('is_payment', 'asc')->orderBy('created_at', 'asc');
+                return $result->get();
+            }
+
+            return [];
         }
 
         return [];

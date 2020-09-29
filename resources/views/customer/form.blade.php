@@ -76,14 +76,14 @@
     </form>
 </div>
 
-<div class="container mg-t-20">
+<div class="container-fluid mg-t-20">
     <div class="table-responsive">
       <table class="table table-bordered" id="tbl_search_result">
         <thead>
             <tr>
                 <th class="text-center">STT</th>
                 <th class="text-center">Mã vận đơn TQ</th>
-                <th class="text-center">Khách hàng</th>
+                <th class="text-center">Mã khách hàng</th>
                 <th class="text-center">Cân nặng (kg)</th>
                 <th class="text-center">Chiều dài (cm)</th>
                 <th class="text-center">Chiều rộng (cm)</th>
@@ -100,7 +100,7 @@
                     <tr>
                         <td>{{ $key + 1 }}</td>
                         <td>{{ $item['cn_code'] }}</td>
-                        <td>{{ $item->customer->symbol_name ?? null }}</td>
+                        <td>{{ $item->customer_name ?? null }}</td>
                         <td>{{ $item->kg }}</td>
                         <td>{{ $item->product_length }}</td>
                         <td>{{ $item->product_width }}</td>

@@ -111,6 +111,12 @@
         #mainNav .navbar-nav>li.nav-item>a {
             font-size: 14px;
         }
+
+        #tbl_search_result thead th {
+            font-size: 16px;
+            font-weight: bold;
+            color: black;
+        }
     </style>
 </head>
 

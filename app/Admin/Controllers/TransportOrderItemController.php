@@ -35,7 +35,7 @@ class TransportOrderItemController extends AdminController
     protected function grid()
     {
         $grid = new Grid(new TransportOrderItem);
-        $grid->model()->orderBy('is_payment', 'asc')->orderBy('created_at', 'asc');
+        $grid->model()->orderBy('is_payment', 'asc')->orderBy('created_at', 'desc');
 
         $grid->filter(function($filter) {
             $filter->expand();

@@ -620,7 +620,7 @@ class TransportOrderController extends AdminController
             }
 
             $flag = Order::where('order_number', $data['order_number'])->count();
-            if ($flag == 0) {
+            if ($flag == 0 && sizeof($request->item_id) >= 1) {
                 # create order
                 $order = Order::create($data);
 

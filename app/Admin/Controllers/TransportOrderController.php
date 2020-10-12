@@ -82,7 +82,7 @@ class TransportOrderController extends AdminController
         });
         $grid->items('Số MVD')->count()->expand(function ($model) {
 
-            $items = $model->items()->take(50)->get()->map(function ($comment) {
+            $items = $model->items()->take(200)->get()->map(function ($comment) {
                 return $comment->only(['cn_code', 'kg', 'product_width', 'product_length', 'product_height', 'advance_drag']);
             })->toArray();
             
@@ -287,7 +287,10 @@ class TransportOrderController extends AdminController
             $grid->header(function ($query) {
                 return "<h4 class='uppercase'><b>Danh sách mã vận đơn</b> <br></h4>";
             });
-
+            $grid->rows(function (Grid\Row $row) {
+                $row->column('number', ($row->number+1));
+            });
+            $grid->column('number', 'STT');
             $grid->cn_code('Mã vận đơn');
             $grid->product_width('Rộng (cm)');
             $grid->product_length('Dài (cm)');

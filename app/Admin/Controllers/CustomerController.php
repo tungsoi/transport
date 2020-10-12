@@ -323,7 +323,7 @@ EOT
         $grid->model()
         ->where('content', '!=', '...')
         ->whereNotNull('money')
-        ->whereNotIn($conditions, 'id')
+        ->whereNotIn('id', $conditions)
         ->where('customer_id', $id)
         ->orderBy('id', 'desc');
 

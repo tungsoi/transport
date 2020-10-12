@@ -319,13 +319,7 @@ EOT
     protected function rechargeHistoryGrid($id)
     {
         $grid = new Grid(new TransportRecharge);
-        $conditions = TransportRecharge::where('money', 0)->where('type_recharge', TransportRecharge::RECHARGE_BANK)->get()->pluck('id');
-        $grid->model()
-        ->where('content', '!=', '...')
-        ->whereNotNull('money')
-        ->whereNotIn('id', $conditions)
-        ->where('customer_id', $id)
-        ->orderBy('id', 'desc');
+        $grid->model()->where('customer_id', $id)->orderBy('id', 'desc');
 
         $grid->filter(function($filter) {
             $filter->expand();

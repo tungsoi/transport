@@ -265,7 +265,7 @@ class CustomerController extends AdminController
     protected function rechargeHistoryGrid($id)
     {
         $grid = new Grid(new TransportRecharge);
-        $grid->model()->where('content', '!=', '...')->where('customer_id', $id)->orderBy('id', 'desc');
+        $grid->model()->where('content', '!=', '...')->whereNotNull('money')->where('customer_id', $id)->orderBy('id', 'desc');
 
         $grid->filter(function($filter) {
             $filter->expand();

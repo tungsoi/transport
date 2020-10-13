@@ -61,6 +61,7 @@ class TransportOrderController extends AdminController
                     $query->whereIn('id', $orders);
                 
                 }, 'Tên khách hàng');
+                $filter->equal('payment_customer_id', 'Khách hàng thanh toán')->select(User::where('is_customer', 0)->get()->pluck('symbol_name', 'id'));
             });
         });
         $grid->rows(function (Grid\Row $row) {

@@ -77,7 +77,10 @@ class RechargeController extends AdminController
     protected function grid()
     {
         $grid = new Grid(new TransportRecharge);
-        $grid->model()->whereIn('type_recharge', [TransportRecharge::RECHARGE_MONEY, TransportRecharge::RECHARGE_BANK])->orderBy('id', 'desc');
+        $grid->model()
+        ->whereIn('type_recharge', [TransportRecharge::RECHARGE_MONEY, TransportRecharge::RECHARGE_BANK])
+        ->where('money', ">", 0)
+        ->orderBy('id', 'desc');
 
         $grid->filter(function($filter) {
             $filter->expand();

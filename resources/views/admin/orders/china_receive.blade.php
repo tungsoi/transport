@@ -129,19 +129,19 @@
                                         <input type="text" name="cn_code[]" class="form-control cn_code" placeholder="Nhập mã vận đơn" autofocus>
                                     </td>
                                     <td>
-                                        <input type="text" name="kg[]" class="form-control kg" placeholder="Nhập cân nặng" value="0">
+                                        <input type="text" name="kg[]" class="form-control kg" placeholder="Nhập cân nặng" value="0" readonly>
                                     </td>
                                     <td>
-                                        <input type="number" name="product_length[]" class="form-control product_length" placeholder="Nhập chiều dài" value="0">
+                                        <input type="number" name="product_length[]" class="form-control product_length" placeholder="Nhập chiều dài" value="0" readonly>
                                     </td>
                                     <td>
-                                        <input type="number" name="product_width[]" class="form-control product_width" placeholder="Nhập chiều rộng" value="0">
+                                        <input type="number" name="product_width[]" class="form-control product_width" placeholder="Nhập chiều rộng" value="0" readonly>
                                     </td>
                                     <td>
-                                        <input type="number" name="product_height[]" class="form-control product_height" placeholder="Nhập chiều cao" value="0">
+                                        <input type="number" name="product_height[]" class="form-control product_height" placeholder="Nhập chiều cao" value="0" readonly>
                                     </td>
                                     <td>
-                                        <input type="text" name="advance_drag[]" class="form-control advance_drag" placeholder="Nhập ứng kéo" value="0">
+                                        <input type="text" name="advance_drag[]" class="form-control advance_drag" placeholder="Nhập ứng kéo" value="0" readonly>
                                     </td>
                                     <td>
                                         <i class="fa fa-times-circle btnRemoveItem" aria-hidden="true"></i>

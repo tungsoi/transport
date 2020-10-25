@@ -3,6 +3,8 @@
 namespace App\Customer\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\District;
+use App\Models\Province;
 use App\User;
 use Encore\Admin\Facades\Admin;
 use Illuminate\Http\Request;
@@ -16,7 +18,11 @@ class RegisterController extends Controller {
         if (Admin::user()) {
             return redirect()->route('admin.home');
         }
-        return view('customer.auth.register');
+
+        $provinces = Province::all();
+        $districts = District::all();
+
+        return view('customer.auth.register', compact('provinces', 'districts'));
     }
 
     public function postRegister(Request $request) {
@@ -34,7 +40,9 @@ class RegisterController extends Controller {
             'symbol_name'   =>  $data['symbol_name'],
             'ware_house_id' =>  null,
             'is_active' =>  1,
-            'address'  =>   $data['address']
+            'address'  =>   $data['address'],
+            'province'  =>  $data['province'],
+            'district'  =>  $data['district']
         ]);
 
         DB::table('admin_role_users')->insert([
@@ -51,7 +59,6 @@ class RegisterController extends Controller {
             'symbol_name' => 'required|unique:admin_users,symbol_name',
             'email' => 'email|unique:admin_users,email',
             'password' => 'required|required_with:password_confirmation|same:password_confirmation',
-            'address'   =>  'required',
             'mobile'    =>  'required'
         ]);
     }

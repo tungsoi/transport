@@ -12,7 +12,9 @@ use App\Admin\Actions\Customer\Recharge;
 use App\Admin\Actions\Customer\RechargeHistory;
 use App\Admin\Actions\Customer\OrderHistory;
 use App\Admin\Actions\Customer\OrderPayment;
+use App\Models\District;
 use App\Models\Order;
+use App\Models\Province;
 use App\Models\TransportOrderItem;
 use App\Models\TransportRecharge;
 use Encore\Admin\Facades\Admin;
@@ -99,6 +101,12 @@ class CustomerController extends AdminController
 
             return '<span class="label label-danger">'.number_format($this->wallet).'</span>';
         })->sortable();
+        $grid->province('Tỉnh/thành phố')->display(function () {
+            return Province::whereProvinceId($this->province)->first()->name ?? "";
+        });
+        $grid->district('Quận/huyện')->display(function () {
+            return District::whereDistrictId($this->district)->first()->name ?? "";
+        });
         $grid->address('Địa chỉ')->editable();
         $grid->is_active('Trạng thái')->display(function () {
             switch($this->is_active) {
@@ -121,6 +129,7 @@ class CustomerController extends AdminController
 
             $actions->disableDelete();
         });
+        $grid->disableBatchActions();
 
         $grid->tools(function (Grid\Tools $tools) {
             $tools->batch(function(Grid\Tools\BatchActions $actions) {
@@ -187,12 +196,15 @@ class CustomerController extends AdminController
             $form->text('email')
             ->creationRules(['required', 'unique:admin_users,email'])
             ->updateRules(['required', "unique:admin_users,email,{{id}}"]);
+            $form->text('phone_number', 'SDT');
+            $form->select('ware_house_id', 'Kho')->options(Warehouse::where('is_active', 1)->get()->pluck('name', 'id'));
             $form->hidden('is_customer')->default(1);
         });
         
         $form->column(1/2, function ($form) {
-            $form->text('phone_number', 'SDT');
-            $form->select('ware_house_id', 'Kho')->options(Warehouse::where('is_active', 1)->get()->pluck('name', 'id'));
+            
+            $form->select('province', 'Tỉnh/thành phố')->options(Province::all()->pluck('name', 'province_id'));
+            $form->select('district', 'Quận/huyện')->options(District::all()->pluck('name', 'district_id'));
             $form->text('address', 'Địa chỉ');
             $form->select('is_active', 'Trạng thái')->options(User::STATUS)->default(1);
             $form->text('note');
@@ -582,6 +594,7 @@ EOT
         });
         $grid->disableCreateButton();
         $grid->disableExport();
+        $grid->disableBatchActions();
         $grid->tools(function ($tools) {
             $tools->append('<a href="'.route('customers.index').'" class="btn btn-sm btn-primary" title="Danh sách">
                 <i class="fa fa-list"></i>

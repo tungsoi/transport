@@ -10,6 +10,9 @@
     input {
         margin-bottom: 5px;
     }
+    .option-hide {
+        display: none;
+    }
 </style>
 <div class="container" id="container-transport">
     <div class="row">
@@ -57,15 +60,45 @@
                         @endif
                     </div>
                 </div>
+                
+                <div class="form-group{{ isset($errors) && $errors->has('province') ? ' has-error' : '' }}">
+                    <label for="address" class="col-md-4 control-label">Địa chỉ  <span class="error">(*)</span></label>
+                    <div class="col-md-12">
+
+                        <select name="province" id="province" class="form-control" value={{ old('province')}}>
+                            <option value="" checked>{{ trans('admin.province') }}</option>
+                            @foreach ($provinces as $province)
+                                <option value="{{ $province->province_id }}">{{ $province->name }}</option>
+                            @endforeach
+                        </select>
+                        @if (isset($errors) && $errors->has('province'))
+                            <label id="province-error" class="error" for="province" >{{ $errors->first('province') }}</label>
+                        @endif
+                    </div>
+                </div>
+
+                <div class="form-group{{ isset($errors) && $errors->has('district') ? ' has-error' : '' }}">
+                    <div class="col-md-12">
+                        <select name="district" id="district" class="form-control">
+                            <option value="" checked>{{ trans('admin.district') }}</option>
+                            @foreach ($districts as $district)
+                                <option value="{{ $district->district_id }}" class="option-hide" data-parent-province={{$district->province_id}}
+                                    >{{ $district->name }}</option>
+                            @endforeach
+                        </select>
+                        @if (isset($errors) && $errors->has('district'))
+                            <label id="district-error" class="error" for="district">{{ $errors->first('district') }}</label>
+                        @endif
+                    </div>
+                </div>
 
                 <div class="form-group{{ $errors->has('address') ? ' has-error' : '' }}">
-                    <label for="address" class="col-md-4 control-label">Địa chỉ  <span class="error">(*)</span></label>
-
+                   
                     <div class="col-md-12">
                         <input id="address" type="text" class="form-control" 
                             name="address" 
                             value="{{ old('address') }}" 
-                            placeholder="..."
+                            placeholder="Số nhà, tên đường"
                             >
 
                         @if ($errors->has('address'))
@@ -134,4 +167,19 @@
         </div>
     </div>
 </div>
+
+@endsection
+
+@section('script')
+<script>
+    $(document).ready(function() {
+        $('#province').on('change', function () {
+            let province_id = $(this).val();
+            $('#district option').removeClass("option-hide");
+            $('#district option').addClass("option-hide");
+            $('#district option[data-parent-province="'+province_id+'"]').removeClass("option-hide");
+            console.log(province_id);
+        });
+    });
+</script>
 @endsection

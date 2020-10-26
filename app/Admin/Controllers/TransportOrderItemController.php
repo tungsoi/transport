@@ -89,7 +89,7 @@ class TransportOrderItemController extends AdminController
             if ($this->transport_customer_id == "") {
                 return $this->customer_name.$input;
             }
-            $res = $this->customer->symbol_name ?? "";
+            $res = $this->customer_name ?? "";
             if ($res != null) {
                 return $res.$input;
             }

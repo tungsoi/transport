@@ -71,6 +71,8 @@ class CustomerController extends AdminController
                 $filter->like('email');
                 $filter->like('phone_number', 'SDT');
                 $filter->equal('ware_house_id', 'Kho')->select(Warehouse::where('is_active', 1)->get()->pluck('name', 'id'));
+                $filter->equal('province', 'Tỉnh/thành phố')->select(Province::all()->pluck('name', 'province_id'));
+                $filter->equal('district', 'Quận/huyện')->select(District::all()->pluck('name', 'district_id'));
             });
         });
 

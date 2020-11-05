@@ -268,7 +268,8 @@ class CustomerController extends AdminController
         $conditions = TransportRecharge::where('money', 0)->where('type_recharge', TransportRecharge::RECHARGE_BANK)->get()->pluck('id');
         $grid->model()
         ->where('content', '!=', '...')
-        ->where('money', '>', 0)
+        ->whereNotNull('money')
+        ->whereNotIn($conditions, 'id')
         ->where('customer_id', $id)
         ->orderBy('id', 'desc');
 

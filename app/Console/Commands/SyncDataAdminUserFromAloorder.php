@@ -76,7 +76,7 @@ class SyncDataAdminUserFromAloorder extends Command
 
             ScheduleLog::create([
                 'code'  =>  'sync-user-from-order-to-logi / '. $e->getMessage()
-            ]);git 
+            ]);
         }
         
     }

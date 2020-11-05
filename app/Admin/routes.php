@@ -68,7 +68,8 @@ Route::group([
         'profiles'              =>  'ProfileController',
         'messages'              =>  'MessageController',
         'popups'                =>  'PopupController',
-        'posts'                 =>  'PostController'
+        'posts'                 =>  'PostController',
+        'schedule_logs'         =>  'ScheduleLogController'
     ]);
 });
 

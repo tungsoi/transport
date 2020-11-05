@@ -29,6 +29,9 @@ class TransportRecharge extends Model
         'content'
     ];
 
+    const TYPE_ORDER = 1;
+    const TYPE_TRANSPORT = 2;
+    
     const RECHARGE = [
         self::RECHARGE_MONEY    =>  'Nạp tiền mặt',
         self::RECHARGE_BANK     =>  'Nạp tiền chuyển khoản',
@@ -42,6 +45,8 @@ class TransportRecharge extends Model
         self::REFUND        =>  'Hoàn tiền',
         self::DEDUCTION     =>  'Trừ tiền',
         self::PAYMENT     =>  self::RECHARGE_PAYMENT,
+        self::DEPOSITE_ORDER    =>  self::DEPOSITE_ORDER_TEXT,
+        self::PAYMENT_ORDER =>  self::PAYMENT_ORDER_TEXT
     ];
 
     const RECHARE_SEARCH = [
@@ -55,12 +60,19 @@ class TransportRecharge extends Model
     const RECHARGE_BANK = 1;
     const PAYMENT = 4;
     const RECHARGE_PAYMENT = 'Thanh toán đơn hàng';
+    const DEPOSITE_ORDER = 5;
+    const DEPOSITE_ORDER_TEXT = "Đặt cọc đơn hàng mua hộ";
+    const PAYMENT_ORDER = 6;
+    const PAYMENT_ORDER_TEXT = "Thanh toán đơn hàng mua hộ";
 
+    const UP = [self::RECHARGE_MONEY, self::RECHARGE_BANK];
     const COLOR = [
         'warning',
         'success',
         'primary',
         'default',
+        'danger',
+        'danger',
         'danger'
     ];
 

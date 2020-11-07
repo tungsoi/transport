@@ -59,6 +59,10 @@
             left: -110px !important;
             top: -100px !important;
         } */
+
+        #purchase-order-table th {
+            font-size: 12px !important;
+        }
     </style>
 </head>
 

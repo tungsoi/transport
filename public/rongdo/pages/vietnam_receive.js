@@ -25,11 +25,14 @@
                             return false;
                         }
                     }
+
                     $.ajax({
                         type: 'GET',
                         url: '/admin/transport_orders/get-data-transport-order-items',
                         data: {cn_code: cn_code},
                         success: function(response) {
+
+                            console.log(response);
                             tr.children().find('input[name="item_id[]"]').val('');
                             tr.children().find('input[name="customer_name[]"]').val('');
                             tr.children().find('input[name="kg[]"]').val('');
@@ -62,6 +65,15 @@
                             } else {
                                 tr.children().find('input[name="cn_code[]"]').parent().append('<span class="error">Mã vận đơn không tổn tại</span>');
                             }
+                        }
+                    });
+
+                    $.ajax({
+                        type: 'GET',
+                        url: '/api/search-order-item',
+                        data: {cn_code: cn_code},
+                        success: function(response) {
+                            $('#purchase-order-table tbody').prepend(response);
                         }
                     });
                 }
@@ -148,4 +160,31 @@
                 $(this).off('mousewheel.disableScroll');
             });
         }
+
+        var bar = "bar";
+        $(document).on('click', '.btn-confirm-receive-vietnam', function () {
+            
+            var foo = bar;
+            if ( foo == "bar" ) {
+                var isGood=confirm('Xác nhận sản phẩm này đã về kho Việt Nam ?');
+                if (isGood) {
+                    $.ajax({
+                        type: 'POST',
+                        url: '/api/confirm-receive-vietnam',
+                        data: {
+                            item_id: $(this).data('id')
+                        },
+                        success: function(response) {
+                            if (response.error == false) {
+                                $(this).removeClass('btn-primary');
+                                $(this).addClass('btn-success');
+                                $(this).html('<i class="fa fa-check"></i> &nbsp; Đã xác nhận');
+                            } else {
+                                alert('Xảy ra lỗi: ' + response.msg);
+                            }
+                        }
+                    });
+                }
+            }
+        });
     });

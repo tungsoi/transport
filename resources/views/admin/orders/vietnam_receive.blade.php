@@ -1,10 +1,14 @@
 {{-- style css --}}
 <style>
-    #vietnam_receive_form {
+    #vietnam_receive_form, #aloorder-items {
         background: white;
         border-top-color: #00c0ef;
         border-top: 3px solid #00c0ef;
-        padding: 20px 0px;
+        /* padding: 20px 0px; */
+    }
+    #aloorder-items {
+        margin-top: 20px;
+        padding: 30px;
     }
     .js-remove-order-info {
         margin-top: -16px;
@@ -45,8 +49,9 @@
     }
 </style>
 
-<div class="col-lg-12" id="vietnam_receive_form">
-    <div class="col-md-12">
+<div class="row" style="padding: 15px;">
+    <div class="" id="vietnam_receive_form">
+    <div class="col-md-12 pd-0">
         <div class="box-header with-border">
             <div class="pull-left">
                 @include('admin.orders.partials.list_btn')
@@ -89,7 +94,7 @@
             </div>
         </div>
     @endif
-    <div class="col-lg-12">
+    <div class="col-lg-12 pd-0">
         <form action="{{ route('transport_orders.storeTransportOrder') }}" method="POST"  enctype="multipart/form-data" class="form js-form-update-transport-order">
             <input type="hidden" name="_token" id="csrf-token" value="{{ Session::token() }}" />
             <div class="modal-body">
@@ -172,4 +177,5 @@
     </div>
 </div>
 
+</div>
 <script src="{{ asset('rongdo/pages/vietnam_receive.js') }}"></script>

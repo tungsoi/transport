@@ -439,6 +439,24 @@ return [
                 'height' => 500,
                 'font-family'   =>  'Arial'
             ]
+        ],
+        'grid-lightbox' => [
+    
+            // Set to `false` if you want to disable this extension
+            'enable' => true,
+        ],
+        'data-table' => [
+            // If the value is set to false, this extension will be disabled
+            'enable' => true,
+            // global options
+            'options' => [
+                 'paging' => false,
+                 'lengthChange' => false,
+                 'searching' => false,
+                 'ordering' => false,
+                 'info' => false,
+                 'language' => 'English', // or Chinese
+            ]
         ]
     ],
     'copyright' =>  "Copyright © 2020 Alilogi Logistics."

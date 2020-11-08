@@ -163,30 +163,24 @@
             });
         }
 
-        var bar = "bar";
         $(document).on('click', '.btn-confirm-receive-vietnam', function () {
-            
-            var foo = bar;
-            if ( foo == "bar" ) {
-                var isGood=confirm('Xác nhận sản phẩm này đã về kho Việt Nam ?');
-                if (isGood) {
-                    $.ajax({
-                        type: 'POST',
-                        url: '/api/confirm-receive-vietnam',
-                        data: {
-                            item_id: $(this).data('id')
-                        },
-                        success: function(response) {
-                            if (response.error == false) {
-                                $(this).removeClass('btn-primary');
-                                $(this).addClass('btn-success');
-                                $(this).html('<i class="fa fa-check"></i> &nbsp; Đã xác nhận');
-                            } else {
-                                alert('Xảy ra lỗi: ' + response.msg);
-                            }
-                        }
-                    });
+            $.ajax({
+                type: 'POST',
+                url: '/api/confirm-receive-vietnam',
+                data: {
+                    item_id: $(this).data('id')
+                },
+                success: function(response) {
+                    if (response.error == false) {
+                        $(this).removeClass('btn-primary');
+                        $(this).addClass('btn-success');
+                        $(this).html('<i class="fa fa-check"></i> &nbsp; Đã xác nhận');
+
+                        alert('Đã chuyển trạng thái');
+                    } else {
+                        alert('Xảy ra lỗi: ' + response.msg);
+                    }
                 }
-            }
+            });
         });
     });

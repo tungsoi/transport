@@ -93,6 +93,21 @@ return [
             'engine' => null,
         ],
 
+        // 'aloorder' => [
+        //     'driver' => 'mysql',
+        //     'host' => '127.0.0.1',
+        //     'port' => env('DB_PORT', '3306'),
+        //     'database' => 'aloorder',
+        //     'username' => 'root',
+        //     'password' => '',
+        //     'unix_socket' => env('DB_SOCKET', ''),
+        //     'charset' => 'utf8mb4',
+        //     'collation' => 'utf8mb4_unicode_ci',
+        //     'prefix' => '',
+        //     'strict' => true,
+        //     'engine' => null,
+        // ],
+
     ],
 
     /*

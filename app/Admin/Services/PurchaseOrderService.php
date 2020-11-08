@@ -21,10 +21,11 @@ class PurchaseOrderService
 
         if ($res->count() > 0) {
             foreach ($res as $item) {
+
                 $data[] = [
                     'key'    =>  $item->id,
                     'order_number'  =>  $item->order->order_number,
-                    'symbol_name'   =>  $item->customer->symbol_name,
+                    'symbol_name'   =>  $item->customer->symbol_name ?? $item->customer->username,
                     'status'    =>  $item->status,
                     'created_at'    =>  date('H:i | d-m-Y', strtotime($item->created_at)),
                     'product_link'  =>  $item->product_link,

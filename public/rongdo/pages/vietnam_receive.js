@@ -164,6 +164,10 @@
         }
 
         $(document).on('click', '.btn-confirm-receive-vietnam', function () {
+            console.log('confirm');
+            $(this).removeClass('btn-primary');
+            $(this).addClass('btn-success');
+            $(this).html('<i class="fa fa-check"></i> &nbsp; Đã xác nhận');
             $.ajax({
                 type: 'POST',
                 url: '/api/confirm-receive-vietnam',
@@ -172,11 +176,7 @@
                 },
                 success: function(response) {
                     if (response.error == false) {
-                        $(this).removeClass('btn-primary');
-                        $(this).addClass('btn-success');
-                        $(this).html('<i class="fa fa-check"></i> &nbsp; Đã xác nhận');
-
-                        alert('Đã chuyển trạng thái');
+                        toastr.success('Đã xác nhận hàng về kho Việt Nam thành công.');
                     } else {
                         alert('Xảy ra lỗi: ' + response.msg);
                     }

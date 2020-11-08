@@ -29,7 +29,7 @@ Route::get('/search-order-item', function (Request $request) {
 });
 
 Route::post('/confirm-receive-vietnam', function (Request $request) {
-    DB::beginTransaction();
+    // DB::beginTransaction();
     try {
         $item_id = $request->item_id;
 
@@ -38,7 +38,8 @@ Route::post('/confirm-receive-vietnam', function (Request $request) {
         $item->save();
 
         $order = PurchaseOrder::find($item->order_id);
-        if ($order->warehouseVietnamItems() == $order->totalItems()) {
+
+        if ($order->status == PurchaseOrder::STATUS_ORDERED && $order->warehouseVietnamItems() == $order->totalItems()) {
             $order->status = PurchaseOrder::STATUS_SUCCESS;
             $order->save();
 
@@ -48,27 +49,28 @@ Route::post('/confirm-receive-vietnam', function (Request $request) {
             $owed = $total_final_price - $deposited;
 
             $customer = User::find($order->customer_id);
+
             $wallet = $customer->wallet;
             $customer->wallet = $wallet - $owed;
             $customer->save();
 
             TransportRecharge::create([
                 'customer_id'       =>  $order->customer_id,
-                'user_id_created'   =>  Admin::user()->id,
-                'money'             =>  $owed > 0 ? $owed : -($owed),
+                'user_id_created'   =>  1,
+                'money'             =>  $owed,
                 'type_recharge'     =>  TransportRecharge::PAYMENT_ORDER,
                 'content'           =>  'Thanh toán đơn hàng mua hộ. Mã đơn hàng '.$order->order_number.". Số tiền " . number_format($owed),
                 'order_type'        =>  TransportRecharge::TYPE_ORDER
             ]);
         }
 
-        DB::commit();
+        // DB::commit();
     
         return response()->json([
             'error' =>  false
         ]);
     } catch (\Exception $e) {
-        DB::rollBack();
+        // DB::rollBack();
 
         return response()->json([
             'error' =>  true,

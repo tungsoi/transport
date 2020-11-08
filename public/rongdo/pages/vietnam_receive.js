@@ -28,6 +28,15 @@
 
                     $.ajax({
                         type: 'GET',
+                        url: '/api/search-order-item',
+                        data: {cn_code: cn_code},
+                        success: function(response) {
+                            $('#purchase-order-table tbody').prepend(response);
+                        }
+                    });
+                    
+                    $.ajax({
+                        type: 'GET',
                         url: '/admin/transport_orders/get-data-transport-order-items',
                         data: {cn_code: cn_code},
                         success: function(response) {
@@ -68,14 +77,7 @@
                         }
                     });
 
-                    $.ajax({
-                        type: 'GET',
-                        url: '/api/search-order-item',
-                        data: {cn_code: cn_code},
-                        success: function(response) {
-                            $('#purchase-order-table tbody').prepend(response);
-                        }
-                    });
+                    
                 }
             });
 

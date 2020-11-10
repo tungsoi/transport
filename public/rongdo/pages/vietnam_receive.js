@@ -31,6 +31,7 @@
                         url: '/api/search-order-item',
                         data: {cn_code: cn_code},
                         success: function(response) {
+                            console.log(response);
                             $('#purchase-order-table tbody').prepend(response);
                         }
                     });

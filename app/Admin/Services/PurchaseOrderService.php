@@ -16,16 +16,15 @@ class PurchaseOrderService
     public function searchPurchaseOrderItem(string $cnCode = "")
     {
         # code...
-        $res = OrderItem::whereCnCode($cnCode)->get();
+        $res = OrderItem::whereCnCode($cnCode)->whereStatus(OrderItem::STATUS_PURCHASE_ITEM_ORDERED)->get();
         $data = [];
 
         if ($res->count() > 0) {
             foreach ($res as $item) {
-
                 $data[] = [
                     'key'    =>  $item->id,
                     'order_number'  =>  $item->order->order_number,
-                    'symbol_name'   =>  $item->customer->symbol_name ?? $item->customer->username,
+                    'symbol_name'   =>  User::find($item->order->customer_id)->symbol_name,
                     'status'    =>  $item->status,
                     'created_at'    =>  date('H:i | d-m-Y', strtotime($item->created_at)),
                     'product_link'  =>  $item->product_link,

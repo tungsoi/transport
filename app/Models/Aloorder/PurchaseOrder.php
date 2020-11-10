@@ -61,6 +61,10 @@ class PurchaseOrder extends Model
         'success',
         'danger'
     ];
+
+    const PERCENT = [
+        '0%', '1%', '1.5%', '2%', '2.5%', '3%'
+    ];
     
     /**
      * Table name
@@ -129,7 +133,9 @@ class PurchaseOrder extends Model
         'is_discounted',
         'transport_customer_id',
         'purchase_order_transport_fee',
-        'purchase_order_service_fee'
+        'purchase_order_service_fee',
+        'final_payment',
+        'user_id_confirm_ordered'
     ];
 
     public function customer() {
@@ -216,7 +222,6 @@ class PurchaseOrder extends Model
         return 0;
     }
 
-
     public function totalItemReality()
     {
         # code...
@@ -255,17 +260,172 @@ class PurchaseOrder extends Model
     public function finalPriceVND()
     {
         # code...
+        return $this->finalPriceRMB() * $this->current_rate;
+    }
 
+    # --------------------------- #
+    /**
+     * Tổng số lượng sản phẩm trong đơn
+     *
+     * @return void
+     */
+    public function sumQtyItem()
+    {
+        # code...
         if ($this->items) {
-            $total = $total_transport = 0;
+            
+            $total = 0;
             foreach ($this->items as $item) {
-                $total += $item->qty_reality * $item->price; // tong gia san pham
-                $total_transport += $item->purchase_cn_transport_fee; // tong phi ship
+                if ($item->status != OrderItem::STATUS_PURCHASE_OUT_OF_STOCK) {
+                    $total += $item->qty;
+                }
+                
             }
 
-            $total_bill = ($total + $total_transport + (int) str_replace(',', '', $this->purchase_order_service_fee));
+            return $total;
+        }
 
-            return $total_bill * $this->current_rate;
+        return 0;
+    }
+
+    /**
+     * Tổng số lượng sản phẩm thực đặt trong đơn
+     *
+     * @return void
+     */
+    public function sumQtyRealityItem()
+    {
+        # code...
+        if ($this->items) {
+            
+            $total = 0;
+            foreach ($this->items as $item) {
+                if ($item->status != OrderItem::STATUS_PURCHASE_OUT_OF_STOCK) {
+                    $total += $item->qty_reality;
+                }
+                
+            }
+
+            return $total;
+        }
+
+        return 0;
+    }
+
+    /**
+     * Tổng phí dịch vụ trong đơn
+     *
+     * @return void
+     */
+    public function sumServiceFee()
+    {
+        # code...
+        return $this->purchase_order_service_fee;
+    }
+
+    /**
+     * Tổng phí ship trong đơn
+     *
+     * @return void
+     */
+    public function sumShipFee()
+    {
+        # code...
+        if ($this->items) {
+            
+            $total = 0;
+            foreach ($this->items as $item) {
+                if ($item->status != OrderItem::STATUS_PURCHASE_OUT_OF_STOCK) {
+                    $total += $item->purchase_cn_transport_fee;
+                }
+                
+            }
+
+            return $total;
+        }
+
+        return 0;
+    }
+
+    /**
+     * Tổng tiền sản phẩm
+     *
+     * @return void
+     */
+    public function sumQtyRealityMoney()
+    {
+        # code...
+        if ($this->items) {
+            
+            $total = 0;
+            foreach ($this->items as $item) {
+                if ($item->status != OrderItem::STATUS_PURCHASE_OUT_OF_STOCK) {
+                    $total += $item->qty_reality * $item->price;
+                }
+                
+            }
+
+            return $total;
+        }
+
+        return 0;
+    }
+
+    /**
+     * Tổng giá cuối
+     *
+     * @return void
+     */
+    public function totalBill()
+    {
+        # code...
+        return $this->sumQtyRealityMoney() + $this->sumShipFee() + $this->sumServiceFee();
+    }
+
+    /**
+     * Cọc mặc định
+     *
+     * @return void
+     */
+    public function depositeDefault()
+    {
+        # code...
+        return $this->totalBill() * 70 / 100;
+    }
+
+    public function totalWarehouseVietnamItems()
+    {
+        # code...
+        
+        if ($this->items) {
+            
+            $total = 0;
+            foreach ($this->items as $item) {
+                if ($item->status != OrderItem::STATUS_PURCHASE_OUT_OF_STOCK && $item->status == OrderItem::STATUS_PURCHASE_WAREHOUSE_VN) {
+                    $total += $item->qty_reality;
+                }
+            }
+
+            return $total;
+        }
+
+        return 0;
+    }
+
+    public function totalOrderedItems()
+    {
+        # code...
+        
+        if ($this->items) {
+            
+            $total = 0;
+            foreach ($this->items as $item) {
+                if ($item->status != OrderItem::STATUS_PURCHASE_OUT_OF_STOCK && $item->status == OrderItem::STATUS_PURCHASE_ITEM_ORDERED) {
+                    $total += $item->qty_reality;
+                }
+            }
+
+            return $total;
         }
 
         return 0;

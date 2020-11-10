@@ -39,27 +39,40 @@ Route::post('/confirm-receive-vietnam', function (Request $request) {
 
         $order = PurchaseOrder::find($item->order_id);
 
-        if ($order->status == PurchaseOrder::STATUS_ORDERED && $order->warehouseVietnamItems() == $order->totalItems()) {
+        if ($order->totalWarehouseVietnamItems() == $order->sumQtyRealityItem() && $order->status != PurchaseOrder::STATUS_SUCCESS) {
             $order->status = PurchaseOrder::STATUS_SUCCESS;
             $order->save();
 
-            $deposited = $order->deposited;
-            $total_final_price = $order->finalPriceVND();
-
-            $owed = $total_final_price - $deposited;
+            $deposited = $order->deposited; // số tiền đã cọc
+            $total_final_price = $order->totalBill() * $order->current_rate; // tổng tiền đơn hiện tại
 
             $customer = User::find($order->customer_id);
-
             $wallet = $customer->wallet;
-            $customer->wallet = $wallet - $owed;
-            $customer->save();
+            if ($deposited <= $total_final_price)
+            {
+                # Đã cọc < tổng đơn -> còn lại : tổng đơn - đã cọc
+                # -> trừ tiền của khách số còn lại
+
+                $owed = $total_final_price - $deposited;
+                $customer->wallet = $wallet - $owed; 
+                $customer->save();
+            } else {
+
+                # Đã cọc > tổng đơn 
+                # -> còn lại: đã cọc - tổng đơn
+                # -> cộng lại trả khách
+
+                $owed = $deposited - $total_final_price;
+                $customer->wallet = $wallet + $owed; 
+                $customer->save();
+            }
 
             TransportRecharge::create([
                 'customer_id'       =>  $order->customer_id,
                 'user_id_created'   =>  1,
                 'money'             =>  $owed,
                 'type_recharge'     =>  TransportRecharge::PAYMENT_ORDER,
-                'content'           =>  'Thanh toán đơn hàng mua hộ. Mã đơn hàng '.$order->order_number.". Số tiền " . number_format($owed),
+                'content'           =>  'Thanh toán đơn hàng mua hộ. Mã đơn hàng '.$order->order_number,
                 'order_type'        =>  TransportRecharge::TYPE_ORDER
             ]);
         }

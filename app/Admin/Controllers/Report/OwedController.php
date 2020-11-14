@@ -50,7 +50,8 @@ class OwedController extends AdminController
     protected function grid()
     {
         $grid = new Grid(new User);
-        $grid->model()->where('wallet', '<', 0)->orderByRaw('CHAR_LENGTH (wallet) desc')->orderBy('wallet', 'desc');
+        $grid->model()
+        ->where('is_customer', 1)->orderBy('wallet', 'asc');
 
         $grid->filter(function($filter) {
             $filter->expand();

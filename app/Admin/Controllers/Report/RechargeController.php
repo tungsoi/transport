@@ -88,7 +88,10 @@ class RechargeController extends AdminController
             $filter->equal('type_recharge', 'Loại giao dịch')->select(TransportRecharge::RECHARE_SEARCH);
             $filter->between('created_at', 'Ngày tạo')->date();
         });
-
+        $grid->header(function ($query) {
+            $money = $query->sum('money');
+            return '<h4>Tổng tiền khách đã nạp: <span style="color:red">'. number_format($money) ."</span> (VND)</h4>";
+        });
         $grid->id('ID');
         $grid->customer_id('Mã khách hàng')->display(function () {
             return $this->customer->symbol_name ?? "";
@@ -97,14 +100,7 @@ class RechargeController extends AdminController
             return $this->userCreated->name ?? "";
         });
         $grid->money('Số tiền')->display(function () {
-            if ($this->money > 0) {
-                return '<span class="label label-success">'.number_format($this->money) ?? "0".'</span>';
-            }
-
-            return '<span class="label label-danger">'.number_format($this->money).'</span>';
-        })->totalRow(function ($amount) {
-            $am = number_format($amount);
-            return '<span class="label label-danger">'.$am.'</span>';
+            return number_format($this->money);
         });
         $grid->type_recharge('Loại giao dịch')->display(function () {
             return TransportRecharge::RECHARGE[$this->type_recharge];

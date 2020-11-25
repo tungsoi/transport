@@ -45,7 +45,7 @@ class CustomerController extends AdminController
     protected function grid()
     {
         $grid = new Grid(new User);
-        $grid->model()->where('is_customer', 1)->orderBy('id', 'desc');
+        $grid->model()->where('is_customer', 1)->where('wallet', '<', 0)->orderByRaw('length(wallet) desc')->orderBy('wallet', 'desc');
 
         $grid->filter(function($filter) {
             $filter->expand();

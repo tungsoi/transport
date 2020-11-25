@@ -35,21 +35,21 @@ class RefundController extends AdminController
             ->header($this->title)
             ->description('Số tiền hoàn trả khách hàng khi thanh toán nhầm')
             ->row(function (Row $row) {
-                $row->column(12, function (Column $column)
-                {
-                    $title = "Báo cáo hoàn trả tiền theo tháng 2020";
-                    $dataArray = [];
-                    for ($i = 1; $i <= 12; $i++) {
-                        $rows = TransportRecharge::whereYear('created_at', '=', '2020')
-                                ->whereMonth('created_at', '=', $i)
-                                ->where('type_recharge', TransportRecharge::REFUND)
-                                ->sum('money');
+                // $row->column(12, function (Column $column)
+                // {
+                //     $title = "Báo cáo hoàn trả tiền theo tháng 2020";
+                //     $dataArray = [];
+                //     for ($i = 1; $i <= 12; $i++) {
+                //         $rows = TransportRecharge::whereYear('created_at', '=', '2020')
+                //                 ->whereMonth('created_at', '=', $i)
+                //                 ->where('type_recharge', TransportRecharge::REFUND)
+                //                 ->sum('money');
 
-                        $dataArray[] = $rows;
-                    }
-                    $data = implode(",", $dataArray);
-                    $column->append(view('admin.charts.bar', compact('title', 'data')));
-                });
+                //         $dataArray[] = $rows;
+                //     }
+                //     $data = implode(",", $dataArray);
+                //     $column->append(view('admin.charts.bar', compact('title', 'data')));
+                // });
                 $row->column(12, function (Column $column)
                 {
                     $column->append($this->grid());
@@ -65,12 +65,17 @@ class RefundController extends AdminController
     protected function grid()
     {
         $grid = new Grid(new TransportRecharge);
-        $grid->model()->whereIn('type_recharge', [TransportRecharge::REFUND, TransportRecharge::DEDUCTION])->orderBy('id', 'desc');
+        $grid->model()->whereIn('type_recharge', [TransportRecharge::REFUND])->where('money', '>', 0)->orderBy('id', 'desc');
 
         $grid->filter(function($filter) {
             $filter->expand();
             $filter->disableIdFilter();
             $filter->between('created_at', 'Ngày tạo')->date();
+        });
+
+        $grid->header(function ($query) {
+            $money = $query->sum('money');
+            return '<h4>Tổng hoàn tiền hiện tại: <span style="color:red">'. number_format($money) ."</span> (VND)</h4>";
         });
 
         $grid->id('ID');
@@ -81,13 +86,7 @@ class RefundController extends AdminController
             return $this->userCreated->name ?? "";
         });
         $grid->money('Số tiền')->display(function () {
-            if ($this->money > 0) {
-                return '<span class="label label-success">'.number_format($this->money) ?? "0".'</span>';
-            }
-
-            return '<span class="label label-danger">'.number_format($this->money).'</span>';
-        })->totalRow(function ($amount) {
-            return number_format($amount);
+            return number_format($this->money);
         });
         $grid->type_recharge('Loại giao dịch')->display(function () {
             return TransportRecharge::RECHARGE[$this->type_recharge];

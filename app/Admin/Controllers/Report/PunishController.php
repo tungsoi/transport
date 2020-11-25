@@ -15,7 +15,7 @@ use Encore\Admin\Layout\Content;
 use Encore\Admin\Widgets\Box;
 use Encore\Admin\Layout\Column;
 
-class OwedController extends AdminController
+class PunishController extends AdminController
 {
     /**
      * Title for current resource.
@@ -26,15 +26,30 @@ class OwedController extends AdminController
 
     public function __construct()
     {
-        $this->title = 'Báo cáo công nợ';
+        $this->title = 'Báo cáo trừ tiền';
     }
 
     public function index(Content $content)
     {
         return $content
             ->header($this->title)
-            ->description('Danh sách')
+            ->description('Số tiền trừ vào tài khoản khách khi thanh toán sai')
             ->row(function (Row $row) {
+                // $row->column(12, function (Column $column)
+                // {
+                //     $title = "Báo cáo hoàn trả tiền theo tháng 2020";
+                //     $dataArray = [];
+                //     for ($i = 1; $i <= 12; $i++) {
+                //         $rows = TransportRecharge::whereYear('created_at', '=', '2020')
+                //                 ->whereMonth('created_at', '=', $i)
+                //                 ->where('type_recharge', TransportRecharge::REFUND)
+                //                 ->sum('money');
+
+                //         $dataArray[] = $rows;
+                //     }
+                //     $data = implode(",", $dataArray);
+                //     $column->append(view('admin.charts.bar', compact('title', 'data')));
+                // });
                 $row->column(12, function (Column $column)
                 {
                     $column->append($this->grid());
@@ -49,60 +64,45 @@ class OwedController extends AdminController
      */
     protected function grid()
     {
-        $grid = new Grid(new User);
-        $grid->model()->where('wallet', '<', 0)->orderByRaw('length(wallet) desc')->orderBy('wallet', 'desc');
+        $grid = new Grid(new TransportRecharge);
+        $grid->model()->whereIn('type_recharge', [TransportRecharge::DEDUCTION])->where('money', '>', 0)->orderBy('id', 'desc');
 
         $grid->filter(function($filter) {
             $filter->expand();
             $filter->disableIdFilter();
-            $filter->like('name', 'Họ và tên');
-            $filter->like('email');
-            $filter->like('phone_number', 'SDT');
-            $filter->equal('ware_house_id', 'Kho')->select(Warehouse::where('is_active', 1)->get()->pluck('name', 'id'));
+            $filter->between('created_at', 'Ngày tạo')->date();
         });
 
         $grid->header(function ($query) {
-
-            $owed = $query->sum('wallet');
-            return '<h4>Công nợ khách hàng tạm tính hiện tại: <span style="color:red">'. number_format($owed) ."</span> (VND)</h4>";
+            $money = $query->sum('money');
+            return '<h4>Tổng trừ tiền hiện tại: <span style="color:red">'. number_format($money) ."</span> (VND)</h4>";
         });
 
-        $grid->rows(function (Grid\Row $row) {
-            $row->column('number', ($row->number+1));
+        $grid->id('ID');
+        $grid->customer_id('Mã khách hàng')->display(function () {
+            return $this->customer->symbol_name ?? "";
         });
-        $grid->column('number', 'STT');
-        $grid->symbol_name('Mã khách hàng');
-        $grid->name('Họ và tên')->editable();
-        $grid->email()->editable();
-        $grid->phone_number('SDT')->editable();
-        $grid->ware_house_id('Kho')->display(function () {
-            return $this->warehouse->name ?? "";
+        $grid->user_id_created('Nhân viên thực hiện')->display(function () {
+            return $this->userCreated->name ?? "";
         });
-        $grid->wallet('Số dư ví (VND)')->display(function () {
-            return number_format($this->wallet);
+        $grid->money('Số tiền')->display(function () {
+            return number_format($this->money);
         });
-        $grid->address('Địa chỉ')->editable();
-        $grid->is_active('Trạng thái')->display(function () {
-            switch($this->is_active) {
-                case 1: 
-                    return  '<span class="label label-success">Hoạt động</span>';
-                default:
-                return  '<span class="label label-danger">Khoá</span>';
-            }
+        $grid->type_recharge('Loại giao dịch')->display(function () {
+            return TransportRecharge::RECHARGE[$this->type_recharge];
         });
+        $grid->content('Nội dung');
         $grid->created_at(trans('admin.created_at'))->display(function () {
-            return $this->created_at != "" ? date('H:i | d-m-Y', strtotime($this->created_at)) : "";
+            return date('H:i | d-m-Y', strtotime($this->created_at));
         });
-        $grid->updated_at(trans('admin.updated_at'))->display(function () {
-            return date('H:i | d-m-Y', strtotime($this->updated_at));
-        });
-        $grid->paginate(500);
         $grid->actions(function ($actions) {
-            $actions->disableEdit();
-            $actions->disableView();
             $actions->disableDelete();
+            $actions->disableView();
+            $actions->disableEdit();
         });
         $grid->disableActions();
+
+        $grid->disableCreateButton();
         return $grid;
     }
 

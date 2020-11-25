@@ -27,6 +27,7 @@ Route::group([
     $router->get('/reports/deductions', 'Report\DeductionController@index')->name('reports.deductions');
     $router->get('/reports/totals', 'Report\TotalController@index')->name('reports.totals');
     $router->get('/reports/customers', 'Report\CustomerController@index')->name('reports.customers');
+    $router->get('/reports/punishs', 'Report\PunishController@index')->name('reports.punishs');
 
     # redirect route use for report group
     $router->get('/reports/customers/{id}/edit', function ($id) {

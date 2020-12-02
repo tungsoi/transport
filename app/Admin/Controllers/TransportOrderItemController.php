@@ -102,6 +102,7 @@ class TransportOrderItemController extends AdminController
             return $this->order->paymentCustomer->symbol_name ?? "";
         });
         $grid->kg()->totalRow(function ($amount) {
+            $amount = number_format($amount, 2);
             return '<span class="label label-danger">'.$amount.'</span>';
         });
         $grid->product_width('Rộng (cm)');
@@ -110,6 +111,7 @@ class TransportOrderItemController extends AdminController
         $grid->volume('V/6000')->display(function() {
             return str_replace('.00', '', $this->volume);
         })->totalRow(function ($amount) {
+            $amount = number_format($amount, 2);
             return '<span class="label label-danger">'.$amount.'</span>';
         });
         $grid->cublic_meter('M3')->display(function() {

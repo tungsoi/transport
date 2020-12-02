@@ -2,7 +2,7 @@
 
 namespace App\Admin\Controllers;
 
-use App\Models\ExchangeRate;
+use App\Models\Aloorder\ExchangeRate;
 use App\Models\TransportRecharge;
 use App\Models\Warehouse;
 use Encore\Admin\Controllers\AdminController;
@@ -125,7 +125,7 @@ class PaymentOrderController extends AdminController
             ->row(function (Row $row) {
                 $row->column(12, function (Column $column)
                 {
-                    $vnd = ExchangeRate::where('is_active', 1)->orderBy('id', 'desc')->first()->vnd;
+                    $vnd = ExchangeRate::first()->vnd;
                     $form = new Form(new TransportRecharge());
                     $customer = $form->select('payment_customer_id', 'Khách hàng thanh toán')
                                 ->options(User::where('is_customer', 1)->pluck('symbol_name', 'id'))

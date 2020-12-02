@@ -70,7 +70,8 @@ Route::group([
         'messages'              =>  'MessageController',
         'popups'                =>  'PopupController',
         'posts'                 =>  'PostController',
-        'schedule_logs'         =>  'ScheduleLogController'
+        'schedule_logs'         =>  'ScheduleLogController',
+        'exchange_rates'        =>  'ExchangeRateController'
     ]);
 });
 

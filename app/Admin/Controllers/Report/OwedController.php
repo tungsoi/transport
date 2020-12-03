@@ -50,7 +50,17 @@ class OwedController extends AdminController
     protected function grid()
     {
         $grid = new Grid(new User);
-        $grid->model()->where('wallet', '<', 0)->orderByRaw('length(wallet) desc')->orderBy('wallet', 'desc');
+        if (! isset($_GET['wallet_sort'])) {
+            // sap xep giam dan : lon -> be
+            $grid->model()->where('wallet', '<', 0)->orderByRaw('length(wallet) desc')->orderBy('wallet', 'desc');
+        } else {
+            if ($_GET['wallet_sort'] == '0') {
+                // giam dan : lon -> be
+                $grid->model()->where('wallet', '<', 0)->orderByRaw('length(wallet) desc')->orderBy('wallet', 'desc');
+            } else {
+                $grid->model()->where('wallet', '<', 0)->orderByRaw('length(wallet) asc')->orderBy('wallet', 'asc');
+            }
+        }
 
         $grid->filter(function($filter) {
             $filter->expand();
@@ -59,6 +69,13 @@ class OwedController extends AdminController
             $filter->like('email');
             $filter->like('phone_number', 'SDT');
             $filter->equal('ware_house_id', 'Kho')->select(Warehouse::where('is_active', 1)->get()->pluck('name', 'id'));
+            $filter->where(function ($query) {
+                if ($this->input == '0') {
+                    $query->orderByRaw('length(wallet) desc')->orderBy('wallet', 'desc');
+                } else {
+                    $query->orderByRaw('length(wallet) desc')->orderBy('wallet', 'asc');
+                }
+            }, 'Sắp xếp Tiền âm ví', 'wallet_sort')->select(['Giảm dần', 'Tăng dần']);
         });
 
         $grid->header(function ($query) {
@@ -81,7 +98,7 @@ class OwedController extends AdminController
         $grid->wallet('Số dư ví (VND)')->display(function () {
             return number_format($this->wallet);
         });
-        $grid->address('Địa chỉ')->editable();
+        $grid->address('Địa chỉ')->editable()->width(100);
         $grid->is_active('Trạng thái')->display(function () {
             switch($this->is_active) {
                 case 1: 

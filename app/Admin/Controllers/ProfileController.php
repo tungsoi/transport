@@ -2,6 +2,7 @@
 
 namespace App\Admin\Controllers;
 
+use App\Models\Aloorder\PurchaseOrder;
 use App\Models\Message;
 use App\Models\Order;
 use App\Models\TransportOrderItem;
@@ -16,6 +17,8 @@ use Encore\Admin\Facades\Admin;
 use Encore\Admin\Layout\Content;
 use Encore\Admin\Layout\Column;
 use Encore\Admin\Layout\Row;
+use Encore\Admin\Widgets\Box;
+use Encore\Admin\Widgets\InfoBox;
 use Encore\Admin\Widgets\Table;
 
 class ProfileController extends AdminController
@@ -106,10 +109,22 @@ class ProfileController extends AdminController
     ####
     public function wallet(Content $content)
     {
-        return $content
-            ->header('Lịch sử thay đổi ví')
-            ->description('Danh sách')
-            ->body($this->walletGrid());
+        $id = Admin::user()->id;
+        return $content->header('Lịch sử giao dịch ví')
+        ->description('Chi tiết')
+
+        ->row(function (Row $row) use ($id) {
+            $row->column(4, new InfoBox('Thông tin', 'users', 'primary', '#', User::find($id)->symbol_name));
+            $row->column(4, new InfoBox('Số dư ví', 'users', 'danger', '#', number_format(User::find($id)->wallet)));
+        })
+        ->row(function (Row $row) use ($id)
+        {
+            // Tab thong tin chi tiet bao cao
+            $row->column(12, function (Column $column)  use ($id)
+            {
+                $column->append((new Box('Chi tiết các giao dịch', $this->walletGrid($id))));
+            });
+        });
     }
 
     public function infomation(Content $content)
@@ -117,64 +132,149 @@ class ProfileController extends AdminController
         return redirect('/admin/auth/setting');
     }
 
-    public function walletGrid() {
-        $grid = new Grid(new TransportRecharge());
-        $grid->model()->where('customer_id', Admin::user()->id)->orderBy('id', 'desc');
+    public function walletGrid($id) {
+        $res = TransportRecharge::where('money', ">", 0)
+        ->where('customer_id', $id)
+        ->orderBy('id', 'desc')
+        ->get();
 
-        $grid->filter(function($filter) {
-            $filter->expand();
-            $filter->disableIdFilter();
-            $filter->equal('type_recharge', 'Loại giao dịch')->select(TransportRecharge::ALL_RECHARGE);
-        });
+        $headers = ['STT', 'Ngày giao dịch', 'Đơn hàng', 'Nội dung giao dịch', 'Loại giao dịch', 'Số dư đầu kỳ (VND)', 'Trừ tiền (VND)', 'Nạp tiền (VND)', 'Số dư cuối kỳ (VND)'];
 
-        $grid->header(function ($query) {
-            $rechargeMoney = TransportRecharge::where('customer_id', Admin::user()->id)->where('type_recharge', TransportRecharge::RECHARGE_MONEY)->sum('money');
-            $rechargeBank = TransportRecharge::where('customer_id', Admin::user()->id)->where('type_recharge', TransportRecharge::RECHARGE_BANK)->sum('money');
-            $money = Admin::user()->wallet;
-            $color = $money > 0 ? 'green' : 'red';
-            return '<h5 style="font-weight: bold;">Tổng tiền mặt đã nạp: <span style="color: green">'. number_format($rechargeMoney) ."</span> (VND)</h5>".
-            '<h5 style="font-weight: bold;">Tổng tiền chuyển khoản đã nạp: <span style="color: green">'. number_format($rechargeBank) ."</span> (VND)</h5>".
-            '<h5 style="font-weight: bold;">Số dư hiện tại: <span style="color: '.$color.'">'. number_format($money) ."</span> (VND)</h5>";
-        });  
+        $raw = [
+            'order' =>  '',
+            'payment_date'  =>  '',
+            'order_link'    =>  '',
+            'type_recharge' =>  '',
+            'content'   =>  '',
+            'before_payment'    =>  '',
+            'down'   =>  '',
+            'up'    =>  '',
+            'after_payment'
+        ];
+        $data = [];
 
-        $grid->id('ID');
-        $grid->customer_id('Tên khách hàng')->display(function () {
-            return $this->customer->name ?? "";
-        });
-        $grid->user_id_created('Nhân viên thực hiện')->display(function () {
-            return $this->userCreated->name ?? "";
-        });
-        $grid->money('Số tiền')->display(function () {
-            if ($this->money > 0) {
-                return '<span class="label label-success">'.number_format($this->money) ?? "0".'</span>';
+        foreach ($res as $key => $record) {
+            $type = $record->type_recharge;
+            if (in_array($type, TransportRecharge::UP)) {
+                $up = $record->money;
+                $down = null;
+                $flag = 'up';
+            } else {
+                $down = $record->money;
+                $up = null;
+                $flag = 'down';
             }
 
-            return '<span class="label label-danger">'.number_format($this->money).'</span>';
-        });
-        $grid->type_recharge('Loại giao dịch')->display(function () {
-            $text = TransportRecharge::RECHARGE[$this->type_recharge] ?? TransportRecharge::RECHARGE_PAYMENT;
-            return "<span class='label label-".TransportRecharge::COLOR[$this->type_recharge]."'>".$text."</span>";
-        });
-        $grid->content('Nội dung');
-        $grid->created_at(trans('admin.created_at'))->display(function () {
-            return date('H:i | d-m-Y', strtotime($this->created_at));
-        });
-        $grid->disableActions();
-        $grid->actions(function ($actions) {
-            $actions->disableDelete();
-            $actions->disableView();
-            $actions->disableEdit();
-        });
+            $data[] = [
+                'order' =>  $key + 1,
+                'payment_date'  =>  date('H:i | d-m-Y', strtotime($record->created_at)),
+                'order_link'    =>  $this->convertOrderLink($record->content, $record->type_recharge),
+                'type_recharge' =>  TransportRecharge::ALL_RECHARGE[$record->type_recharge],
+                'content'   =>  $record->content,
+                'before_payment'    =>  '',
+                'down'   =>  $down,
+                'up'    => $up,
+                'after_payment' =>  '',
+                'flag'  =>  $flag
+            ];
+        }
 
-        $grid->tools(function (Grid\Tools $tools) {
-            $tools->append('<a href="'.route('customers.index').'" class="btn btn-sm btn-primary" title="Danh sách">
-                <i class="fa fa-list"></i>
-                <span class="hidden-xs">&nbsp;Danh sách</span>
-            </a>');
-        });
+        $data = array_reverse($data);
+        foreach ($data as $key => $raw) {
+            if ($key == 0) {
+                $data[0]['before_payment']  = 0;
+                if ($data[0]['flag'] == 'up') {
+                    $data[0]['after_payment'] = $data[0]['before_payment'] + $data[0]['up'];
+                }
+                else {
+                    $data[0]['after_payment'] = $data[0]['before_payment'] - $data[0]['down'];
+                }
+            }
+            else {
+                $data[$key]['before_payment']  = $data[$key-1]['after_payment'];
+                if ($data[$key]['flag'] == 'up') {
+                    $data[$key]['after_payment'] = $data[$key]['before_payment'] + $data[$key]['up'];
+                }
+                else {
+                    $data[$key]['after_payment'] = $data[$key]['before_payment'] - $data[$key]['down'];
+                }
+            }
+        }
 
-        $grid->disableCreateButton();
-        return $grid;
+        $data = array_reverse($data);
+
+        foreach ($data as $key => $last_raw) {
+
+            $data[$key]['before_payment'] = $data[$key]['before_payment'] >= 0 
+            ? "<span class='label label-success'>".number_format($data[$key]['before_payment'])."</span>"
+            : "<span class='label label-danger'>".number_format($data[$key]['before_payment'])."</span>";
+
+            $data[$key]['down'] = $data[$key]['down'] != null
+            ? "<span class='label label-danger'>".number_format($data[$key]['down'])."</span>"
+            : null;
+            
+            $data[$key]['up'] = $data[$key]['up'] != null
+            ? "<span class='label label-success'>".number_format($data[$key]['up'])."</span>"
+            : null;
+        
+            $data[$key]['after_payment'] = $data[$key]['after_payment'] >= 0 
+            ? "<span class='label label-success'>".number_format($data[$key]['after_payment'])."</span>"
+            : "<span class='label label-danger'>".number_format($data[$key]['after_payment'])."</span>";
+
+            unset($data[$key]['flag']);
+        }
+
+        $table = new Table($headers, $data);
+
+        return $table->render();
+    }
+
+    public function convertOrderLink($content, $type)
+    {
+        # code...
+
+        switch ($type) {
+            case 4: 
+                $subs = explode("Thanh toán đơn hàng vận chuyển VC-", $content);
+                $order_number = trim($subs[1]);
+                $order = Order::whereOrderNumber($order_number)->first();
+                if ($order) {
+                    return "<a href='https://alilogi.vn/admin/transport_orders/".$order->id."' target='_blank'>Đơn hàng vận chuyển ".$subs[1]."</a>";
+                }
+                else {
+                    return null;
+                }
+            case 5: 
+                $subs = explode("Đặt cọc đơn hàng mua hộ. Mã đơn hàng", $content);
+                $order_number = trim($subs[1]);
+                
+                $order = PurchaseOrder::whereOrderNumber($order_number)->first();
+
+                if ($order) {
+                    $route = 'https://aloorder.vn/admin/customer_orders/'.$order->id;
+
+                    return '<a href="'.$route.'" target="_blank">Đơn hàng order '.$subs[1].'</a>';
+                }
+                else {
+                    return null;
+                }
+                
+            case 6: 
+                $subs = explode("Thanh toán đơn hàng mua hộ. Mã đơn hàng", $content);
+                $order_number = trim($subs[1]);
+                $order = PurchaseOrder::whereOrderNumber($order_number)->first();
+                if ($order) {
+                    $route = 'https://aloorder.vn/admin/customer_orders/'.$order->id;
+                    return '<a href="'.$route.'" target="_blank">Đơn hàng order '.$subs[1].'</a>';
+                }
+                else {
+                    return null;
+                }
+                
+            default:
+                return null;
+        }
+        return $content;
     }
 
     public function history(Content $content)

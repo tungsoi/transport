@@ -171,4 +171,8 @@ class User extends Model implements AuthenticatableContract
     public static function customers() {
         return self::where('is_customer', 1)->get();
     }
+
+    public function orderPaymented() {
+        return $this->hasMany('App\Models\Order', 'payment_customer_id', 'id');
+    }
 }

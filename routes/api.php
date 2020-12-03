@@ -30,44 +30,44 @@ Route::get('/search-order-item', function (Request $request) {
 
 Route::post('/confirm-receive-vietnam', function (Request $request) {
     // DB::beginTransaction();
-    try {
-        $item_id = $request->item_id;
+    if ($request->ajax()) {
+        try {
+            $item_id = $request->item_id;
 
-        $item = OrderItem::find($item_id);
-        $item->status = OrderItem::STATUS_PURCHASE_WAREHOUSE_VN;
-        $item->save();
+            $item = OrderItem::find($item_id);
+            $item->status = OrderItem::STATUS_PURCHASE_WAREHOUSE_VN;
+            $item->save();
 
-        $order = PurchaseOrder::find($item->order_id);
+            $order = PurchaseOrder::find($item->order_id);
 
-        if ($order->totalWarehouseVietnamItems() == $order->sumQtyRealityItem() && $order->status != PurchaseOrder::STATUS_SUCCESS) {
-            $order->status = PurchaseOrder::STATUS_SUCCESS;
-            $order->save();
+            if ($order->totalWarehouseVietnamItems() == $order->sumQtyRealityItem() && $order->status != PurchaseOrder::STATUS_SUCCESS) {
+                $order->status = PurchaseOrder::STATUS_SUCCESS;
+                $order->save();
 
-            $deposited = $order->deposited; // số tiền đã cọc
+                $deposited = $order->deposited; // số tiền đã cọc
             $total_final_price = $order->totalBill() * $order->current_rate; // tổng tiền đơn hiện tại
 
             $customer = User::find($order->customer_id);
-            $wallet = $customer->wallet;
-            if ($deposited <= $total_final_price)
-            {
-                # Đã cọc < tổng đơn -> còn lại : tổng đơn - đã cọc
-                # -> trừ tiền của khách số còn lại
+                $wallet = $customer->wallet;
+                if ($deposited <= $total_final_price) {
+                    # Đã cọc < tổng đơn -> còn lại : tổng đơn - đã cọc
+                    # -> trừ tiền của khách số còn lại
 
-                $owed = $total_final_price - $deposited;
-                $customer->wallet = $wallet - $owed; 
-                $customer->save();
-            } else {
+                    $owed = $total_final_price - $deposited;
+                    $customer->wallet = $wallet - $owed;
+                    $customer->save();
+                } else {
 
-                # Đã cọc > tổng đơn 
-                # -> còn lại: đã cọc - tổng đơn
-                # -> cộng lại trả khách
+                # Đã cọc > tổng đơn
+                    # -> còn lại: đã cọc - tổng đơn
+                    # -> cộng lại trả khách
 
-                $owed = $deposited - $total_final_price;
-                $customer->wallet = $wallet + $owed; 
-                $customer->save();
-            }
+                    $owed = $deposited - $total_final_price;
+                    $customer->wallet = $wallet + $owed;
+                    $customer->save();
+                }
 
-            TransportRecharge::create([
+                TransportRecharge::create([
                 'customer_id'       =>  $order->customer_id,
                 'user_id_created'   =>  1,
                 'money'             =>  $owed,
@@ -75,20 +75,21 @@ Route::post('/confirm-receive-vietnam', function (Request $request) {
                 'content'           =>  'Thanh toán đơn hàng mua hộ. Mã đơn hàng '.$order->order_number,
                 'order_type'        =>  TransportRecharge::TYPE_ORDER
             ]);
-        }
+            }
 
-        // DB::commit();
+            // DB::commit();
     
-        return response()->json([
+            return response()->json([
             'error' =>  false
         ]);
-    } catch (\Exception $e) {
-        // DB::rollBack();
+        } catch (\Exception $e) {
+            // DB::rollBack();
 
-        return response()->json([
+            return response()->json([
             'error' =>  true,
             'msg'   =>  $e->getMessage()
         ]);
+        }
     }
     
 });

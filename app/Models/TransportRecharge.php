@@ -26,7 +26,8 @@ class TransportRecharge extends Model
         'user_id_created',
         'money',
         'type_recharge',
-        'content'
+        'content',
+        'note'
     ];
 
     const TYPE_ORDER = 1;

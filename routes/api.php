@@ -29,7 +29,7 @@ Route::get('/search-order-item', function (Request $request) {
 });
 
 Route::post('/confirm-receive-vietnam', function (Request $request) {
-    // DB::beginTransaction();
+    
     if ($request->ajax()) {
         try {
             $item_id = $request->item_id;
@@ -42,53 +42,64 @@ Route::post('/confirm-receive-vietnam', function (Request $request) {
 
             if ($order->totalWarehouseVietnamItems() == $order->sumQtyRealityItem() && $order->status != PurchaseOrder::STATUS_SUCCESS) {
                 $order->status = PurchaseOrder::STATUS_SUCCESS;
+                $order->success_at = date('Y-m-d H:i:s', strtotime(now()));
                 $order->save();
 
-                $deposited = $order->deposited; // số tiền đã cọc
-            $total_final_price = $order->totalBill() * $order->current_rate; // tổng tiền đơn hiện tại
+                if ($order->status == PurchaseOrder::STATUS_SUCCESS) {
+                    $deposited = $order->deposited; // số tiền đã cọc
+                    $total_final_price = round($order->totalBill() * $order->current_rate); // tổng tiền đơn hiện tại
 
-            $customer = User::find($order->customer_id);
-                $wallet = $customer->wallet;
-                if ($deposited <= $total_final_price) {
-                    # Đã cọc < tổng đơn -> còn lại : tổng đơn - đã cọc
-                    # -> trừ tiền của khách số còn lại
+                    $customer = $order->customer;
+                    $wallet = $customer->wallet;
 
-                    $owed = $total_final_price - $deposited;
-                    $customer->wallet = $wallet - $owed;
-                    $customer->save();
-                } else {
+                    $flag = false;
+                    $msg = "";
+                    if ($deposited <= $total_final_price)
+                    {
+                        # Đã cọc < tổng đơn -> còn lại : tổng đơn - đã cọc
+                        # -> trừ tiền của khách số còn lại
 
-                # Đã cọc > tổng đơn
-                    # -> còn lại: đã cọc - tổng đơn
-                    # -> cộng lại trả khách
+                        $owed = $total_final_price - $deposited;
+                        $customer->wallet = $wallet - $owed; 
+                        $customer->save();
+                        $flag = true;
+                        $msg = "";
+                    } else {
 
-                    $owed = $deposited - $total_final_price;
-                    $customer->wallet = $wallet + $owed;
-                    $customer->save();
+                        # Đã cọc > tổng đơn 
+                        # -> còn lại: đã cọc - tổng đơn
+                        # -> cộng lại trả khách
+
+                        $owed = $deposited - $total_final_price;
+                        $customer->wallet = $wallet + $owed; 
+                        $customer->save();
+                        $flag = true;
+                        $msg = 'Khách cọc dư, cộng hoàn tiền thừa';
+                    }
+
+                    if ($flag) {
+                        TransportRecharge::firstOrCreate([
+                            'customer_id'       =>  $order->customer_id,
+                            'user_id_created'   =>  1,
+                            'money'             =>  $owed,
+                            'type_recharge'     =>  TransportRecharge::PAYMENT_ORDER,
+                            'content'           =>  'Thanh toán đơn hàng mua hộ. Mã đơn hàng '.$order->order_number,
+                            'order_type'        =>  TransportRecharge::TYPE_ORDER,
+                            'note'              =>  'Tích nhận hàng ở alilogi, hệ thống tự chốt đơn. ' . $msg
+                        ]);
+                    }
                 }
-
-                TransportRecharge::create([
-                'customer_id'       =>  $order->customer_id,
-                'user_id_created'   =>  1,
-                'money'             =>  $owed,
-                'type_recharge'     =>  TransportRecharge::PAYMENT_ORDER,
-                'content'           =>  'Thanh toán đơn hàng mua hộ. Mã đơn hàng '.$order->order_number,
-                'order_type'        =>  TransportRecharge::TYPE_ORDER
-            ]);
             }
-
-            // DB::commit();
     
             return response()->json([
-            'error' =>  false
-        ]);
+                'error' =>  false
+            ]);
         } catch (\Exception $e) {
-            // DB::rollBack();
 
             return response()->json([
-            'error' =>  true,
-            'msg'   =>  $e->getMessage()
-        ]);
+                'error' =>  true,
+                'msg'   =>  $e->getMessage()
+            ]);
         }
     }
     

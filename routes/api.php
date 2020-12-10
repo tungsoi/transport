@@ -3,6 +3,7 @@
 use App\Admin\Services\PurchaseOrderService;
 use App\Models\Aloorder\OrderItem;
 use App\Models\Aloorder\PurchaseOrder;
+use App\Models\Order;
 use App\Models\TransportRecharge;
 use App\User;
 use Encore\Admin\Facades\Admin;
@@ -103,4 +104,17 @@ Route::post('/confirm-receive-vietnam', function (Request $request) {
         }
     }
     
+});
+
+
+
+Route::group([
+    // 'middleware' => ['cors']
+], function () {
+    Route::post('getOrders', function () {
+
+        return response()->json([
+            'orders'    =>  Order::limit(10)->get()
+        ]);
+    })->name('api.getOrder');
 });

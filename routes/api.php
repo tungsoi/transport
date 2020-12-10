@@ -109,7 +109,7 @@ Route::post('/confirm-receive-vietnam', function (Request $request) {
 
 
 Route::group([
-    // 'middleware' => ['cors']
+    'middleware' => ['cors']
 ], function () {
     Route::post('getOrders', function () {
 

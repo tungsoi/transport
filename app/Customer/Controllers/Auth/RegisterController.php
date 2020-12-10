@@ -45,7 +45,12 @@ class RegisterController extends Controller {
             'district'  =>  $data['district']
         ]);
 
-        DB::table('admin_role_users')->insert([
+        DB::connection('aloorder')->table('admin_role_users')->insert([
+            'user_id'   =>  $user->id,
+            'role_id'   =>  2
+        ]);
+
+        DB::connection('alilogi')->table('admin_role_users')->insert([
             'user_id'   =>  $user->id,
             'role_id'   =>  2
         ]);

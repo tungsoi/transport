@@ -107,14 +107,8 @@ Route::post('/confirm-receive-vietnam', function (Request $request) {
 });
 
 
-
-Route::group([
-    'middleware' => ['cors']
-], function () {
-    Route::post('getOrders', function () {
-
-        return response()->json([
-            'orders'    =>  Order::limit(10)->get()
-        ]);
-    })->name('api.getOrder');
-});
+Route::get('', ['middleware' => 'cors', function() {
+    return response()->json([
+        'orders'    =>  Order::limit(10)->get()
+    ]);
+}]);

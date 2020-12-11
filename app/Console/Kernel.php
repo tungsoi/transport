@@ -14,6 +14,7 @@ class Kernel extends ConsoleKernel
      */
     protected $commands = [
         'App\Console\Commands\SyncDataAdminUserFromAloorder',
+        'App\Console\Commands\CreateReportWarehousePortal'
     ];
 
     /**
@@ -24,7 +25,7 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        $schedule->command('sync:user-aloorder')->everyMinute();
+        $schedule->command('report-warehouse:portal')->everyMinute();
     }
 
     /**

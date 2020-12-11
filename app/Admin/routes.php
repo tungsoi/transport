@@ -71,7 +71,10 @@ Route::group([
         'popups'                =>  'PopupController',
         'posts'                 =>  'PostController',
         'schedule_logs'         =>  'ScheduleLogController',
-        'exchange_rates'        =>  'ExchangeRateController'
+        'exchange_rates'        =>  'ExchangeRateController',
+        'report_warehouses'     =>  'ReportWarehouse\DetailController',
+        'report_warehouse_portal'     =>  'ReportWarehouse\PortalController',
+        'report_warehouse_daily'     =>  'ReportWarehouse\DailyController'
     ]);
 });
 

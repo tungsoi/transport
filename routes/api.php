@@ -64,7 +64,21 @@ Route::post('/confirm-receive-vietnam', function (Request $request) {
                         $customer->wallet = $wallet - $owed; 
                         $customer->save();
                         $flag = true;
-                        $msg = "";
+
+                        if ($flag) {
+                            TransportRecharge::firstOrCreate([
+                                'customer_id'       =>  $order->customer_id,
+                                'user_id_created'   =>  1,
+                                'money'             =>  $owed,
+                                'type_recharge'     =>  TransportRecharge::DEDUCTION,
+                                'content'           =>  'Thanh toán đơn hàng mua hộ. Mã đơn hàng '.$order->order_number,
+                                'order_type'        =>  TransportRecharge::TYPE_ORDER
+                            ]);
+                        }
+
+                        return response()->json([
+                            'error' =>  false
+                        ]);
                     } else {
 
                         # Đã cọc > tổng đơn 
@@ -75,18 +89,20 @@ Route::post('/confirm-receive-vietnam', function (Request $request) {
                         $customer->wallet = $wallet + $owed; 
                         $customer->save();
                         $flag = true;
-                        $msg = 'Khách cọc dư, cộng hoàn tiền thừa';
-                    }
 
-                    if ($flag) {
-                        TransportRecharge::firstOrCreate([
-                            'customer_id'       =>  $order->customer_id,
-                            'user_id_created'   =>  1,
-                            'money'             =>  $owed,
-                            'type_recharge'     =>  TransportRecharge::PAYMENT_ORDER,
-                            'content'           =>  'Thanh toán đơn hàng mua hộ. Mã đơn hàng '.$order->order_number,
-                            'order_type'        =>  TransportRecharge::TYPE_ORDER,
-                            'note'              =>  'Tích nhận hàng ở alilogi, hệ thống tự chốt đơn. ' . $msg
+                        if ($flag) {
+                            TransportRecharge::firstOrCreate([
+                                'customer_id'       =>  $order->customer_id,
+                                'user_id_created'   =>  1,
+                                'money'             =>  $owed,
+                                'type_recharge'     =>  TransportRecharge::REFUND,
+                                'content'           =>  'Thanh toán đơn hàng mua hộ. Mã đơn hàng '.$order->order_number,
+                                'order_type'        =>  TransportRecharge::TYPE_ORDER
+                            ]);
+                        }
+
+                        return response()->json([
+                            'error' =>  false
                         ]);
                     }
                 }
@@ -107,7 +123,8 @@ Route::post('/confirm-receive-vietnam', function (Request $request) {
 });
 
 
-Route::post('/getOrders', ['middleware' => ['cors'], function() {
+// Đây là route phía website "Server" trả về 1 danh sách 10 bản ghi dữ liệu Order
+Route::post('/getOrders', ['middleware' =>  ['cors'], function() {
     return response()->json([
         'orders'    =>  Order::limit(10)->get()
     ]);

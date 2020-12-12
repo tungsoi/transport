@@ -650,7 +650,7 @@ class TransportOrderController extends AdminController
                     'customer_id'       =>  $request->payment_customer_id,
                     'user_id_created'   =>  1,
                     'money'             =>  (int) str_replace('.00', '', $data['final_total_price']),
-                    'type_recharge'     =>  TransportRecharge::PAYMENT,
+                    'type_recharge'     =>  TransportRecharge::DEDUCTION,
                     'content'           =>  TransportRecharge::RECHARGE_PAYMENT . " " . $order->order_number
                 ]);
                 

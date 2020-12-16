@@ -13,10 +13,10 @@ Route::group([
     'middleware'    => config('admin.route.middleware'),
 ], function (Router $router) {
 
-    $router->get('/', function () {
-        return redirect()->route('admin.home');
-    });
-    $router->get('/home', 'HomeController@index')->name('admin.home');
+    // $router->get('/', function () {
+    //     return redirect()->route('admin.home');
+    // });
+    $router->get('/', 'HomeController@index')->name('admin.home');
     $router->get('/customers/{id}/recharge', 'CustomerController@recharge')->name('customers.recharge');
     $router->post('/customers/recharge', 'CustomerController@rechargeStore')->name('customers.rechargeStore');
     $router->get('/customers/{id}/recharge-history', 'CustomerController@rechargeHistory')->name('customers.rechargeHistory');

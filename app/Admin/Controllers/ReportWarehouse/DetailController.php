@@ -40,21 +40,66 @@ class DetailController extends AdminController
             $filter->like('title', "Ký hiệu");
         });
 
-        $grid->column('date',"Ngày về kho");
-        $grid->column('order',"STT");
-        $grid->column('title', "Ký hiệu");
-        $grid->column('weight',"Cân nặng")->totalRow();
-        $grid->column('lenght','Dài (cm)');
-        $grid->column('width','Dài (cm)');
-        $grid->column('height','Cao (cm)');
-        $grid->column('cublic_meter', 'Mét khối')->totalRow();
-        $grid->column('line', 'Line');
+        $grid->quickCreate(function (Grid\Tools\QuickCreate $create) {
+            $create->date('date',"Ngày về kho");
+            $create->text('order',"STT");
+            $create->text('title', "Ký hiệu");
+            $create->text('weight',"Cân nặng");
+            $create->text('lenght','Dài (cm)');
+            $create->text('width','Rộng (cm)');
+            $create->text('height','Cao (cm)');
+            $create->text('cublic_meter', 'Mét khối');
+            $create->text('line', 'Line');
+        });
+
+        $grid->column('date',"Ngày về kho")->width(150);
+        $grid->column('order',"STT")->width(64);
+        $grid->column('title', "Ký hiệu")->width(138);
+        $grid->column('weight',"Cân nặng")->width(121); // ->totalRow();
+        $grid->column('lenght','Dài (cm)')->width(100);
+        $grid->column('width','Rộng (cm)')->width(100);
+        $grid->column('height','Cao (cm)')->width(100);
+        $grid->column('cublic_meter', 'Mét khối')->width(100); //->totalRow();
+        $grid->column('line', 'Line')->width(100);
         $grid->created_at(trans('admin.created_at'))->display(function () {
             return date('H:i | d-m-Y', strtotime($this->created_at));
         });
 
         // setup
         $grid->paginate(200);
+
+        // style
+        Admin::style('
+            .quick-create input#date {
+                width: 150px !important;
+            }
+            .quick-create input#order {
+                width: 64px !important;
+            }
+            .quick-create input#title {
+                width: 100px !important;
+            }
+            .quick-create input#weight {
+                width: 100px !important;
+            }
+            .quick-create input#lenght {
+                width: 100px !important;
+            }
+            .quick-create input#width {
+                width: 100px !important;
+            }
+            .quick-create input#height {
+                width: 100px !important;
+            }
+            .quick-create input#cublic_meter {
+                width: 100px !important;
+            }
+            .quick-create input#line {
+                width: 100px !important;
+            }
+        
+        ');
+
 
         // script
         Admin::script(

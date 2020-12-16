@@ -477,6 +477,18 @@ class TransportOrderController extends AdminController
                     . " + " .number_format($order->getSumKgDiscount() * $order->getPriceService($order, Order::KG))
                     . " + " .number_format($order->transport_advance_drag)
                 ],
+                [
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                ],
+                [
+                    "<h5><b>Thời gian gửi khiếu nại: Trong vòng 48h kể từ khi nhận hàng.</b></h5>"
+                ]
             ];
 
             $table = new Table($headers, $rows);

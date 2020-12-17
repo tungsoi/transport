@@ -63,6 +63,11 @@
         #purchase-order-table th {
             font-size: 12px !important;
         }
+
+        td, th {
+            padding: 0;
+            border: 1px solid #f4f4f4;
+        }
     </style>
 </head>
 

@@ -97,6 +97,13 @@ class CustomerController extends AdminController
                         $query->whereNotIn('id', $paymented);
                     }
                 }, 'Tìm kiếm', 'search_customer')->radio(['Khách chưa từng phát sinh giao dịch vận chuyển']);
+
+                $filter->where(function ($query) {
+                    if ($this->input == '0') {
+                        $paymented = PurchaseOrder::where('status', '!=', PurchaseOrder::STATUS_NEW_ORDER)->pluck('customer_id');
+                        $query->whereNotIn('id', $paymented);
+                    }
+                }, 'Tìm kiếm', 'search_customer_order')->radio(['Khách chưa từng phát sinh giao dịch mua hộ']);
             });
             $filter->column(1/2, function ($filter) {
                 $filter->like('email');
@@ -541,7 +548,8 @@ EOT
     protected function orderHistoryGrid($id)
     {
         $grid = new Grid(new TransportOrderItem);
-        $grid->model()->where('transport_customer_id', $id)->orderBy('id', 'desc');
+        $order_ids = Order::wherePaymentCustomerId($id)->get()->pluck('id');
+        $grid->model()->whereIn('order_id', $order_ids)->orderBy('id', 'desc');
 
         $grid->filter(function($filter) {
             $filter->expand();
@@ -575,9 +583,7 @@ EOT
             $row->column('number', ($row->number+1));
         });
         $grid->column('number', 'STT');
-        $grid->transport_customer_id('Tên KH')->display(function () {
-            return $this->customer->symbol_name ?? "";
-        });
+        $grid->customer_name('Tên KH');
         $grid->cn_code('MVD');
         $grid->kg();
         $grid->product_width('Rộng (cm)');

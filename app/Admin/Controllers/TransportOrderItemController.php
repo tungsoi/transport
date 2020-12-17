@@ -155,10 +155,16 @@ class TransportOrderItemController extends AdminController
         $grid->note('Ghi chú')->editable();
         $grid->actions(function ($actions) {
             $actions->disableView();
-
+            
             if ($actions->row->is_payment == 1) {
                 $actions->disableEdit();
                 $actions->disableDelete();
+
+                $id = $actions->row->id;
+                Admin::script(
+<<<EOT
+$('input[data-id=$id]').parent().parent().empty();
+EOT);
             } elseif ($actions->row->warehouse_vn == 0) {
                 $actions->disableEdit();
             }
@@ -169,7 +175,7 @@ class TransportOrderItemController extends AdminController
         });
         $grid->paginate(20);
         $grid->disableCreateButton();
-        
+
         $grid->tools(function (Grid\Tools $tools) {
             if (Admin::user()->can('order.payment') ) {
                 $tools->append('<a id="btn-payment-code" class="btn btn-sm btn-danger" title="Thanh toán">
@@ -212,6 +218,8 @@ class TransportOrderItemController extends AdminController
                
                 window.location.href = "/admin/transport_orders/payments?payment_in_list_code="+list;
             });
+
+
 EOT
     );
         return $grid;

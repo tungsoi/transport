@@ -2,6 +2,10 @@
 
 namespace App\Admin\Controllers\Report;
 
+use App\Admin\Actions\Customer\OrderHistory;
+use App\Admin\Actions\Customer\OrderPayment;
+use App\Admin\Actions\Customer\Recharge;
+use App\Admin\Actions\Customer\RechargeHistory;
 use App\Models\Warehouse;
 use Encore\Admin\Controllers\AdminController;
 use Encore\Admin\Form;
@@ -118,8 +122,13 @@ class OwedController extends AdminController
             $actions->disableEdit();
             $actions->disableView();
             $actions->disableDelete();
+
+            $actions->add(new Recharge($this->row->id));
+            $actions->add(new RechargeHistory($this->row->id));
+            $actions->add(new OrderHistory($this->row->id));
+            $actions->add(new OrderPayment($this->row->id));
+            
         });
-        $grid->disableActions();
         return $grid;
     }
 

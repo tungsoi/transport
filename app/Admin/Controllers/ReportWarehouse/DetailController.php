@@ -8,6 +8,8 @@ use Encore\Admin\Grid;
 use Encore\Admin\Show;
 use App\Models\ReportWarehouse;
 use Encore\Admin\Facades\Admin;
+use Illuminate\Foundation\Console\Presets\React;
+use Illuminate\Http\Request;
 
 class DetailController extends AdminController
 {
@@ -40,65 +42,22 @@ class DetailController extends AdminController
             $filter->like('title', "Ký hiệu");
         });
 
-        $grid->quickCreate(function (Grid\Tools\QuickCreate $create) {
-            $create->date('date',"Ngày về kho");
-            $create->text('order',"STT");
-            $create->text('title', "Ký hiệu");
-            $create->text('weight',"Cân nặng");
-            $create->text('lenght','Dài (cm)');
-            $create->text('width','Rộng (cm)');
-            $create->text('height','Cao (cm)');
-            $create->text('cublic_meter', 'Mét khối');
-            $create->text('line', 'Line');
-        });
-
         $grid->column('date',"Ngày về kho")->width(150);
-        $grid->column('order',"STT")->width(64);
-        $grid->column('title', "Ký hiệu")->width(138);
-        $grid->column('weight',"Cân nặng")->width(121); // ->totalRow();
-        $grid->column('lenght','Dài (cm)')->width(100);
-        $grid->column('width','Rộng (cm)')->width(100);
-        $grid->column('height','Cao (cm)')->width(100);
-        $grid->column('cublic_meter', 'Mét khối')->width(100); //->totalRow();
-        $grid->column('line', 'Line')->width(100);
+        $grid->column('order',"STT")->width(64)->editable();
+        $grid->column('title', "Ký hiệu")->width(138)->editable();
+        $grid->column('weight',"Cân nặng")->width(121)->editable();
+        $grid->column('lenght','Dài (cm)')->width(100)->editable();
+        $grid->column('width','Rộng (cm)')->width(100)->editable();
+        $grid->column('height','Cao (cm)')->width(100)->editable();
+        $grid->column('cublic_meter', 'Mét khối')->width(100)->editable();
+        $grid->column('line', 'Line')->width(100)->editable();
         $grid->created_at(trans('admin.created_at'))->display(function () {
             return date('H:i | d-m-Y', strtotime($this->created_at));
         });
 
         // setup
         $grid->paginate(200);
-
-        // style
-        Admin::style('
-            .quick-create input#date {
-                width: 150px !important;
-            }
-            .quick-create input#order {
-                width: 64px !important;
-            }
-            .quick-create input#title {
-                width: 100px !important;
-            }
-            .quick-create input#weight {
-                width: 100px !important;
-            }
-            .quick-create input#lenght {
-                width: 100px !important;
-            }
-            .quick-create input#width {
-                width: 100px !important;
-            }
-            .quick-create input#height {
-                width: 100px !important;
-            }
-            .quick-create input#cublic_meter {
-                width: 100px !important;
-            }
-            .quick-create input#line {
-                width: 100px !important;
-            }
-        
-        ');
+        $grid->disableActions();
 
 
         // script
@@ -141,22 +100,65 @@ EOT
     protected function form()
     {
         $form = new Form(new ReportWarehouse);
+        $form->setAction(route('report_warehouses.storeDetail'));
 
         $form->display('id', __('ID'));
         $form->date('date', "Ngày về kho")->default(now());
-        $form->text('order', "STT");
         $form->text('title', "Ký hiệu");
-        $form->text('weight', "Cân nặng");
-        $form->text('lenght', 'Dài (cm)');
-        $form->text('width', 'Rộng (cm)');
-        $form->text('height', 'Cao (cm)');
-        $form->text('cublic_meter', 'Mét khối');
-        $form->text('line', 'Line');
+
+        $form->html(function () {
+            return view('admin.report-warehouse')->render();
+        });
 
         $form->disableEditingCheck();
         $form->disableCreatingCheck();
         $form->disableViewCheck();
 
+        // callback before save
+
         return $form;
+    }
+
+    public function storeDetail(Request $request) {
+        $data = $request->all();
+
+        unset($data['order'][0]);
+        unset($data['weight'][0]);
+        unset($data['lenght'][0]);
+        unset($data['width'][0]);
+        unset($data['height'][0]);
+        unset($data['cublic_meter'][0]);
+
+        $size = sizeof($data['order']);
+        for ($i = 1; $i <= $size; $i++) {
+            $res = [
+                'date'  =>  $data['date'],
+                'order' =>  $data['order'][$i],
+                'title' =>  $data['title'],
+                'weight'    =>  $data['weight'][$i],
+                'lenght'    =>  $data['lenght'][$i],
+                'width'    =>  $data['width'][$i],
+                'height'    =>  $data['height'][$i],
+                'cublic_meter'    =>  $data['cublic_meter'][$i],
+                'line'    =>  $data['line'][$i],
+            ];
+
+            ReportWarehouse::create($res);
+        }
+
+        admin_toastr('Lưu thành công', 'success');
+        return redirect()->route('report_warehouses.index');
+    }
+
+    public function updateDetail($id, Request $request) {
+        ReportWarehouse::find($request->pk)->update([
+            $request->name  =>  $request->value
+        ]);
+
+        return response()->json([
+            'status' =>  true,
+            'message'   =>  'Lưu thành công'
+        ]);
+
     }
 }

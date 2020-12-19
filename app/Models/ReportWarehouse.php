@@ -29,4 +29,8 @@ class ReportWarehouse extends Model
         'cublic_meter',
         'line',
     ];
+
+    public function details() {
+        return $this->hasMany('App\Models\ReportWarehouse', 'id', 'id');
+    }
 }

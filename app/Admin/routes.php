@@ -64,6 +64,10 @@ Route::group([
     // post
     $router->get('/posts/fetch/{id}', 'PostController@fetch')->name('posts.fetch');
 
+    // report_warehouses
+    $router->post('/report_warehouses/storeDetail', 'ReportWarehouse\\DetailController@storeDetail')->name('report_warehouses.storeDetail');
+    $router->put('/report_warehouses/{id}', 'ReportWarehouse\\DetailController@updateDetail')->name('report_warehouses.updateDetail');
+
     $router->resources([
         'customers'             =>  'CustomerController',
         'warehouses'            =>  'WareHouseController',

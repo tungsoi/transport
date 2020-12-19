@@ -2,6 +2,7 @@
 
 namespace App\Admin\Controllers\Report;
 
+use App\Admin\Actions\Exporter\CustomerRechargeExporter;
 use App\Models\Warehouse;
 use Encore\Admin\Controllers\AdminController;
 use Encore\Admin\Form;
@@ -118,6 +119,8 @@ class RechargeController extends AdminController
         $grid->disableActions();
 
         $grid->disableCreateButton();
+
+        $grid->exporter(new CustomerRechargeExporter());
 
         $grid->tools(function (Grid\Tools $tools) {
             $tools->append('<a href="'.route('reports.recharges').'" class="btn btn-sm btn-danger" title="Tất cả">

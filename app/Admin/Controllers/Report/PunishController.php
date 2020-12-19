@@ -71,6 +71,7 @@ class PunishController extends AdminController
             $filter->expand();
             $filter->disableIdFilter();
             $filter->between('created_at', 'Ngày tạo')->date();
+            $filter->like('content', 'Nội dung');
         });
 
         $grid->header(function ($query) {

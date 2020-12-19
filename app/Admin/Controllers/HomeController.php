@@ -21,7 +21,26 @@ class HomeController extends Controller
     {
         return $content
             ->header('Bảng điều khiển')
-            ->description('...');
+            ->description('...')
+            ->row(function (Row $row) {
+                $words = 'Hệ thống đang trong quá trình triển khai và nâng cấp tính năng, mọi yêu cầu hoặc đóng góp ý kiến vui lòng gửi về địa chỉ hòm thư: thanhtung.atptit@gmail.com<br>Số điện thoại IT support: 0345.513.889';
+                $row->column(12, function (Column $column) use ($words) {
+                    $column->append((new Callout($words))->style('success'));
+                });
+            })
+            ->row(function (Row $row) {
+                if (Admin::user()->isRole('administrator')) {
+                    // $row->column(3, new InfoBox('Quản trị viên', 'users', 'aqua', 'admin/auth/users', User::where('is_customer', 0)->count()));
+                    // $row->column(3, new InfoBox('Khách hàng', 'book', 'green', '/admin/customers', User::where('is_customer', 1)->count()));
+                    // $row->column(3, new InfoBox('Mã vận đơn', 'tag', 'yellow', '/admin/transport_order_items', TransportOrderItem::all()->count()));
+                    // $row->column(3, new InfoBox('Đơn hàng', 'file', 'red', '/admin/transport_orders', Order::all()->count()));
+                } else {
+                    $row->column(12, function (Column $column) {
+                        $column->append($this->grid()->render());
+                    });
+                }
+                
+            });
         // try {
         //     return $content
         //     ->header('Bảng điều khiển')

@@ -41,7 +41,7 @@ class OrderService
         $flag = TransportOrderItem::where('cn_code', $data['cn_code'])->first();
 
         $data['warehouse_cn']           = 1;
-        $data['warehouse_cn_date']      = $flag ? $flag->warehouse_cn_date : now();
+        $data['warehouse_cn_date']      = $flag != null ? $flag->warehouse_cn_date : now();
         $data['advance_drag']           = $data['advance_drag'] != "" ? str_replace(',', '', $data['advance_drag']) : 0;
         $data['kg']                     = str_replace(',', '.', $data['kg']);
         $data['user_id_updated']        = Admin::user()->id;
@@ -59,7 +59,7 @@ class OrderService
         $data['transport_customer_id']  =  $customer->id ?? null;
         $data['warehouse_vn']           =  1;
         $data['warehouse_vn_date']      =  now();
-        $data['is_created']             =  $flag ? true : false;
+        $data['is_created']             =  $flag != null ? true : false;
 
         return $data;
     }

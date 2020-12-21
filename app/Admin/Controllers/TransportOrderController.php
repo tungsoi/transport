@@ -427,7 +427,7 @@ class TransportOrderController extends AdminController
             ];
 
             // Header table
-            $headers = ['THANH TOÁN', null, null, null, null, null];
+            $headers = ['THANH TOÁN', null, null, null, null];
 
             // Get detail sum kg
             $detailSumKg   = $order->getDetailSumKg();
@@ -483,11 +483,14 @@ class TransportOrderController extends AdminController
                     "",
                     "",
                     "",
-                    "",
-                    "",
                 ],
                 [
-                    "<h5><b>Thời gian gửi khiếu nại: Trong vòng 48h kể từ khi nhận hàng.</b></h5>"
+                    "<h5><b>Thời gian gửi khiếu nại: Trong vòng 48h kể từ khi nhận hàng.</b></h5>",
+                    "",
+                    "",
+                    "",
+                    "<h5><b>Khách hàng ký nhận.</b></h5>"
+
                 ]
             ];
 

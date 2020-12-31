@@ -47,9 +47,13 @@ class PortalController extends AdminController
             return number_format($this->weight, 2);
         })->totalRow();
         $grid->column('cublic_meter', 'Mét khối')->display(function () {
-            return number_format($this->cublic_meter, 2);
+            $number = number_format($this->cublic_meter, 2);
+            if ($number == '0.00') {
+                return null;
+            }
+            return $number;
         })->totalRow();
-        $grid->column('line', 'Line');
+        // $grid->column('line', 'Line');
         $grid->column('note', 'Ghi Chú');
         $grid->created_at(trans('admin.created_at'))->display(function () {
             return date('H:i | d-m-Y', strtotime($this->created_at));

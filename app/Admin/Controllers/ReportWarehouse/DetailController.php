@@ -33,7 +33,7 @@ class DetailController extends AdminController
     protected function grid()
     {
         $grid = new Grid(new ReportWarehouse());
-        $grid->model()->orderBy('date', 'desc')->orderBy('order', 'desc');
+        $grid->model()->orderBy('created_at', 'desc')->orderBy('order', 'desc');
 
         $grid->filter(function($filter) {
             $filter->expand();
@@ -127,9 +127,10 @@ EOT
         unset($data['lenght'][0]);
         unset($data['width'][0]);
         unset($data['height'][0]);
-        unset($data['cublic_meter'][0]);
+        unset($data['line'][0]);
 
         $size = sizeof($data['order']);
+
         for ($i = 1; $i <= $size; $i++) {
             $res = [
                 'date'  =>  $data['date'],
@@ -139,11 +140,11 @@ EOT
                 'lenght'    =>  $data['lenght'][$i],
                 'width'    =>  $data['width'][$i],
                 'height'    =>  $data['height'][$i],
-                'cublic_meter'    =>  $data['cublic_meter'][$i],
+                'cublic_meter'    => number_format( ($data['lenght'][$i]*$data['width'][$i]*$data['height'][$i]) / 1000000, 4),
                 'line'    =>  $data['line'][$i],
             ];
 
-            ReportWarehouse::create($res);
+            ReportWarehouse::firstOrCreate($res);
         }
 
         admin_toastr('Lưu thành công', 'success');

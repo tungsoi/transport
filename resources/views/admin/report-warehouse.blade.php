@@ -13,7 +13,6 @@
         <th>Dài (cm)</th>
         <th>Rộng (cm)</th>
         <th>Cao (cm)</th>
-        <th>Mét khối</th>
         <th>Line</th>
     </thead>
     <tbody>
@@ -34,9 +33,6 @@
                 <input type="text" name="height[]" class="form-control">
             </td>
             <td>
-                <input type="text" name="cublic_meter[]" class="form-control">
-            </td>
-            <td>
                 <input type="text" name="line[]" class="form-control">
             </td>
         </tr>
@@ -55,9 +51,6 @@
             </td>
             <td>
                 <input type="text" name="height[]" class="form-control">
-            </td>
-            <td>
-                <input type="text" name="cublic_meter[]" class="form-control">
             </td>
             <td>
                 <input type="text" name="line[]" class="form-control">

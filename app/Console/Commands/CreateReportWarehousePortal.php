@@ -44,26 +44,28 @@ class CreateReportWarehousePortal extends Command
             $report_warehouses = ReportWarehouse::select('title')->groupBy('title')->get();
 
             foreach ($report_warehouses as $report_warehouse) {
+
                 echo $report_warehouse->title . "\n";
-                $data = $this->buildData($report_warehouse->title);
-                
-                $flag = ReportWarehousePortal::whereTitle($report_warehouse->title)->first();
-                if ($flag) {
-                    // update
-                    ReportWarehousePortal::find($flag->id)->update([
-                        'date'  =>  $data['date'],
-                        'title' =>  $data['title'],
-                        'count' =>  $data['count'],
-                        'weight'  =>    $data['weight'],
-                        'cublic_meter'  =>  $data['cublic_meter'],
-                        'line'  =>  $data['line']
-                    ]);
+                if ($report_warehouse->title != null) {
+                    $data = $this->buildData($report_warehouse->title);
+
+                    $flag = ReportWarehousePortal::whereTitle($report_warehouse->title)->first();
+                    if ($flag) {
+                        // update
+                        ReportWarehousePortal::find($flag->id)->update([
+                            'date'  =>  $data['date'],
+                            'title' =>  $data['title'],
+                            'count' =>  $data['count'],
+                            'weight'  =>    $data['weight'],
+                            'cublic_meter'  =>  $data['cublic_meter'],
+                            'line'  =>  $data['line']
+                        ]);
+                    }
+                    else {
+                        // create
+                        ReportWarehousePortal::create($data);
+                    }
                 }
-                else {
-                    // create
-                    ReportWarehousePortal::create($data);
-                }
-                
             }
 
             ScheduleLog::create([
@@ -77,17 +79,23 @@ class CreateReportWarehousePortal extends Command
     }
 
     public function buildData($title = "") {
-        $raw = ReportWarehouse::whereTitle($title)->first();
-
+        $records = ReportWarehouse::whereTitle($title)->get();
+        $weight = 0;
+        $cl = 0;
+        foreach ($records as $row) {
+            $weight += floatval(str_replace(',', '.', $row->weight));
+            $cl += floatval(str_replace(',', '.', $row->cublic_meter));
+        }
+        
         return [
             'date'  =>  ReportWarehouse::whereTitle($title)->orderBy('date', 'asc')->first()->date,
             'title' =>  $title,
             'count' =>  ReportWarehouse::whereTitle($title)->count(),
-            'weight'  =>  ReportWarehouse::whereTitle($title)->sum('weight'),
-            'cublic_meter'  =>  ReportWarehouse::whereTitle($title)->sum('cublic_meter'),
+            'weight'  =>  $weight,
+            'cublic_meter'  =>  $cl,
             'offer_weight'  =>  0,
             'offer_cublic_meter'    =>  0,
-            'line'  =>  ReportWarehouse::whereTitle($title)->orderBy('date', 'asc')->first()->line,
+            'line'  =>  "",
             'note'  =>  "",
         ];
     }

@@ -25,7 +25,7 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        $schedule->command('report-warehouse:portal')->hourly();
+        $schedule->command('report-warehouse:portal')->everyMinute();
     }
 
     /**

@@ -66,7 +66,8 @@ class DeductionController extends AdminController
     protected function grid()
     {
         $grid = new Grid(new TransportRecharge);
-        $grid->model()->where('type_recharge', TransportRecharge::PAYMENT)->orderBy('id', 'desc');
+        $grid->model()->where('type_recharge', TransportRecharge::DEDUCTION)
+        ->where('content', 'like', 'Thanh toán đơn hàng vận chuyển%')->orderBy('id', 'desc');
 
         $grid->filter(function($filter) {
             $filter->expand();
@@ -76,7 +77,12 @@ class DeductionController extends AdminController
                 $query->where('content', 'like', "%{$this->input}%");
             
             }, 'Mã đơn hàng');
-            $filter->between('created_at', 'Ngày tạo')->date();
+            $filter->where(function ($query) {
+                $query->where('created_at', '>=', $this->input." 00:00:00");
+            }, 'Ngày thanh toán nhỏ nhất', 'created_at_begin')->date();
+            $filter->where(function ($query) {
+                $query->where('created_at', '<=', $this->input." 23:59:59");
+            }, 'Ngày thanh toán lớn nhất', 'created_at_finish')->date();
         });
 
         $grid->id('ID');

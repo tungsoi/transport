@@ -19,7 +19,7 @@
     <tbody>
         <tr class="default-row" style="display: none">
             <td>
-                <input type="text" name="order[]" class="form-control">
+                <input type="text" name="order[]" class="form-control order" value="1">
             </td>
             <td>
                 <input type="text" name="weight[]" class="form-control">
@@ -42,7 +42,7 @@
         </tr>
         <tr>
             <td>
-                <input type="text" name="order[]" class="form-control">
+                <input type="text" name="order[]" class="form-control" value="1">
             </td>
             <td>
                 <input type="text" name="weight[]" class="form-control">
@@ -69,12 +69,13 @@
 <button class="btn btn-xs btn-success" id="btn-add-row" type="button">Thêm dòng</button>
 
 <script>
+    let order = 2;
     $(document).on('click', '#btn-add-row', function () {
         let default_row = $('.default-row').clone();
 
         default_row.css('display', 'table-row');
         default_row.removeClass('default-row');
-        console.log(default_row);
+        default_row.find('.order').val(order++);
         $('#table-warehouse tbody').append(default_row);
     });
 </script>

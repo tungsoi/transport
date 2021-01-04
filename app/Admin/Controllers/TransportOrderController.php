@@ -89,7 +89,7 @@ class TransportOrderController extends AdminController
             
             return new Table(['MVD', 'Khối lượng (kg)', 'Rộng (cm)', 'Dài (cm)', 'Cao (cm)', 'Ứng kéo (Tệ)'], $items);
         });
-        $grid->transport_kg('KG');
+        $grid->transport_kg('KG')->totalRow();
         $grid->price_kg('Giá KG (VND)')->display(function() {
             return number_format($this->getPriceService($this, $this::KG));
         });

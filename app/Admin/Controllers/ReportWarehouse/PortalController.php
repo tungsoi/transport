@@ -31,7 +31,7 @@ class PortalController extends AdminController
     protected function grid()
     {
         $grid = new Grid(new ReportWarehousePortal());
-        $grid->model()->orderBy('created_at', 'desc');
+        $grid->model()->orderBy('date', 'desc');
 
         $grid->filter(function($filter) {
             $filter->expand();

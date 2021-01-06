@@ -43,8 +43,9 @@ class CreateReportWarehousePortal extends Command
         try {
             $report_warehouses = ReportWarehouse::select('title')->groupBy('title')->get();
 
+            $exist_titles = [];
             foreach ($report_warehouses as $report_warehouse) {
-
+                $exist_titles[$report_warehouse->title] = $report_warehouse->title;
                 echo $report_warehouse->title . "\n";
                 if ($report_warehouse->title != null) {
                     $data = $this->buildData($report_warehouse->title);
@@ -67,6 +68,8 @@ class CreateReportWarehousePortal extends Command
                     }
                 }
             }
+
+            $delete_rows = ReportWarehousePortal::whereNotIn('title', $exist_titles)->delete();
 
             ScheduleLog::create([
                 'code'  =>  'Tính dữ liệu báo cáo nhập kho theo lô hàng'

@@ -41,15 +41,37 @@ class DailyController extends AdminController
         });
 
         $grid->column('date',"Ngày");
+        $grid->column('total', 'Số lượng')->display(function () {
+            return ReportWarehouse::where('date', $this->date)->whereIn('line', ['BAO', 'KIỆN'])->count();
+        });
         $grid->column('weight', 'Tổng KG')->display(function () {
             return ReportWarehouse::where('date', $this->date)->sum('weight');
         });
         $grid->column('cublic_meter', 'Tổng M3')->display(function () {
             return ReportWarehouse::where('date', $this->date)->sum('cublic_meter');
         });
+        $grid->column('box', 'Số bao')->display(function () {
+            return ReportWarehouse::where('date', $this->date)->where('line', 'BAO')->count();
+        });
+        $grid->column('kg_box', 'Số KG bao')->display(function () {
+            return ReportWarehouse::where('date', $this->date)->where('line', 'BAO')->sum('weight');
+        });
+        $grid->column('m3_box', 'M3 bao')->display(function () {
+            return ReportWarehouse::where('date', $this->date)->where('line', 'BAO')->sum('cublic_meter');
+        });
+        $grid->column('package', 'Số kiện')->display(function () {
+            return ReportWarehouse::where('date', $this->date)->where('line', 'KIỆN')->count();
+        });
+        $grid->column('kg_package', 'Số KG kiện')->display(function () {
+            return ReportWarehouse::where('date', $this->date)->where('line', 'KIỆN')->sum('weight');
+        });
+        $grid->column('m3_package', 'M3 kiện')->display(function () {
+            return ReportWarehouse::where('date', $this->date)->where('line', 'KIỆN')->sum('cublic_meter');
+        });
 
         // setup
         $grid->paginate(20);
+        $grid->disableActions();
 
         return $grid;
     }

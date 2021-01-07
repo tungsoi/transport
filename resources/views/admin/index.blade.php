@@ -98,7 +98,7 @@
 
 </div>
 
-<button id="totop" title="Go to top" style="display: none;"><i class="fa fa-chevron-up"></i></button>
+{{-- <button id="totop" title="Go to top" style="display: none;"><i class="fa fa-chevron-up"></i></button> --}}
 
 <script>
     function LA() {}

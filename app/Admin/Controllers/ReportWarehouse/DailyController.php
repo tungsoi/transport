@@ -37,12 +37,12 @@ class DailyController extends AdminController
         $grid->filter(function($filter) {
             $filter->expand();
             $filter->disableIdFilter();
-            $filter->date('date', "Ngày")->date();
+            $filter->between('date', "Ngày")->date();
         });
 
         $grid->column('date',"Ngày");
         $grid->column('total', 'Số lượng')->display(function () {
-            return ReportWarehouse::where('date', $this->date)->whereIn('line', ['BAO', 'KIỆN'])->count();
+            return ReportWarehouse::where('date', $this->date)->whereIn('line', ReportWarehouse::LINE)->count();
         });
         $grid->column('weight', 'Tổng KG')->display(function () {
             return ReportWarehouse::where('date', $this->date)->sum('weight');
@@ -51,22 +51,22 @@ class DailyController extends AdminController
             return ReportWarehouse::where('date', $this->date)->sum('cublic_meter');
         });
         $grid->column('box', 'Số bao')->display(function () {
-            return ReportWarehouse::where('date', $this->date)->where('line', 'BAO')->count();
+            return ReportWarehouse::where('date', $this->date)->where('line', 0)->count();
         });
         $grid->column('kg_box', 'Số KG bao')->display(function () {
-            return ReportWarehouse::where('date', $this->date)->where('line', 'BAO')->sum('weight');
+            return ReportWarehouse::where('date', $this->date)->where('line', 0)->sum('weight');
         });
         $grid->column('m3_box', 'M3 bao')->display(function () {
-            return ReportWarehouse::where('date', $this->date)->where('line', 'BAO')->sum('cublic_meter');
+            return ReportWarehouse::where('date', $this->date)->where('line', 0)->sum('cublic_meter');
         });
         $grid->column('package', 'Số kiện')->display(function () {
-            return ReportWarehouse::where('date', $this->date)->where('line', 'KIỆN')->count();
+            return ReportWarehouse::where('date', $this->date)->where('line', 1)->count();
         });
         $grid->column('kg_package', 'Số KG kiện')->display(function () {
-            return ReportWarehouse::where('date', $this->date)->where('line', 'KIỆN')->sum('weight');
+            return ReportWarehouse::where('date', $this->date)->where('line', 1)->sum('weight');
         });
         $grid->column('m3_package', 'M3 kiện')->display(function () {
-            return ReportWarehouse::where('date', $this->date)->where('line', 'KIỆN')->sum('cublic_meter');
+            return ReportWarehouse::where('date', $this->date)->where('line', 1)->sum('cublic_meter');
         });
 
         // setup

@@ -6,6 +6,11 @@ use Illuminate\Database\Eloquent\Model;
 
 class ReportWarehouse extends Model
 {
+    const LINE = [
+        'BAO',
+        'KIỆN'
+    ];
+    
     /**
      * Table name
      *

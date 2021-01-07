@@ -42,7 +42,20 @@ class PortalController extends AdminController
 
         $grid->column('date',"Ngày đầu về kho");
         $grid->column('title', "Ký hiệu");
-        $grid->column('count', 'Thực nhận');
+        $grid->column('count', 'Thực nhận')->display(function () {
+            $arr = explode('-', $this->title);
+            if (sizeof($arr) == 2) {
+                if ($arr[1] == $this->count) {
+                    return $this->count;
+                }
+
+                else {
+                    return '<span class="label label-danger">'.$this->count.'</span>';
+                }
+            }
+
+            return $this->count;
+        });
         $grid->column('weight',"Cân nặng")->display(function () {
             return number_format($this->weight, 2);
         })->totalRow();
@@ -54,7 +67,7 @@ class PortalController extends AdminController
             return $number;
         })->totalRow();
         // $grid->column('line', 'Line');
-        $grid->column('note', 'Ghi Chú');
+        $grid->column('note', 'Ghi Chú')->editable();
         $grid->created_at(trans('admin.created_at'))->display(function () {
             return date('H:i | d-m-Y', strtotime($this->created_at));
         });
@@ -116,6 +129,7 @@ EOT
         $form->text('height', 'Cao (cm)');
         $form->text('cublic_meter', 'Mét khối');
         $form->text('line', 'Line');
+        $form->text('note', 'Ghi chú');
 
         $form->disableEditingCheck();
         $form->disableCreatingCheck();

@@ -13,7 +13,7 @@ class PurchaseOrder extends Model
 
     protected $connection = 'aloorder';
 
-    // const STATUS_UNSENT = 1;
+    const STATUS_UNSENT = 1;
     const STATUS_NEW_ORDER = 2;
     // const STATUS_CONFIRMED = 3;
     const STATUS_DEPOSITED_ORDERING = 4;
@@ -24,7 +24,7 @@ class PurchaseOrder extends Model
     const STATUS_SUCCESS = 9;
     const STATUS_CANCEL = 10;
 
-    // const STATUS_UNSENT_TEXT = 'Chưa gửi';
+    const STATUS_UNSENT_TEXT = 'Chưa gửi';
     const STATUS_NEW_ORDER_TEXT = 'Đơn hàng mới';
     // const STATUS_CONFIRMED_TEXT = 'Đã xác nhận';
     const STATUS_DEPOSITED_ORDERING_TEXT = 'Đã cọc - đang đặt';
@@ -36,7 +36,7 @@ class PurchaseOrder extends Model
     const STATUS_CANCEL_TEXT = 'Đã hủy';
 
     const STATUS = [
-        // self::STATUS_UNSENT => self::STATUS_UNSENT_TEXT,
+        self::STATUS_UNSENT => self::STATUS_UNSENT_TEXT,
         self::STATUS_NEW_ORDER => self::STATUS_NEW_ORDER_TEXT,
         // self::STATUS_CONFIRMED => self::STATUS_CONFIRMED_TEXT,
         self::STATUS_DEPOSITED_ORDERING => self::STATUS_DEPOSITED_ORDERING_TEXT,
@@ -49,21 +49,25 @@ class PurchaseOrder extends Model
     ];
 
     const LABEL = [
-        "", 
-        "",
+        "default", 
+        "default",
         'default',
-        "",
+        "default",
         'primary',
         'info',
-        "",
+        "default",
         'warning',
-        "",
+        "default",
         'success',
         'danger'
     ];
 
     const PERCENT = [
         '0%', '1%', '1.5%', '2%', '2.5%', '3%'
+    ];
+
+    const PERCENT_NUMBER = [
+        0, 1, 1.5, 2, 2.5, 3
     ];
     
     /**
@@ -135,7 +139,10 @@ class PurchaseOrder extends Model
         'purchase_order_transport_fee',
         'purchase_order_service_fee',
         'final_payment',
-        'user_id_confirm_ordered'
+        'user_id_confirm_ordered',
+        'user_input_final_payment',
+        'offer_cn',
+        'offer_vnd'
     ];
 
     public function customer() {
@@ -336,7 +343,14 @@ class PurchaseOrder extends Model
             $total = 0;
             foreach ($this->items as $item) {
                 if ($item->status != OrderItem::STATUS_PURCHASE_OUT_OF_STOCK) {
-                    $total += $item->purchase_cn_transport_fee;
+                    try {
+                        $item->purchase_cn_transport_fee = str_replace(",", ".", $item->purchase_cn_transport_fee);
+                        $total += $item->purchase_cn_transport_fee;
+                    }
+                    catch (\Exception $e) {
+                        // dd($item);
+                    }
+                    
                 }
                 
             }
@@ -421,7 +435,7 @@ class PurchaseOrder extends Model
             $total = 0;
             foreach ($this->items as $item) {
                 if ($item->status != OrderItem::STATUS_PURCHASE_OUT_OF_STOCK && $item->status == OrderItem::STATUS_PURCHASE_ITEM_ORDERED) {
-                    $total += $item->qty_reality;
+                    $total ++;
                 }
             }
 
@@ -430,5 +444,51 @@ class PurchaseOrder extends Model
 
         return 0;
     }
-    
+
+    public static function totalItemsByCustomerId($customer_id = "")
+    {
+        # code...
+        $orders = PurchaseOrder::whereCustomerId($customer_id)->get();
+        $total = 0;
+
+        if ($orders) 
+        {
+            foreach ($orders as $order)
+            {
+                $total += $order->items->count();
+            }
+            return $total;
+        }
+        return 0;
+    }
+
+    public static function buildData($id) {
+
+        $order = self::find($id);
+
+        $purchase_total_items_price = 0;
+        $purchase_cn_transport_fee = 0;
+        foreach ($order->items as $item) {
+            if ($item->status != OrderItem::STATUS_PURCHASE_OUT_OF_STOCK) {
+                $purchase_total_items_price += ($item->qty_reality * $item->price); // Te
+                $purchase_cn_transport_fee += $item->purchase_cn_transport_fee;
+            }
+        }
+
+        $percent = (float) PurchaseOrder::PERCENT_NUMBER[$order->customer->customer_percent_service];
+        $purchase_order_service_fee = round($purchase_total_items_price / 100 * $percent, 2);
+        $final_total_price = round(($purchase_total_items_price + $purchase_order_service_fee + $purchase_cn_transport_fee) * $order->current_rate); // vnd
+        $deposit_default   = round($final_total_price * 70 / 100); // tiền cọc = 70% tiền tổng đơn
+        
+        return [
+            'purchase_total_items_price'  =>  $purchase_total_items_price,
+            'final_total_price' =>  $final_total_price,
+            'deposit_default'   =>  $deposit_default,
+            'purchase_order_service_fee'    =>  $purchase_order_service_fee
+        ];
+    }
+
+    public function totalItemOutStock() {
+        return $this->items->where('status', OrderItem::STATUS_PURCHASE_OUT_OF_STOCK)->count();
+    }
 }

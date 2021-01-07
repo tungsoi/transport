@@ -13,7 +13,7 @@
         <th>Dài (cm)</th>
         <th>Rộng (cm)</th>
         <th>Cao (cm)</th>
-        <th>Line</th>
+        <th>Quy cách đóng gói</th>
     </thead>
     <tbody>
         <tr class="default-row" style="display: none">
@@ -33,7 +33,11 @@
                 <input type="text" name="height[]" class="form-control">
             </td>
             <td>
-                <input type="text" name="line[]" class="form-control">
+                <select class="form-control" name="line[]">
+                    @foreach ($line as $key => $row)
+                        <option value="{{$key}}">{{ $row }}</option>
+                    @endforeach
+                </select>
             </td>
         </tr>
         <tr>
@@ -53,7 +57,11 @@
                 <input type="text" name="height[]" class="form-control">
             </td>
             <td>
-                <input type="text" name="line[]" class="form-control">
+                <select class="form-control" name="line[]">
+                    @foreach ($line as $key => $row)
+                        <option value="{{$key}}">{{ $row }}</option>
+                    @endforeach
+                </select>
             </td>
         </tr>
     </tbody>

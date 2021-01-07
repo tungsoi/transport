@@ -46,19 +46,17 @@ class DetailController extends AdminController
         $grid->column('order',"STT")->width(64)->editable();
         $grid->column('title', "Ký hiệu")->width(138)->editable();
         $grid->column('weight',"Cân nặng")->width(121)->editable()->totalRow();
-        $grid->column('lenght','Dài (cm)')->width(100)->editable();
-        $grid->column('width','Rộng (cm)')->width(100)->editable();
-        $grid->column('height','Cao (cm)')->width(100)->editable();
-        $grid->column('cublic_meter', 'Mét khối')->width(100)->editable();
-        $grid->column('line', 'Line')->width(100)->editable();
+        $grid->column('lenght','Dài (cm)')->width(150)->editable();
+        $grid->column('width','Rộng (cm)')->width(150)->editable();
+        $grid->column('height','Cao (cm)')->width(150)->editable();
+        $grid->column('cublic_meter', 'Mét khối')->width(150)->editable();
+        $grid->column('line', 'Quy cách đóng gói')->width(150)->editable('select', ReportWarehouse::LINE);
         $grid->created_at(trans('admin.created_at'))->display(function () {
             return date('H:i | d-m-Y', strtotime($this->created_at));
         });
 
         // setup
         $grid->paginate(200);
-        $grid->disableActions();
-
 
         // script
         Admin::script(
@@ -105,9 +103,10 @@ EOT
         $form->display('id', __('ID'));
         $form->date('date', "Ngày về kho")->default(now());
         $form->text('title', "Ký hiệu");
+        $line = ReportWarehouse::LINE;
 
-        $form->html(function () {
-            return view('admin.report-warehouse')->render();
+        $form->html(function () use ($line) {
+            return view('admin.report-warehouse', compact('line'))->render();
         });
 
         $form->disableEditingCheck();

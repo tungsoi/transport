@@ -85,7 +85,11 @@ class OwedController extends AdminController
         $grid->header(function ($query) {
 
             $owed = $query->sum('wallet');
-            return '<h4>Công nợ khách hàng tạm tính hiện tại: <span style="color:red">'. number_format($owed) ."</span> (VND)</h4>";
+            $html = '<h4>Công nợ : <span style="color:red">'. number_format($owed) ."</span> (VND)</h4>";
+
+            $plus = User::whereIsCustomer(1)->where('wallet', '>', 0)->sum('wallet');
+            $html .= '<h4>Số dư &nbsp;&nbsp;&nbsp;: <span style="color:green">'. number_format($plus) ."</span> (VND)</h4>";
+            return $html;
         });
 
         $grid->rows(function (Grid\Row $row) {

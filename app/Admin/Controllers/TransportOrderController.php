@@ -597,11 +597,13 @@ class TransportOrderController extends AdminController
                 }
 
                 foreach ($items as $item) {
-                    if ($item['is_created']) {
-                        unset($item['is_created']);
-                        TransportOrderItem::where('cn_code', $item['cn_code'])->update($item);
-                    } else {
-                        TransportOrderItem::create($item);
+                    unset($item['is_created']);
+                    $flag = TransportOrderItem::where('cn_code', $item['cn_code'])->first();
+                    if (! $flag) {
+                        TransportOrderItem::firstOrCreate($item);
+                    } 
+                    else {
+                        TransportOrderItem::find($flag->id)->update($item);
                     }
                 }
     

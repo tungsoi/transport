@@ -598,8 +598,9 @@ class TransportOrderController extends AdminController
 
                 foreach ($items as $item) {
                     unset($item['is_created']);
-                    $flag = TransportOrderItem::where('cn_code', $item['cn_code'])->first();
-                    if (! $flag) {
+                    $flag = TransportOrderItem::where('cn_code', trim($item['cn_code']))->get()->count();
+                    
+                    if ($flag == 0) {
                         TransportOrderItem::firstOrCreate($item);
                     } 
                     else {
@@ -613,7 +614,7 @@ class TransportOrderController extends AdminController
             }
 
         } catch (\Exception $e) {
-            DB::rollback();
+            DB::rollBack();
             Log::error([
                 'message' => 'Lỗi khi tạo đơn hàng vận chuyển'
             ]);
@@ -678,7 +679,7 @@ class TransportOrderController extends AdminController
 
             }
         } catch (\Exception $exception) {
-            DB::rollback();
+            DB::rollBack();
             Log::error(['message' => 'Lỗi khi thanh toán đơn hàng vận chuyển' ]);
             Session::flash('payment-error', ['status' => 'danger', 'message' => 'Thanh toán đơn hàng vận chuyển lỗi']);
 

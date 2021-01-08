@@ -42,7 +42,7 @@ class DailyController extends AdminController
 
         $grid->column('date',"Ngày");
         $grid->column('total', 'Số lượng')->display(function () {
-            return ReportWarehouse::where('date', $this->date)->whereIn('line', ReportWarehouse::LINE)->count();
+            return ReportWarehouse::where('date', $this->date)->whereIn('line', [0, 1])->count();
         });
         $grid->column('weight', 'Tổng KG')->display(function () {
             return ReportWarehouse::where('date', $this->date)->sum('weight');

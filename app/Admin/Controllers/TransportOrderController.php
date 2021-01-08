@@ -528,13 +528,18 @@ class TransportOrderController extends AdminController
             }
 
             $data = $service->buildDataChinaReceive($request->all());
-            TransportOrderItem::create($data);
 
-            DB::commit();
-            return response()->json([
-                'error' =>  false,
-                'msg'   =>  'Tạo đơn hàng TQ nhận thành công'
-            ]);
+            $flag = TransportOrderItem::where('cn_code', $data['cn_code'])->first();
+            if ($flag == null) {
+                
+                TransportOrderItem::create($data);
+
+                DB::commit();
+                return response()->json([
+                    'error' =>  false,
+                    'msg'   =>  'Tạo đơn hàng TQ nhận thành công'
+                ]);
+            }
 
         } catch (\Exception $e) {
             DB::rollBack();
@@ -574,16 +579,15 @@ class TransportOrderController extends AdminController
      */
     public function storeTransportOrder(Request $request)
     {
-        DB::beginTransaction();
+        // DB::beginTransaction();
         try {
             $service = new OrderService();
             $data = $request->all();
 
             if (sizeof($data['cn_code']) >= 1 && $data['cn_code'][0] != null) {
-                $items = [];
                 for ($key = 0; $key < sizeof($data['cn_code']); $key++) {
                     if ($data['cn_code'][$key] != "") {
-                        $items[] = $service->buildDataVietnamReceive([
+                        $item = $service->buildDataVietnamReceive([
                             'customer_name'     =>  $data['customer_name'],
                             'cn_code'           =>  $data['cn_code'][$key],
                             'kg'                =>  $data['kg'][$key],
@@ -593,28 +597,30 @@ class TransportOrderController extends AdminController
                             'advance_drag'      =>  $data['advance_drag'][$key],
                             'note'              =>  $data['note'][$key]
                         ]);
+
+                        if ($item['cn_code'] != "") {
+                            unset($item['is_created']);
+
+                            $flag = TransportOrderItem::where('cn_code', trim($item['cn_code']))->first();
+                        
+                            if ($flag == null) {
+                                TransportOrderItem::firstOrCreate($item);
+                            } 
+                            else {
+                                TransportOrderItem::find($flag->id)->update($item);
+                            }
+                        }
+                        
                     }
                 }
 
-                foreach ($items as $item) {
-                    unset($item['is_created']);
-                    $flag = TransportOrderItem::where('cn_code', trim($item['cn_code']))->get()->count();
-                    
-                    if ($flag == 0) {
-                        TransportOrderItem::firstOrCreate($item);
-                    } 
-                    else {
-                        TransportOrderItem::find($flag->id)->update($item);
-                    }
-                }
-    
-                DB::commit();
+                // DB::commit();
                 Session::flash('notification', 'Tạo đơn hàng Hà Nội nhận thành công');
                 return redirect()->back();
             }
 
         } catch (\Exception $e) {
-            DB::rollBack();
+            // DB::rollBack();
             Log::error([
                 'message' => 'Lỗi khi tạo đơn hàng vận chuyển'
             ]);

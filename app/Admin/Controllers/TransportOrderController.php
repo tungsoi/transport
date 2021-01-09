@@ -579,7 +579,7 @@ class TransportOrderController extends AdminController
      */
     public function storeTransportOrder(Request $request)
     {
-        // DB::beginTransaction();
+        DB::beginTransaction();
         try {
             $service = new OrderService();
             $data = $request->all();
@@ -601,7 +601,7 @@ class TransportOrderController extends AdminController
                         if ($item['cn_code'] != "") {
                             unset($item['is_created']);
 
-                            $flag = TransportOrderItem::where('cn_code', trim($item['cn_code']))->first();
+                            $flag = TransportOrderItem::where('cn_code', $item['cn_code'])->first();
                         
                             if ($flag == null) {
                                 TransportOrderItem::firstOrCreate($item);
@@ -614,13 +614,13 @@ class TransportOrderController extends AdminController
                     }
                 }
 
-                // DB::commit();
+                DB::commit();
                 Session::flash('notification', 'Tạo đơn hàng Hà Nội nhận thành công');
                 return redirect()->back();
             }
 
         } catch (\Exception $e) {
-            // DB::rollBack();
+            DB::rollBack();
             Log::error([
                 'message' => 'Lỗi khi tạo đơn hàng vận chuyển'
             ]);

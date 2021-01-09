@@ -79,7 +79,18 @@ class TransportOrderItemController extends AdminController
         $grid->order_id('Mã đơn hàng')->display(function () {
             return $this->order->order_number ?? "";
         });
-        $grid->cn_code('MVD')->label('warning');
+        $grid->cn_code('MVD')->display(function () {
+            $html = "<span class='label label-warning'>".$this->cn_code."</span>";
+
+            $flag = TransportOrderItem::where('cn_code', $this->cn_code)->get();
+
+            if ($flag->count() > 1) {
+                $html .= "<br><br> Trùng (".($flag->count() - 1).")";
+                return $html;
+            }
+
+            return $html;
+        });
         $grid->transport_customer_id('Mã KH')->display(function () {
             $check_row = false;
             if ($this->warehouse_cn == 1 && $this->warehouse_vn == 1 && $this->is_payment == 0) {

@@ -70,6 +70,13 @@ class TransportOrderItemController extends AdminController
                 $filter->between('warehouse_cn_date', 'Ngày về TQ')->date();
                 $filter->between('warehouse_vn_date', 'Ngày về HN')->date();
                 $filter->equal('user_id_updated', 'Người sửa')->select(User::where('is_customer', 0)->pluck('name', 'id'));
+                $filter->where(function ($query) {
+                    if ($this->input == '0') {
+                        $duplicate_items = TransportOrderItem::select('cn_code')->groupBy('cn_code')->havingRaw('count(cn_code) > 1')->get()->pluck('cn_code');
+                        
+                        $query->whereIn('cn_code', $duplicate_items);
+                    }
+                }, 'Mã vận đơn', 'search_customer_order')->radio(['Bị trùng hoặc nhảy mã']);
             });
         });
         $grid->rows(function (Grid\Row $row) {
@@ -196,9 +203,9 @@ EOT);
             }
 
             $tools->batch(function(Grid\Tools\BatchActions $actions){
-                if (! Admin::user()->isRole('administrator')) {
+                // if (! Admin::user()->isRole('administrator')) {
                     $actions->disableDelete();
-                }
+                // }
             });
         });
 

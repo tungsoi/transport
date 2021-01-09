@@ -530,6 +530,7 @@ class TransportOrderController extends AdminController
             $data = $service->buildDataChinaReceive($request->all());
 
             $flag = TransportOrderItem::where('cn_code', $data['cn_code'])->first();
+
             if ($flag == null) {
                 
                 TransportOrderItem::create($data);
@@ -584,12 +585,12 @@ class TransportOrderController extends AdminController
             $service = new OrderService();
             $data = $request->all();
 
-            if (sizeof($data['cn_code']) >= 1 && $data['cn_code'][0] != null) {
-                for ($key = 0; $key < sizeof($data['cn_code']); $key++) {
-                    if ($data['cn_code'][$key] != "") {
+            if (sizeof($data['cn_code']) >= 1) {
+                foreach ($data['cn_code'] as $key => $cn_code) {
+                    if ($cn_code != "") {
                         $item = $service->buildDataVietnamReceive([
                             'customer_name'     =>  $data['customer_name'],
-                            'cn_code'           =>  $data['cn_code'][$key],
+                            'cn_code'           =>  $cn_code,
                             'kg'                =>  $data['kg'][$key],
                             'product_width'     =>  $data['product_width'][$key],
                             'product_length'    =>  $data['product_length'][$key],
@@ -598,26 +599,22 @@ class TransportOrderController extends AdminController
                             'note'              =>  $data['note'][$key]
                         ]);
 
-                        if ($item['cn_code'] != "") {
-                            unset($item['is_created']);
+                        $flag = TransportOrderItem::where('cn_code', $item['cn_code'])->first();
 
-                            $flag = TransportOrderItem::where('cn_code', $item['cn_code'])->first();
-                        
-                            if ($flag == null) {
-                                TransportOrderItem::firstOrCreate($item);
-                            } 
-                            else {
-                                TransportOrderItem::find($flag->id)->update($item);
-                            }
+                        if ($flag == null) {
+                            TransportOrderItem::create($item);
                         }
-                        
+                        else {
+                            TransportOrderItem::find($flag->id)->update($item);
+                        }
                     }
+                    
                 }
-
-                DB::commit();
-                Session::flash('notification', 'Tạo đơn hàng Hà Nội nhận thành công');
-                return redirect()->back();
             }
+
+            DB::commit();
+            Session::flash('notification', 'Tạo đơn hàng Hà Nội nhận thành công');
+            return redirect()->back();
 
         } catch (\Exception $e) {
             DB::rollBack();

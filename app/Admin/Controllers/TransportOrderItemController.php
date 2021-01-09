@@ -204,7 +204,7 @@ EOT);
 
             $tools->batch(function(Grid\Tools\BatchActions $actions){
                 // if (! Admin::user()->isRole('administrator')) {
-                    $actions->disableDelete();
+                    // $actions->disableDelete();
                 // }
             });
         });

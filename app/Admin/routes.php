@@ -81,7 +81,9 @@ Route::group([
         'exchange_rates'        =>  'ExchangeRateController',
         'report_warehouses'     =>  'ReportWarehouse\DetailController',
         'report_warehouse_portal'     =>  'ReportWarehouse\PortalController',
-        'report_warehouse_daily'     =>  'ReportWarehouse\DailyController'
+        'report_warehouse_daily'     =>  'ReportWarehouse\DailyController',
+        'transport_routes'  =>  'ReportWarehouse\TransportRouteController',
+        'report_warehouse_route'    =>  'ReportWarehouse\ReportRouteController'
     ]);
 });
 

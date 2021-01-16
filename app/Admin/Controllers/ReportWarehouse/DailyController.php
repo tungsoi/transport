@@ -7,6 +7,7 @@ use Encore\Admin\Form;
 use Encore\Admin\Grid;
 use Encore\Admin\Show;
 use App\Models\ReportWarehouse;
+use App\Models\TransportRoute;
 use Encore\Admin\Facades\Admin;
 
 class DailyController extends AdminController
@@ -40,33 +41,159 @@ class DailyController extends AdminController
             $filter->between('date', "Ngày")->date();
         });
 
+        $routes = TransportRoute::get();
+
         $grid->column('date',"Ngày");
-        $grid->column('total', 'Số lượng')->display(function () {
-            return ReportWarehouse::where('date', $this->date)->whereIn('line', [0, 1])->count();
+        $grid->column('total', 'Số lượng')->display(function () use ($routes) {
+            
+            $html = "<ul style='padding-left: 10px'>";
+            $total = 0;
+            foreach ($routes as $route) {
+                $content = ReportWarehouse::where('date', $this->date)
+                ->whereIn('line', [0, 1])
+                ->whereTransportRoute($route->id)
+                ->count();
+                $total += $content;
+
+                $html .= "<li>".$route->title." : ".$content."</li>";
+            }
+            $html .= "<li><b>Tổng : ".$total."</b></li>";
+            $html .= "</ul>";
+
+            return $html;
         });
-        $grid->column('weight', 'Tổng KG')->display(function () {
-            return ReportWarehouse::where('date', $this->date)->sum('weight');
+        $grid->column('weight', 'Tổng KG')->display(function () use ($routes) {
+            $html = "<ul style='padding-left: 10px'>";
+            $total = 0;
+            foreach ($routes as $route) {
+                $content = ReportWarehouse::where('date', $this->date)
+                ->whereTransportRoute($route->id)
+                ->sum('weight');
+                $total += $content;
+
+                $html .= "<li>".$route->title." : ".$content."</li>";
+            }
+            $html .= "<li><b>Tổng : ".$total."</b></li>";
+            $html .= "</ul>";
+
+            return $html;
         });
-        $grid->column('cublic_meter', 'Tổng M3')->display(function () {
-            return ReportWarehouse::where('date', $this->date)->sum('cublic_meter');
+        $grid->column('cublic_meter', 'Tổng M3')->display(function () use ($routes) {
+            $html = "<ul style='padding-left: 10px'>";
+            $total = 0;
+            foreach ($routes as $route) {
+                $content = ReportWarehouse::where('date', $this->date)
+                ->whereTransportRoute($route->id)
+                ->sum('cublic_meter');
+                $total += $content;
+
+                $html .= "<li>".$route->title." : ".$content."</li>";
+            }
+            $html .= "<li><b>Tổng : ".$total."</b></li>";
+            $html .= "</ul>";
+
+            return $html;
         });
-        $grid->column('box', 'Số bao')->display(function () {
-            return ReportWarehouse::where('date', $this->date)->where('line', 0)->count();
+        $grid->column('box', 'Số bao')->display(function () use ($routes) {
+            $html = "<ul style='padding-left: 10px'>";
+            $total = 0;
+            foreach ($routes as $route) {
+                $content = ReportWarehouse::where('date', $this->date)
+                ->whereTransportRoute($route->id)
+                ->where('line', 0)->count();
+                $total += $content;
+
+                $html .= "<li>".$route->title." : ".$content."</li>";
+            }
+            $html .= "<li><b>Tổng : ".$total."</b></li>";
+            $html .= "</ul>";
+
+            return $html;
         });
-        $grid->column('kg_box', 'Số KG bao')->display(function () {
-            return ReportWarehouse::where('date', $this->date)->where('line', 0)->sum('weight');
+        $grid->column('kg_box', 'Số KG bao')->display(function () use ($routes) {
+            $html = "<ul style='padding-left: 10px'>";
+            $total = 0;
+            foreach ($routes as $route) {
+                $content = ReportWarehouse::where('date', $this->date)
+                ->whereTransportRoute($route->id)
+                ->where('line', 0)
+                ->sum('weight');
+                $total += $content;
+
+                $html .= "<li>".$route->title." : ".$content."</li>";
+            }
+            $html .= "<li><b>Tổng : ".$total."</b></li>";
+            $html .= "</ul>";
+
+            return $html;
         });
-        $grid->column('m3_box', 'M3 bao')->display(function () {
-            return ReportWarehouse::where('date', $this->date)->where('line', 0)->sum('cublic_meter');
+        $grid->column('m3_box', 'M3 bao')->display(function () use ($routes) {
+            $html = "<ul style='padding-left: 10px'>";
+            $total = 0;
+            foreach ($routes as $route) {
+                $content = ReportWarehouse::where('date', $this->date)
+                ->whereTransportRoute($route->id)
+                ->where('line', 0)
+                ->sum('cublic_meter');
+                $total += $content;
+
+                $html .= "<li>".$route->title." : ".$content."</li>";
+            }
+            $html .= "<li><b>Tổng : ".$total."</b></li>";
+            $html .= "</ul>";
+
+            return $html;
         });
-        $grid->column('package', 'Số kiện')->display(function () {
-            return ReportWarehouse::where('date', $this->date)->where('line', 1)->count();
+        $grid->column('package', 'Số kiện')->display(function () use ($routes) {
+            $html = "<ul style='padding-left: 10px'>";
+            $total = 0;
+            foreach ($routes as $route) {
+                $content = ReportWarehouse::where('date', $this->date)
+                ->whereTransportRoute($route->id)
+                ->where('line', 1)
+                ->count();
+                $total += $content;
+
+                $html .= "<li>".$route->title." : ".$content."</li>";
+            }
+            $html .= "<li><b>Tổng : ".$total."</b></li>";
+            $html .= "</ul>";
+
+            return $html;
         });
-        $grid->column('kg_package', 'Số KG kiện')->display(function () {
-            return ReportWarehouse::where('date', $this->date)->where('line', 1)->sum('weight');
+        $grid->column('kg_package', 'Số KG kiện')->display(function () use ($routes) {
+            $html = "<ul style='padding-left: 10px'>";
+            $total = 0;
+            foreach ($routes as $route) {
+                $content = ReportWarehouse::where('date', $this->date)
+                ->whereTransportRoute($route->id)
+                ->where('line', 1)
+                ->sum('weight');
+                $total += $content;
+
+                $html .= "<li>".$route->title." : ".$content."</li>";
+            }
+            $html .= "<li><b>Tổng : ".$total."</b></li>";
+            $html .= "</ul>";
+
+            return $html;
         });
-        $grid->column('m3_package', 'M3 kiện')->display(function () {
-            return ReportWarehouse::where('date', $this->date)->where('line', 1)->sum('cublic_meter');
+        $grid->column('m3_package', 'M3 kiện')->display(function () use ($routes) {
+            $html = "<ul style='padding-left: 10px'>";
+            $total = 0;
+            foreach ($routes as $route) {
+                $content = ReportWarehouse::where('date', $this->date)
+                ->whereTransportRoute($route->id)
+                ->where('line', 1)
+                ->sum('cublic_meter');
+                $total += $content;
+
+                $html .= "<li>".$route->title." : ".$content."</li>";
+            }
+            $html .= "<li><b>Tổng : ".$total."</b></li>";
+            $html .= "</ul>";
+
+            return $html;
         });
 
         // setup

@@ -33,9 +33,14 @@ class ReportWarehouse extends Model
         'height',
         'cublic_meter',
         'line',
+        'transport_route'
     ];
 
     public function details() {
         return $this->hasMany('App\Models\ReportWarehouse', 'id', 'id');
+    }
+
+    public function transportRoute() {
+        return $this->hasMany('App\Models\TransportRoute', 'id', 'transport_route');
     }
 }

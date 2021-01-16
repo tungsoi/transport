@@ -34,7 +34,7 @@ class DetailController extends AdminController
     protected function grid()
     {
         $grid = new Grid(new ReportWarehouse());
-        $grid->model()->orderBy('created_at', 'desc')->orderBy('order', 'desc');
+        $grid->model()->orderBy('date', 'desc')->orderBy('title', 'desc')->orderBy('order', 'desc');
 
         $grid->filter(function($filter) {
             $filter->expand();
@@ -61,12 +61,26 @@ class DetailController extends AdminController
         $grid->paginate(200);
         $grid->disableActions();
 
+        $grid->disableCreateButton();
+        $grid->tools(function ($tools) {
+            $tools->append('<div class="btn-group pull-right grid-create-btn" style="margin-right: 10px">
+                <a href="" id="btn-add" class="btn btn-sm btn-success" title="Thêm mới">
+                    <i class="fa fa-plus"></i><span class="hidden-xs">&nbsp;&nbsp;Thêm mới</span>
+                </a>
+            </div>');
+        });
+
+        $route = route('report_warehouses.create');
         // script
         Admin::script(
             <<<EOT
 
             $('tfoot').each(function () {
                 $(this).insertAfter($(this).siblings('thead'));
+            });
+
+            $('#btn-add').on('click', function () {
+                window.location.href = '{$route}';
             });
 EOT
     );

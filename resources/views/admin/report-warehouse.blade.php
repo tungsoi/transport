@@ -70,6 +70,7 @@
 <button class="btn btn-xs btn-success" id="btn-add-row" type="button">Thêm dòng</button>
 
 <script>
+
     let order = 2;
     $(document).on('click', '#btn-add-row', function () {
         let default_row = $('.default-row').clone();

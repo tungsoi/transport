@@ -104,7 +104,11 @@ class OwedController extends AdminController
             return $this->warehouse->name ?? "";
         });
         $grid->wallet('Số dư ví (VND)')->display(function () {
-            return number_format($this->wallet);
+            if ($this->wallet > 0) {
+                return '<span class="label label-success">'.number_format($this->wallet) ?? "0".'</span>';
+            }
+
+            return '<span class="label label-danger">'.number_format($this->wallet).'</span>';
         });
         $grid->address('Địa chỉ')->editable()->width(100);
         $grid->is_active('Trạng thái')->display(function () {

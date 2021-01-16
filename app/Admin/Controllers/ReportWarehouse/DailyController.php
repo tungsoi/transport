@@ -2,6 +2,7 @@
 
 namespace App\Admin\Controllers\ReportWarehouse;
 
+use App\Admin\Actions\Exporter\DailyReportWarehouseExporter;
 use Encore\Admin\Controllers\AdminController;
 use Encore\Admin\Form;
 use Encore\Admin\Grid;
@@ -43,7 +44,9 @@ class DailyController extends AdminController
 
         $routes = TransportRoute::get();
 
-        $grid->column('date',"Ngày");
+        $grid->column('date',"Ngày")->totalRow(function () {
+            return "-";
+        });
         $grid->column('total', 'Số lượng')->display(function () use ($routes) {
             
             $html = "<ul style='padding-left: 10px'>";
@@ -57,7 +60,7 @@ class DailyController extends AdminController
 
                 $html .= "<li>".$route->title." : ".$content."</li>";
             }
-            $html .= "<li><b>Tổng : ".$total."</b></li>";
+            $html .= "<li>Tổng : <b class='sum_total'>".$total."</b></li>";
             $html .= "</ul>";
 
             return $html;
@@ -73,7 +76,7 @@ class DailyController extends AdminController
 
                 $html .= "<li>".$route->title." : ".$content."</li>";
             }
-            $html .= "<li><b>Tổng : ".$total."</b></li>";
+            $html .= "<li>Tổng : <b class='sum_weight'>".$total."</b></li>";
             $html .= "</ul>";
 
             return $html;
@@ -89,7 +92,7 @@ class DailyController extends AdminController
 
                 $html .= "<li>".$route->title." : ".$content."</li>";
             }
-            $html .= "<li><b>Tổng : ".$total."</b></li>";
+            $html .= "<li>Tổng : <b class='sum_cublic_meter'>".$total."</b></li>";
             $html .= "</ul>";
 
             return $html;
@@ -105,7 +108,7 @@ class DailyController extends AdminController
 
                 $html .= "<li>".$route->title." : ".$content."</li>";
             }
-            $html .= "<li><b>Tổng : ".$total."</b></li>";
+            $html .= "<li>Tổng : <b class='sum_box'>".$total."</b></li>";
             $html .= "</ul>";
 
             return $html;
@@ -122,7 +125,7 @@ class DailyController extends AdminController
 
                 $html .= "<li>".$route->title." : ".$content."</li>";
             }
-            $html .= "<li><b>Tổng : ".$total."</b></li>";
+            $html .= "<li>Tổng : <b class='sum_kg_box'>".$total."</b></li>";
             $html .= "</ul>";
 
             return $html;
@@ -139,7 +142,7 @@ class DailyController extends AdminController
 
                 $html .= "<li>".$route->title." : ".$content."</li>";
             }
-            $html .= "<li><b>Tổng : ".$total."</b></li>";
+            $html .= "<li>Tổng : <b class='sum_m3_box'>".$total."</b></li>";
             $html .= "</ul>";
 
             return $html;
@@ -156,7 +159,7 @@ class DailyController extends AdminController
 
                 $html .= "<li>".$route->title." : ".$content."</li>";
             }
-            $html .= "<li><b>Tổng : ".$total."</b></li>";
+            $html .= "<li>Tổng : <b class='sum_package'>".$total."</b></li>";
             $html .= "</ul>";
 
             return $html;
@@ -173,7 +176,7 @@ class DailyController extends AdminController
 
                 $html .= "<li>".$route->title." : ".$content."</li>";
             }
-            $html .= "<li><b>Tổng : ".$total."</b></li>";
+            $html .= "<li>Tổng : <b class='sum_kg_package'>".$total."</b></li>";
             $html .= "</ul>";
 
             return $html;
@@ -190,7 +193,7 @@ class DailyController extends AdminController
 
                 $html .= "<li>".$route->title." : ".$content."</li>";
             }
-            $html .= "<li><b>Tổng : ".$total."</b></li>";
+            $html .= "<li>Tổng : <b class='sum_m3_package'>".$total."</b></li>";
             $html .= "</ul>";
 
             return $html;
@@ -199,6 +202,57 @@ class DailyController extends AdminController
         // setup
         $grid->paginate(20);
         $grid->disableActions();
+
+        $grid->exporter(new DailyReportWarehouseExporter());
+
+        if (isset($_GET['date']) && sizeof($_GET['date']) > 1) {
+            Admin::script(
+                <<<EOT
+    
+                $('tfoot').each(function () {
+                    $(this).insertAfter($(this).siblings('thead'));
+                });
+    
+                $( document ).ready(function() {
+                    $('tfoot .column-date').html("");
+    
+                    $('tfoot .column-total').html(getTotal('sum_total', 0));
+                    $('tfoot .column-weight').html(getTotal('sum_weight', 1));
+                    $('tfoot .column-cublic_meter').html(getTotal('sum_cublic_meter'));
+                    $('tfoot .column-box').html(getTotal('sum_box', 0));
+                    $('tfoot .column-kg_box').html(getTotal('sum_kg_box', 2));
+                    $('tfoot .column-m3_box').html(getTotal('sum_m3_box'));
+                    $('tfoot .column-package').html(getTotal('sum_package', 0));
+                    $('tfoot .column-kg_package').html(getTotal('sum_kg_package', 2));
+                    $('tfoot .column-m3_package').html(getTotal('sum_m3_package'));
+                });
+    
+                function getTotal(cl, prefix = 4) {
+                    let obj = $('tbody .'+cl);
+    
+                    let total = 0;
+                    obj.each( function( i, el ) {
+                        var elem = $( el );
+                        let html = parseFloat($.trim(elem.html()));
+                        total += html;
+                    });
+                    total = total.toFixed(prefix);
+    
+                    return total;
+                }
+EOT
+    );
+    }
+    else {
+        Admin::script(
+            <<<EOT
+
+            $('tfoot').each(function () {
+                $(this).insertAfter($(this).siblings('thead'));
+            });
+EOT
+);
+    }
 
         return $grid;
     }

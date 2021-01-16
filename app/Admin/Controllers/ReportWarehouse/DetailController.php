@@ -151,9 +151,16 @@ EOT
         $size = sizeof($data['order']);
 
         for ($i = 1; $i <= $size; $i++) {
+            if (strlen($data['order'][$i]) == 1) {
+                $order = str_pad($data['order'][$i], 2, '0', STR_PAD_LEFT);
+            }
+            else {
+                $order = $data['order'][$i];
+            }
+
             $res = [
                 'date'  =>  $data['date'],
-                'order' =>  $data['order'][$i],
+                'order' =>  $order,
                 'title' =>  $data['title'],
                 'weight'    =>  $data['weight'][$i],
                 'lenght'    =>  $data['lenght'][$i],

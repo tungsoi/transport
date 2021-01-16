@@ -34,7 +34,9 @@ class DetailController extends AdminController
     protected function grid()
     {
         $grid = new Grid(new ReportWarehouse());
-        $grid->model()->orderBy('date', 'desc')->orderBy('title', 'desc')->orderBy('order', 'desc');
+        $grid->model()->orderBy('date', 'desc')
+        ->orderBy('title', 'desc')
+        ->orderBy('id', 'desc');
 
         $grid->filter(function($filter) {
             $filter->expand();

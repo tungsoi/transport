@@ -2,10 +2,13 @@
 
 namespace App\Models;
 
+use Encore\Admin\Traits\AdminBuilder;
 use Illuminate\Database\Eloquent\Model;
 
 class ReportWarehouse extends Model
 {
+    use AdminBuilder;
+    
     const LINE = [
         'BAO',
         'KIỆN'

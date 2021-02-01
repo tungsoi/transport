@@ -49,7 +49,7 @@ class TransportOrderItemController extends AdminController
                 }, 'Mã đơn hàng');
                 $filter->like('cn_code', 'Mã vận đơn');
                 $filter->like('customer_name', 'Mã KH');
-                $filter->equal('transport_customer_id', 'Mã khách hàng thanh toán')->select(User::whereIsCustomer(1)->get()->pluck('symbol_name', 'id'));
+                $filter->equal('payment_customer_id', 'Mã khách hàng thanh toán')->select(User::whereIsCustomer(1)->get()->pluck('symbol_name', 'id'));
                 $filter->where(function ($query) {
                     switch ($this->input) {
                         case TransportOrderItem::IS_PAYMENT:

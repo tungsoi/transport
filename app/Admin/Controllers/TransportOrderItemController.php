@@ -69,6 +69,16 @@ class TransportOrderItemController extends AdminController
                             break;
                     }
                 }, 'Trạng thái', 'status')->select(TransportOrderItem::STATUS);
+                $filter->where(function ($query) {
+                    $min = $this->input;
+                    $orders = Order::where('created_at', '>=', $this->input." 00:00:01")->get()->pluck('id');
+                    $query->whereIn('order_id', $orders);
+                }, 'Ngày thanh toán bé nhất', 'min_paymented_at')->date();
+                $filter->where(function ($query) {
+                    $min = $this->input;
+                    $orders = Order::where('created_at', '<=', $this->input." 23:59:59")->get()->pluck('id');
+                    $query->whereIn('order_id', $orders);
+                }, 'Ngày thanh toán lớn nhất', 'max_paymented_at')->date();
             });
             $filter->column(1/2, function ($filter) {
                 $filter->between('warehouse_cn_date', 'Ngày về TQ')->date();

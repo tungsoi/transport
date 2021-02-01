@@ -49,6 +49,7 @@ class TransportOrderItemController extends AdminController
                 }, 'Mã đơn hàng');
                 $filter->like('cn_code', 'Mã vận đơn');
                 $filter->like('customer_name', 'Mã KH');
+                $filter->equal('transport_customer_id', 'Mã khách hàng thanh toán')->select(User::whereIsCustomer(1)->get()->pluck('symbol_name', 'id'));
                 $filter->where(function ($query) {
                     switch ($this->input) {
                         case TransportOrderItem::IS_PAYMENT:
@@ -135,6 +136,7 @@ class TransportOrderItemController extends AdminController
         $grid->cublic_meter('M3')->display(function() {
             return str_replace('.000', '', $this->cublic_meter);
         })->totalRow(function ($amount) {
+            $amount = number_format($amount, 3);
             return '<span class="label label-danger">'.$amount.'</span>';
         });
         $grid->advance_drag('Ứng kéo (Tệ)');
@@ -171,6 +173,9 @@ class TransportOrderItemController extends AdminController
             return $this->warehouse_vn_date != "" ? date('H:i | d-m-Y', strtotime($this->warehouse_vn_date)) : "";
         });
         $grid->note('Ghi chú')->editable();
+        $grid->ware_house_id('Kho')->display(function () {
+            return $this->warehouse->name ?? "";
+        });
         $grid->actions(function ($actions) {
             $actions->disableView();
             

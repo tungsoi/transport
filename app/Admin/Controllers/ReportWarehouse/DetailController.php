@@ -8,6 +8,7 @@ use Encore\Admin\Grid;
 use Encore\Admin\Show;
 use App\Models\ReportWarehouse;
 use App\Models\TransportRoute;
+use App\Models\Warehouse;
 use Encore\Admin\Facades\Admin;
 use Illuminate\Foundation\Console\Presets\React;
 use Illuminate\Http\Request;
@@ -53,8 +54,9 @@ class DetailController extends AdminController
         $grid->column('width','Rộng (cm)')->width(150)->editable();
         $grid->column('height','Cao (cm)')->width(150)->editable();
         $grid->column('cublic_meter', 'Mét khối')->width(150)->editable()->totalRow();
-        $grid->column('line', 'Quy cách đóng gói')->width(150)->editable('select', ReportWarehouse::LINE);
+        $grid->column('line', 'Quy cách đóng gói')->width(100)->editable('select', ReportWarehouse::LINE);
         $grid->transport_route('Line vận chuyển')->editable('select', TransportRoute::all()->pluck('title', 'id'));
+        $grid->warehouse()->name('Kho nhận hàng');
         $grid->created_at(trans('admin.created_at'))->display(function () {
             return date('H:i | d-m-Y', strtotime($this->created_at));
         });
@@ -125,6 +127,9 @@ EOT
         $form->select('transport_route', 'Line vận chuyển')
         ->options(TransportRoute::all()->pluck('title', 'id'))
         ->default(1);
+        $form->select('warehouse_id', 'Kho nhận hàng')
+        ->options(Warehouse::all()->pluck('name', 'id'))
+        ->default(2);
         $line = ReportWarehouse::LINE;
 
         $form->html(function () use ($line) {
@@ -170,7 +175,8 @@ EOT
                 'height'    =>  $data['height'][$i],
                 'cublic_meter'    => number_format( ($data['lenght'][$i]*$data['width'][$i]*$data['height'][$i]) / 1000000, 4),
                 'line'    =>  $data['line'][$i],
-                'transport_route'   =>  $data['transport_route']
+                'transport_route'   =>  $data['transport_route'],
+                'warehouse_id'  =>  $data['warehouse_id']
             ];
 
             ReportWarehouse::firstOrCreate($res);

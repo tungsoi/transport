@@ -117,6 +117,18 @@
                             value="{{ old('customer_name') }}">
                         </div>
                     </div>
+                    <div class="warehouse col-lg-4">
+                        <div>
+                            <strong>
+                                <span class="bolder uppercase">Kho nhận hàng</span>
+                            </strong>
+                        </div>
+                        <select name="ware_house_id" class="form-control">
+                            @foreach ($warehouses as $warehouse)
+                                <option value="{{ $warehouse->id }}">{{ $warehouse->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
                 </div>
                 <hr>
                 <div class="row">

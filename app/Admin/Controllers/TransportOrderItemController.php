@@ -69,16 +69,7 @@ class TransportOrderItemController extends AdminController
                             break;
                     }
                 }, 'Trạng thái', 'status')->select(TransportOrderItem::STATUS);
-                $filter->where(function ($query) {
-                    $min = $this->input;
-                    $orders = Order::where('created_at', '>=', $this->input." 00:00:01")->get()->pluck('id');
-                    $query->whereIn('order_id', $orders);
-                }, 'Ngày thanh toán bé nhất', 'min_paymented_at')->date();
-                $filter->where(function ($query) {
-                    $min = $this->input;
-                    $orders = Order::where('created_at', '<=', $this->input." 23:59:59")->get()->pluck('id');
-                    $query->whereIn('order_id', $orders);
-                }, 'Ngày thanh toán lớn nhất', 'max_paymented_at')->date();
+                
             });
             $filter->column(1/2, function ($filter) {
                 $filter->between('warehouse_cn_date', 'Ngày về TQ')->date();
@@ -91,6 +82,16 @@ class TransportOrderItemController extends AdminController
                         $query->whereIn('cn_code', $duplicate_items);
                     }
                 }, 'Mã vận đơn', 'search_customer_order')->radio(['Bị trùng hoặc nhảy mã']);
+                $filter->where(function ($query) {
+                    $min = $this->input;
+                    $orders = Order::where('created_at', '>=', $this->input." 00:00:01")->get()->pluck('id');
+                    $query->whereIn('order_id', $orders);
+                }, 'Ngày thanh toán bé nhất', 'min_paymented_at')->date();
+                $filter->where(function ($query) {
+                    $min = $this->input;
+                    $orders = Order::where('created_at', '<=', $this->input." 23:59:59")->get()->pluck('id');
+                    $query->whereIn('order_id', $orders);
+                }, 'Ngày thanh toán lớn nhất', 'max_paymented_at')->date();
             });
         });
         $grid->rows(function (Grid\Row $row) {
@@ -106,8 +107,11 @@ class TransportOrderItemController extends AdminController
             $flag = TransportOrderItem::where('cn_code', $this->cn_code)->get();
 
             if ($flag->count() > 1) {
-                $html .= "<br><br> Trùng (".($flag->count() - 1).")";
-                return $html;
+                $id_main = TransportOrderItem::where('cn_code', $this->cn_code)->first()->id;
+                if ($id_main != $this->id) {
+                    $html .= "<br><br> Trùng (".($flag->count() - 1).")";
+                    return $html;
+                }
             }
 
             return $html;

@@ -47,7 +47,8 @@ class TransportOrderItem extends Model
         'cublic_meter',
         'note',
         'payment_date',
-        'customer_name'
+        'customer_name',
+        'ware_house_id'
     ];
 
     const KG = 1;
@@ -136,5 +137,9 @@ class TransportOrderItem extends Model
      */
     public static function calculateCublicMeter($productWidth = 0, $productHeight = 0, $productLength = 0) {
         return number_format( ( $productWidth * $productHeight * $productLength)/1000000, 3 );
+    }
+
+    public function warehouse() {
+        return $this->hasOne('App\Models\Warehouse', 'id', 'ware_house_id');
     }
 }

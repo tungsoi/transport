@@ -36,7 +36,8 @@ class ReportWarehouse extends Model
         'height',
         'cublic_meter',
         'line',
-        'transport_route'
+        'transport_route',
+        'warehouse_id'
     ];
 
     public function details() {
@@ -45,5 +46,9 @@ class ReportWarehouse extends Model
 
     public function transportRoute() {
         return $this->hasMany('App\Models\TransportRoute', 'id', 'transport_route');
+    }
+
+    public function warehouse() {
+        return $this->hasOne('App\Models\Warehouse', 'id', 'warehouse_id');
     }
 }

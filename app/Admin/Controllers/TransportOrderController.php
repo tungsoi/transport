@@ -596,7 +596,8 @@ class TransportOrderController extends AdminController
                             'product_length'    =>  $data['product_length'][$key],
                             'product_height'    =>  $data['product_height'][$key],
                             'advance_drag'      =>  $data['advance_drag'][$key],
-                            'note'              =>  $data['note'][$key]
+                            'note'              =>  $data['note'][$key],
+                            'ware_house_id'     =>  $data['ware_house_id']
                         ]);
 
                         $flag = TransportOrderItem::where('cn_code', $item['cn_code'])->first();

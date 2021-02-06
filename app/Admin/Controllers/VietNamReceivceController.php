@@ -4,6 +4,7 @@ namespace App\Admin\Controllers;
 
 use App\Models\Aloorder\OrderItem;
 use App\Models\Aloorder\PurchaseOrder;
+use App\Models\Warehouse;
 use App\User;
 use Encore\Admin\Controllers\AdminController;
 use Encore\Admin\Layout\Content;
@@ -41,7 +42,8 @@ class VietNamReceivceController extends AdminController
         ->description($this->description)
         ->body(function (Row $row) {
             $row->column(12, function (Column $column) {
-                $column->append((new Box('DANH SÁCH SẢN PHẨM', view('admin.orders.vietnam_receive')->render())));
+                $warehouses = Warehouse::all();
+                $column->append((new Box('DANH SÁCH SẢN PHẨM', view('admin.orders.vietnam_receive', compact('warehouses'))->render())));
             });
 
             $row->column(12, function (Column $column) {

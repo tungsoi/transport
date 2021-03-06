@@ -14,6 +14,7 @@
         <th>Rộng (cm)</th>
         <th>Cao (cm)</th>
         <th>Quy cách đóng gói</th>
+        <th>Ghi chú</th>
     </thead>
     <tbody>
         <tr class="default-row" style="display: none">
@@ -39,6 +40,9 @@
                     @endforeach
                 </select>
             </td>
+            <td>
+                <input type="text" name="note[]" class="form-control">
+            </td>
         </tr>
         <tr>
             <td>
@@ -62,6 +66,9 @@
                         <option value="{{$key}}">{{ $row }}</option>
                     @endforeach
                 </select>
+            </td>
+            <td>
+                <input type="text" name="note[]" class="form-control">
             </td>
         </tr>
     </tbody>

@@ -57,6 +57,7 @@ class DetailController extends AdminController
         $grid->column('line', 'Quy cách đóng gói')->width(100)->editable('select', ReportWarehouse::LINE);
         $grid->transport_route('Line vận chuyển')->editable('select', TransportRoute::all()->pluck('title', 'id'));
         $grid->warehouse()->name('Kho nhận hàng');
+        $grid->note('Ghi chú');
         $grid->created_at(trans('admin.created_at'))->display(function () {
             return date('H:i | d-m-Y', strtotime($this->created_at));
         });
@@ -154,6 +155,7 @@ EOT
         unset($data['width'][0]);
         unset($data['height'][0]);
         unset($data['line'][0]);
+        unset($data['note'][0]);
 
         $size = sizeof($data['order']);
 
@@ -176,7 +178,8 @@ EOT
                 'cublic_meter'    => number_format( ($data['lenght'][$i]*$data['width'][$i]*$data['height'][$i]) / 1000000, 4),
                 'line'    =>  $data['line'][$i],
                 'transport_route'   =>  $data['transport_route'],
-                'warehouse_id'  =>  $data['warehouse_id']
+                'warehouse_id'  =>  $data['warehouse_id'],
+                'note'  =>  $data['note'][$i]
             ];
 
             ReportWarehouse::firstOrCreate($res);

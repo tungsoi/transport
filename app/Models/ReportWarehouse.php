@@ -37,7 +37,8 @@ class ReportWarehouse extends Model
         'cublic_meter',
         'line',
         'transport_route',
-        'warehouse_id'
+        'warehouse_id',
+        'note'
     ];
 
     public function details() {

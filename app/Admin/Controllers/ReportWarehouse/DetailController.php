@@ -53,11 +53,13 @@ class DetailController extends AdminController
         $grid->column('lenght','Dài (cm)')->width(150)->editable();
         $grid->column('width','Rộng (cm)')->width(150)->editable();
         $grid->column('height','Cao (cm)')->width(150)->editable();
-        $grid->column('cublic_meter', 'Mét khối')->width(150)->editable()->totalRow();
+        $grid->column('cublic_meter', 'Mét khối')->width(150)->display(function () {
+            return str_replace('.0000','', $this->cublic_meter);
+        })->editable()->totalRow();
         $grid->column('line', 'Quy cách đóng gói')->width(100)->editable('select', ReportWarehouse::LINE);
         $grid->transport_route('Line vận chuyển')->editable('select', TransportRoute::all()->pluck('title', 'id'));
         $grid->warehouse()->name('Kho nhận hàng');
-        $grid->note('Ghi chú');
+        $grid->note('Ghi chú')->editable();
         $grid->created_at(trans('admin.created_at'))->display(function () {
             return date('H:i | d-m-Y', strtotime($this->created_at));
         });
@@ -175,7 +177,7 @@ EOT
                 'lenght'    =>  $data['lenght'][$i],
                 'width'    =>  $data['width'][$i],
                 'height'    =>  $data['height'][$i],
-                'cublic_meter'    => number_format( ($data['lenght'][$i]*$data['width'][$i]*$data['height'][$i]) / 1000000, 4),
+                'cublic_meter'    => number_format( ($data['lenght'][$i]*$data['width'][$i]*$data['height'][$i]) / 1000000, 4, '.', ''),
                 'line'    =>  $data['line'][$i],
                 'transport_route'   =>  $data['transport_route'],
                 'warehouse_id'  =>  $data['warehouse_id'],
@@ -194,9 +196,14 @@ EOT
             $request->name  =>  $request->value
         ]);
 
+        $row = ReportWarehouse::find($request->pk);
+        $cublic_meter = number_format(($row->lenght * $row->width * $row->height) / 1000000, 4, '.', '');
+        $row->cublic_meter = $cublic_meter;
+        $row->save();
+
         return response()->json([
             'status' =>  true,
-            'message'   =>  'Lưu thành công'
+            'message'   =>  'Lưu thành công test'
         ]);
 
     }

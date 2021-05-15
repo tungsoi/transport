@@ -11,7 +11,16 @@
     </td>
     <td class="column-created_at">{{ $item['created_at'] }}</td>
     <td class="column-product_image">
-        <img src="{{ "https://aloorder.vn/storage/admin/".$item['product_image'] }}" alt="" width="100px" class="product-image" style="cursor: pointer">
+        @if (! strpos($item['product_image'], 'https'))
+            @php
+                $route = $item['product_image'];
+            @endphp
+        @else
+            @php
+                $route = "https://aloorder.vn/storage/admin/".$item['product_image'];
+            @endphp
+        @endif
+        <img src="{{ $route }}" alt="" width="100px" class="product-image" style="cursor: pointer">
     </td>
     <td class="column-product_size">{{ $item['product_size'] }}</td>
     <td class="column-product_color">{{ $item['product_color'] }}</td>

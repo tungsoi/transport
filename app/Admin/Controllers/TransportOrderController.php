@@ -486,7 +486,7 @@ class TransportOrderController extends AdminController
                     "",
                 ],
                 [
-                    "<h5><b>Thời gian gửi khiếu nại: Trong vòng 48h kể từ khi nhận hàng.</b></h5>",
+                    "<h5><b>Yêu cầu Khách hàng kiểm tra đủ số lượng hàng hoá và đúng mã vận đơn theo đơn hàng. Nếu có sai sót xin phản ánh lại với công ty trong vòng 24h.</b></h5>",
                     "",
                     "",
                     "",

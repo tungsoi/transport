@@ -156,7 +156,8 @@ class TransportOrderController extends AdminController
             $grid->disableExport();
         }
 
-        $grid->paginate(20);
+        $grid->paginate(10);
+        $grid->perPages([10, 50, 100, 200, 1000]);
         return $grid;
     }
 

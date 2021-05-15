@@ -10,7 +10,9 @@
     <span class="label label-{{ App\Models\Aloorder\OrderItem::LABEL[$item['status']] }}">{{ App\Models\Aloorder\OrderItem::STATUS[$item['status']] }}</span><br> <br><b><a href="{{ $item['product_link'] }}" target="_blank"> Link sản phẩm </a></b>
     </td>
     <td class="column-created_at">{{ $item['created_at'] }}</td>
-    <td class="column-product_image"></td>
+    <td class="column-product_image">
+        <img src="{{ "https://aloorder.vn/storage/admin/".$item['product_image'] }}" alt="" width="100px" class="product-image" style="cursor: pointer">
+    </td>
     <td class="column-product_size">{{ $item['product_size'] }}</td>
     <td class="column-product_color">{{ $item['product_color'] }}</td>
     <td class="column-qty">{{ $item['qty'] }}</td>
@@ -34,3 +36,10 @@
 @endforeach
 
 @endif
+
+
+<script>
+    $(document).on('click', '.product-image', function () {
+        $(this).parent().dialog();
+    })
+</script>

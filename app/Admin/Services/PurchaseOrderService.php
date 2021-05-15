@@ -16,7 +16,7 @@ class PurchaseOrderService
     public function searchPurchaseOrderItem(string $cnCode = "")
     {
         # code...
-        $res = OrderItem::whereCnCode($cnCode)->whereStatus(OrderItem::STATUS_PURCHASE_ITEM_ORDERED)->get();
+        $res = OrderItem::where('cn_code', 'like', '%'.$cnCode.'%')->whereStatus(OrderItem::STATUS_PURCHASE_ITEM_ORDERED)->get();
         $data = [];
 
         if ($res->count() > 0) {

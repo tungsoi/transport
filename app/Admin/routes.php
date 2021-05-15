@@ -67,6 +67,7 @@ Route::group([
     // report_warehouses
     $router->post('/report_warehouses/storeDetail', 'ReportWarehouse\\DetailController@storeDetail')->name('report_warehouses.storeDetail');
     $router->put('/report_warehouses/{id}', 'ReportWarehouse\\DetailController@updateDetail')->name('report_warehouses.updateDetail');
+    // $router->post('/report_warehouses/{id}', 'ReportWarehouse\\DetailController@updateEditable')->name('report_warehouses.updateEditable');
 
     $router->resources([
         'customers'             =>  'CustomerController',

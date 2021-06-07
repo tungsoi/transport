@@ -330,18 +330,18 @@ class TransportOrderController extends AdminController
                 $order = Order::find($id);
                 return '<span class="label label-primary">'.number_format($order->getTotalPriceOrder()).'</span>';
             });
-            $grid->description('Chi tiết')->display(function () {
-                switch ($this->payment_type)
-                {
-                    case TransportOrderItem::KG:
-                        return "= ".(int) $this->kg." x ". number_format($this->price_service);
-                    case TransportOrderItem::V:
-                        return "= ".$this->volume." x ". number_format($this->price_service);
-                    case TransportOrderItem::M3:
-                        return "= ".$this->cublic_meter." x ". number_format($this->price_service);
-                }      
-                return number_format($this->kg * $this->price_service) ?? 0;
-            });
+            // $grid->description('Chi tiết')->display(function () {
+            //     switch ($this->payment_type)
+            //     {
+            //         case TransportOrderItem::KG:
+            //             return "= ".(int) $this->kg." x ". number_format($this->price_service);
+            //         case TransportOrderItem::V:
+            //             return "= ".$this->volume." x ". number_format($this->price_service);
+            //         case TransportOrderItem::M3:
+            //             return "= ".$this->cublic_meter." x ". number_format($this->price_service);
+            //     }      
+            //     return number_format($this->kg * $this->price_service) ?? 0;
+            // });
 
             $grid->disableActions();
             $grid->disablePagination();

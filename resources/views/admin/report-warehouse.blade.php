@@ -36,7 +36,7 @@
             <td>
                 <select class="form-control" name="line[]">
                     @foreach ($line as $key => $row)
-                        <option value="{{$key}}">{{ $row }}</option>
+                        <option value="{{$key}}" @if ($key != 0) selected @endif>{{ $row }}</option>
                     @endforeach
                 </select>
             </td>
